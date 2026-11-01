@@ -1,0 +1,11 @@
+# Third-party material and private interview prep stay local
+reference/
+.DS_Store
+# Secrets and heavy local state
+.env
+**/.env
+ai-stack/.venv/
+ai-stack/.chroma/
+ai-stack/.models/
+__pycache__/
+*.mp3

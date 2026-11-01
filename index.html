@@ -162,9 +162,9 @@ tailwind.config = {
 
 <header class="top">
   <div class="wrap">
-    <p class="kick">Dyssonance enterprise AI challenge &middot; one failure mode of LLM agents, made into a product</p>
-    <h1>TITLE: the thing being built, v1 scope</h1>
-    <p class="sub">One sentence: who this is for, which failure mode it contains, and what decision it changes.</p>
+    <p class="kick">Dyssonance enterprise AI challenge &middot; when enterprise agents disagree</p>
+    <h1>When agents disagree: keep the dissent, let evidence decide, ask a person only when it matters</h1>
+    <p class="sub">For the person accountable for an agent-run workflow in a bank, a freight operation or a contact centre: a layer that decides whether specialist agents that disagree may act. Working name Warrant; the product angle is set in design.</p>
     <div class="chips">
       <span class="chip">materials due Tue 3 Nov</span>
       <span class="chip">presenting Thu 5 Nov, 30 + 15 min</span>
@@ -175,8 +175,12 @@ tailwind.config = {
 </header>
 
 <nav class="toc"><div class="wrap"><ol>
+  <li><a href="#vision">Vision</a></li>
   <li><a href="#failure">Failure mode</a></li>
   <li><a href="#problem">Business problem</a></li>
+  <li><a href="#market">Market</a></li>
+  <li><a href="#competition">Competition</a></li>
+  <li><a href="#judgement">Judgement</a></li>
   <li><a href="#user">User and JTBD</a></li>
   <li><a href="#scope">Scope</a></li>
   <li><a href="#model">Model</a></li>
@@ -189,48 +193,136 @@ tailwind.config = {
 </ol></div></nav>
 
 <!-- 1 -->
+<section id="vision"><div class="wrap">
+  <div class="sh"><span class="sn">01</span><h2>Vision</h2></div>
+  <p class="big font-serif text-fg" style="font-size:22px;line-height:1.35">Enterprises will run agents as colleagues. The ones that scale will be the ones whose agents can disagree safely: the dissent is kept, evidence decides, and a person is asked only when it matters.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>What I believe</th><th>What it implies for the product</th></tr></thead>
+    <tbody>
+      <tr><td>Agents are becoming first-class workers with identities and permissions (Entra Agent ID, Workday Agent System of Record)</td><td>Conflicts between agents become an operating problem, not a research curiosity</td></tr>
+      <tr><td>The scarce resource is the person with authority, not compute</td><td>Sell throughput: more decisions act safely without them</td></tr>
+      <tr><td>Convergence should be a state update, not a longer conversation</td><td>Read the belief state; never add another debate loop or harness</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<!-- 2 -->
 <section id="failure"><div class="wrap">
-  <div class="sh"><span class="sn">01</span><h2>The failure mode</h2></div>
-  <p class="lede">What breaks in today's LLM-based enterprise systems, stated as an observable behaviour, with no solution in the sentence. Then the evidence that it happens, with a source or an "assumed" marker.</p>
-  <p><strong>FAILURE MODE SENTENCE.</strong> Example shape: an agent completes a multi-step task and reports success while one step silently did the wrong thing.</p>
-  <p>EVIDENCE SENTENCE, WITH SOURCE.</p>
+  <div class="sh"><span class="sn">02</span><h2>The failure mode</h2></div>
+  <p class="lede">What breaks, stated as an observable behaviour, with no solution in the sentence.</p>
+  <p><strong>An agent commits an action on a belief that is contested or stale, and nothing records what it relied on.</strong> The most visible and fastest-growing source of contest is other agents: when two specialists reach different conclusions about the same object, today's systems settle it by mechanics (last write wins, the most confident agent acts, or the coordinator picks), and the action executes against the system of record.</p>
+  <p>Evidence: Spawn, an agent-native company landing about 108 changes an hour, resolves agent conflicts by letting whoever lands second reconcile, and keeps no record of the competing positions (Spawn CEO blog, 28 Oct 2026, pp. 3 to 6). Academic failure taxonomies find inter-agent misalignment is a large share of multi-agent failures, though on research coding and maths tasks (MAST, arXiv 2503.13657). <strong>The enterprise rate is unmeasured; that is the first thing to find out.</strong></p>
 
   <h3>Candidates I considered</h3>
   <div class="tbl"><table>
     <thead><tr><th>Failure mode</th><th>Evidence it is real</th><th>Who feels it first</th><th>Verdict</th></tr></thead>
     <tbody>
-      <tr><td><strong>FAILURE MODE A</strong></td><td>SOURCE</td><td>WHO</td><td><span class="pill ok">Chosen</span> REASON</td></tr>
-      <tr><td>FAILURE MODE B</td><td>SOURCE</td><td>WHO</td><td><span class="pill warn">Not now</span> REASON</td></tr>
-      <tr><td>FAILURE MODE C</td><td>SOURCE</td><td>WHO</td><td><span class="pill stop">Rejected</span> REASON</td></tr>
+      <tr><td><strong>Acting on a contested or stale belief, with agent disagreement as the lead trigger</strong></td><td>Spawn practice; MAST taxonomy; Dyssonance's unshown "knows enough to act"</td><td>Operations owners of agent-run workflows</td><td><span class="pill ok">Chosen</span> Actionable, costly, invisible until a reversal</td></tr>
+      <tr><td>Agents disagree, framed as a shared-memory problem</td><td>Dyssonance's own "43 AI agents and zero shared reality"</td><td>AI platform teams</td><td><span class="pill stop">Rejected</span> Rewrites their essay</td></tr>
+      <tr><td>Supervisor agent that arbitrates and pings a human</td><td>Common pattern</td><td>Developers</td><td><span class="pill stop">Rejected</span> It is a harness, which they position against</td></tr>
+      <tr><td>Output evals miss errors until after the fact</td><td>Crowded tooling (LangSmith, Langfuse, Arize)</td><td>ML engineers</td><td><span class="pill warn">Folded in</span> Becomes the measurement layer, not the product</td></tr>
     </tbody>
   </table></div>
   <div class="note"><span class="tag">How I chose</span>
-    <p>Frequent enough to matter, expensive when it happens, invisible to the person it hurts until too late, and containable by a product rather than only by a better model. <strong>If the next model release fixes it, it is not a product.</strong></p>
-  </div>
-</div></section>
-
-<!-- 2 -->
-<section id="problem"><div class="wrap">
-  <div class="sh"><span class="sn">02</span><h2>The business problem</h2></div>
-  <p class="lede">The same failure, translated into the language of the person paying for it: who is affected, why it matters, and what it costs.</p>
-  <p>PROBLEM SENTENCE, in the user's position, no mechanism in it.</p>
-  <p>COST SENTENCE, in money, time or trust, with a source or marked assumed.</p>
-  <div class="tbl"><table>
-    <thead><tr><th>Who is affected</th><th>Why it matters to them</th><th>Impact today</th></tr></thead>
-    <tbody>
-      <tr><td><strong>AFFECTED PARTY 1</strong></td><td>...</td><td>... <span class="pill warn">assumed</span></td></tr>
-      <tr><td>AFFECTED PARTY 2</td><td>...</td><td>...</td></tr>
-      <tr><td>AFFECTED PARTY 3</td><td>...</td><td>...</td></tr>
-    </tbody>
-  </table></div>
-  <div class="note warn"><span class="tag">Why now</span>
-    <p>WHY NOW SENTENCE: what changed in agent adoption that makes this failure newly expensive.</p>
+    <p>Frequent enough to matter, expensive when it happens, invisible to the person it hurts until too late, and containable by a product rather than only by a better model. <strong>A better model in each agent still disagrees with a better model in the next one; conflicting evidence is not a capability gap.</strong></p>
   </div>
 </div></section>
 
 <!-- 3 -->
+<section id="problem"><div class="wrap">
+  <div class="sh"><span class="sn">03</span><h2>The business problem</h2></div>
+  <p class="lede">The same failure in the language of the person paying for it.</p>
+  <p>Operations owners see agent actions reversed, refunds clawed back, customers told the wrong status, and a growing queue of escalations they cannot clear.</p>
+  <p>Each one costs handle time and rework, and in regulated workflows a wrong irreversible action becomes a loss or a finding. The per-incident cost is unmeasured <span class="pill warn">assumed material</span>; the log pull in section 06 replaces this line with a number.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Vertical</th><th>The conflict</th><th>The rule that exists</th><th>Where the rule fails</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Retail banking</strong></td><td>Service agent sends a cheque book to a just-changed address while the transaction agent holds an open dispute and KYC is stale</td><td>Account-takeover rule blocks address change plus cheque book</td><td>Fires on every genuine move; cannot see the KYC refresh completed an hour ago elsewhere</td></tr>
+      <tr><td><strong>Freight</strong></td><td>Exception agent tells the customer a container is released while the broker shows an exam hold</td><td>Customs status outranks carrier</td><td>Cannot express that the hold is six hours old, or the exam finished but was not posted</td></tr>
+      <tr><td><strong>CRM service</strong></td><td>Refund agent approves a credit while risk has flagged the account and the contract overrides terms</td><td>Risk outranks service</td><td>Cannot tell the flag was cleared yesterday or the contract was amended</td></tr>
+    </tbody>
+  </table></div>
+  <p class="text-fg-2" style="font-size:14px">Enterprise structure makes it harder: RBAC means the agent that can act is often not the one that knows; hierarchy means some views outrank others only while current; PII rules limit what an escalation may show to whom.</p>
+  <div class="note warn"><span class="tag">Why now</span>
+    <p>Organisations orchestrating multiple agents rose from 9% to 18% in one quarter (KPMG AI Pulse, to verify). Gartner expects over 40% of agentic AI projects cancelled by end 2027, partly over risk controls. Agents now get directory identities and HR records (Entra Agent ID; Workday Agent System of Record). Spawn and Block show where action volume is heading; they are colour, not proof of enterprise pain.</p>
+  </div>
+</div></section>
+
+<!-- 4 -->
+<section id="market"><div class="wrap">
+  <div class="sh"><span class="sn">04</span><h2>Market landscape and sizing</h2></div>
+  <p class="lede">Top-down for the landscape, bottom-up for what this product could earn. Bottom-up inputs are assumed until a design partner's logs replace them.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Market</th><th>2030 estimate</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>AI agents</td><td class="num">$48B to $53B</td><td>MarketsandMarkets, Grand View, BCC</td></tr>
+      <tr><td>AI governance platforms</td><td class="num">$1B to $15.8B</td><td>Gartner; Forrester (15x apart on definitions)</td></tr>
+      <tr><td>LLM observability</td><td class="num">over $9B</td><td>Citi Ventures</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Bottom-up</th><th>Value</th><th>How</th></tr></thead>
+    <tbody>
+      <tr><td><strong>TAM</strong></td><td class="num">$0.58B (range $0.14B to $2.9B)</td><td>12,000 multi-agent enterprises × 50k to 1M high-impact writes a month × $0.02 <span class="pill warn">assumed</span>; 2% to 6% of 2030 governance plus observability spend</td></tr>
+      <tr><td><strong>SAM</strong></td><td class="num">$0.23B</td><td>40% in regulated or high-consequence operations <span class="pill warn">assumed</span></td></tr>
+      <tr><td><strong>SOM, year 3</strong></td><td class="num">about $7M ARR</td><td>100 accounts at about $73k, roughly 3% of SAM <span class="pill warn">assumed</span></td></tr>
+    </tbody>
+  </table></div>
+  <h3>Cost or revenue, tangible or secondary</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Value</th><th>Type</th><th>Tangible?</th><th>How the customer sees it</th></tr></thead>
+    <tbody>
+      <tr><td>More agent decisions act safely without a person</td><td>Cost, capacity</td><td><span class="pill ok">Tangible</span></td><td>Handle time, backlog, review minutes</td></tr>
+      <tr><td>Fewer reversals and clawbacks</td><td>Cost</td><td><span class="pill ok">Tangible</span></td><td>Reversal rate already tracked</td></tr>
+      <tr><td>Avoided wrong irreversible action</td><td>Risk</td><td><span class="pill warn">Secondary</span></td><td>Rare and counterfactual; the compliance sign-off argument</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Lead with throughput, keep risk for the security buyer.</strong> The payer (AI platform budget) and the beneficiary (operations P&amp;L) differ, so the case is written in the operations owner's numbers.</p>
+</div></section>
+
+<!-- 5 -->
+<section id="competition"><div class="wrap">
+  <div class="sh"><span class="sn">05</span><h2>Competition and what customers pay today</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Category</th><th>Examples</th><th>What they do</th><th>Price</th><th>What they miss</th></tr></thead>
+    <tbody>
+      <tr><td>Status quo</td><td>Reviewers, approval queues, hard-coded gates</td><td>People and static rules</td><td>Headcount</td><td>Does not scale with agent volume; rules blind to age</td></tr>
+      <tr><td>Orchestrators</td><td>Agentforce, Copilot Studio, ServiceNow</td><td>Coordinate agents inside one estate</td><td class="num">$0.10 per action; $200 per 25k credits</td><td>Cannot see evidence in other vendors' systems</td></tr>
+      <tr><td>Governance and control</td><td>Zenity, Credo, Lakera, White Circle</td><td>Check one agent or model against a policy</td><td>Not public</td><td>No notion of two agents disagreeing</td></tr>
+      <tr><td>Observability and evals</td><td>LangSmith, Langfuse, Arize</td><td>Trace and score after the run</td><td class="num">$29 to $39 per seat a month</td><td>After the write, not before</td></tr>
+      <tr><td>Research</td><td>MPAC protocol</td><td>Freezes a contested scope</td><td>n/a</td><td>Not a product</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn"><span class="tag">The real threat, and the wedge</span>
+    <p>Platforms will build the in-estate version. The wedge is what they structurally cannot see: <strong>high-impact writes whose evidence spans two or more systems of record</strong>, such as KYC in core banking, disputes in the card platform and service in the CRM.</p>
+  </div>
+</div></section>
+
+<!-- 6 -->
+<section id="judgement"><div class="wrap">
+  <div class="sh"><span class="sn">06</span><h2>Judgement: why narrow to this</h2></div>
+  <p class="lede">Each row is a call I made, what I rejected, and what would prove me wrong.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Call</th><th>Chose</th><th>Rejected</th><th>I am wrong if</th></tr></thead>
+    <tbody>
+      <tr><td><strong>The anchor</strong></td><td>Acting on a contested or stale belief, disagreement as lead trigger</td><td>"Agents disagree" alone</td><td>Interviews show conflicts are rare and staleness is the whole problem</td></tr>
+      <tr><td><strong>The customer</strong></td><td>Established enterprises in banking, freight, CRM service</td><td>Agent-native companies like Spawn</td><td>Only agent-native companies reach conflict volume that matters</td></tr>
+      <tr><td><strong>The moment</strong></td><td>Before the write</td><td>After-the-fact observability</td><td>Reversal is cheap enough that tracing is sufficient</td></tr>
+      <tr><td><strong>The value</strong></td><td>Throughput first, risk second</td><td>Selling fear</td><td>Buyers only budget for this after an incident</td></tr>
+      <tr><td><strong>The wedge</strong></td><td>Cross-system writes</td><td>A feature inside one orchestrator</td><td>Most high-impact writes stay inside one vendor's estate</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note stop"><span class="tag">Is the Spawn and Block direction a judgement call or a trend chase?</span>
+    <p>Partly a trend chase, and I am treating it that way. Spawn is ten people writing code, and Block's restructuring is about one agent, not agents disagreeing. They are used as colour for where action volume goes, never as evidence. The evidence has to come from five operations-owner interviews and one log pull counting reversals and overrides, before design is committed.</p>
+  </div>
+  <div class="note"><span class="tag">Constraints carried into design</span>
+    <p>Bounded output (act, gather, hold) from a small classifier, costed per resolved conflict, not per token. Escalate only real disagreements: users approve about 93% of Claude Code permission prompts (Anthropic, as cited by C. Lozano). Hold is a first-class output and is bias-tested with counterfactual pairs, because KillBench found structured outputs collapse refusals and amplify bias (White Circle). Escalations are reviewable artifacts in the surface the person already uses, ruled on by comment, the pattern Antigravity uses to supervise parallel agents; Antigravity's artifacts are per agent, and nothing adjudicates across agents touching the same object. Evaluate on planted defects in our own workflow, not a leaderboard.</p>
+  </div>
+</div></section>
+
+<!-- 7 -->
 <section id="user"><div class="wrap">
-  <div class="sh"><span class="sn">03</span><h2>Target user and jobs to be done</h2></div>
+  <div class="sh"><span class="sn">07</span><h2>Target user and jobs to be done</h2></div>
   <p class="lede">One primary user. Jobs written as <em>When [situation], I want to [motivation], so I can [outcome].</em> Then what they do instead today.</p>
   <div class="tbl"><table>
     <thead><tr><th>User</th><th>Job to be done</th><th>What they do today</th></tr></thead>
@@ -243,9 +335,9 @@ tailwind.config = {
   <p><strong>The decision this changes:</strong> DECISION SENTENCE.</p>
 </div></section>
 
-<!-- 4 -->
+<!-- 8 -->
 <section id="scope"><div class="wrap">
-  <div class="sh"><span class="sn">04</span><h2>Goal and non-goals</h2></div>
+  <div class="sh"><span class="sn">08</span><h2>Goal and non-goals</h2></div>
   <p><strong>Goal.</strong> One line, with the decision it changes.</p>
   <h3>Non-goals for v1</h3>
   <ul>
@@ -258,9 +350,9 @@ tailwind.config = {
   </div>
 </div></section>
 
-<!-- 5 -->
+<!-- 9 -->
 <section id="model"><div class="wrap">
-  <div class="sh"><span class="sn">05</span><h2>The model</h2></div>
+  <div class="sh"><span class="sn">09</span><h2>The model</h2></div>
   <p class="lede">The actors in the agentic workflow, where trust is handed from one to the next, and the point where the failure enters. Edit the labels, keep the shape.</p>
   <figure>
     <svg viewBox="0 0 760 290" role="img" aria-label="Agent workflow and failure point">
@@ -299,9 +391,9 @@ tailwind.config = {
   </figure>
 </div></section>
 
-<!-- 6 -->
+<!-- 10 -->
 <section id="proto"><div class="wrap">
-  <div class="sh"><span class="sn">06</span><h2>Solution and prototype</h2></div>
+  <div class="sh"><span class="sn">10</span><h2>Solution and prototype</h2></div>
   <p class="lede">What it is in one paragraph, the surface it lives on and why, and an honest line between what is working and what is staged.</p>
   <p>SOLUTION PARAGRAPH.</p>
   <p><strong>Surface:</strong> SURFACE (for example Slack, Notion, web), because REASON tied to where the user already works.</p>
@@ -319,9 +411,9 @@ tailwind.config = {
   </table></div>
 </div></section>
 
-<!-- 7 -->
+<!-- 11 -->
 <section id="decisions"><div class="wrap">
-  <div class="sh"><span class="sn">07</span><h2>Key decisions and trade-offs</h2></div>
+  <div class="sh"><span class="sn">11</span><h2>Key decisions and trade-offs</h2></div>
   <p class="lede">Each row is a fork in the road: what I chose, what I gave up, and what would make me switch.</p>
   <div class="tbl"><table>
     <thead><tr><th>Decision</th><th>Chose</th><th>Gave up</th><th>I would switch if</th></tr></thead>
@@ -334,9 +426,9 @@ tailwind.config = {
   </table></div>
 </div></section>
 
-<!-- 8 -->
+<!-- 12 -->
 <section id="reqs"><div class="wrap">
-  <div class="sh"><span class="sn">08</span><h2>Requirements and guardrails</h2></div>
+  <div class="sh"><span class="sn">12</span><h2>Requirements and guardrails</h2></div>
   <p class="lede">Condition, then observable behaviour, then how we would test it. <strong>If I cannot name the test, it is not a requirement yet, it is an intention.</strong></p>
   <div class="tbl"><table>
     <thead><tr><th style="width:52px">ID</th><th>Requirement</th><th>Test</th></tr></thead>
@@ -362,9 +454,9 @@ tailwind.config = {
   </div>
 </div></section>
 
-<!-- 9 -->
+<!-- 13 -->
 <section id="metrics"><div class="wrap">
-  <div class="sh"><span class="sn">09</span><h2>Metrics and evals</h2></div>
+  <div class="sh"><span class="sn">13</span><h2>Metrics and evals</h2></div>
   <div class="tbl"><table>
     <thead><tr><th>Type</th><th>Metric</th><th>Why this one</th></tr></thead>
     <tbody>
@@ -377,9 +469,9 @@ tailwind.config = {
   <p>EVAL SENTENCE: how many cases, where they come from, which share are known failures, and what counts as a pass. Without this, every metric above is self-reported by the system being measured.</p>
 </div></section>
 
-<!-- 10 -->
+<!-- 14 -->
 <section id="risks"><div class="wrap">
-  <div class="sh"><span class="sn">10</span><h2>Risks and open questions</h2></div>
+  <div class="sh"><span class="sn">14</span><h2>Risks and open questions</h2></div>
   <div class="tbl"><table>
     <thead><tr><th>Risk</th><th>Why it bites</th><th>Mitigation or owner</th></tr></thead>
     <tbody>
@@ -397,9 +489,9 @@ tailwind.config = {
   </div>
 </div></section>
 
-<!-- 11 -->
+<!-- 15 -->
 <section id="close"><div class="wrap">
-  <div class="sh"><span class="sn">11</span><h2>Conclusions and phasing</h2></div>
+  <div class="sh"><span class="sn">15</span><h2>Conclusions and phasing</h2></div>
   <p class="lede">Sequenced as de-risking, not as t-shirt sizes I have no basis for.</p>
   <div class="tbl"><table>
     <thead><tr><th>Phase</th><th>What</th><th>The assumption it tests</th></tr></thead>

@@ -41,40 +41,42 @@ DYSSONANCE CONTEXT: what they build, who their customers are, which surfaces and
 
 ## Fill order
 
-Work top down. Sections 01 to 04 first, because they are the problem framing and the scope agreement with myself. Then 05 the model, then 06 the solution and prototype, then 07 to 11. Then the slides.
+Work top down. Discovery (01 to 06) is drafted. Next: 07 user and JTBD and 08 scope (design stage), then 09 the model, 10 the solution and prototype, then 11 to 15. Then the slides.
 
-If time runs short, the sections that must exist are **01 failure mode, 03 user and JTBD, 06 solution and prototype, 07 decisions and trade-offs, 11 conclusions**. They map one to one onto what the assignment says is evaluated.
+If time runs short, the sections that must exist are **02 failure mode, 06 judgement, 07 user and JTBD, 10 solution and prototype, 11 decisions and trade-offs, 15 conclusions**. They map one to one onto what the assignment says is evaluated.
 
 ## Section notes
 
-**01 Failure mode.** One sentence describing an observable behaviour of LLM systems or agents, with no solution in it. Then evidence it is real, sourced. The candidates table shows the alternatives considered and why one won: that table is where judgment is visible. Selection test: frequent, expensive, invisible to the victim until late, and containable by a product rather than only by a better model. If the next model release fixes it, it is not a product.
+**Product discovery, 01 to 06.** Done 31 Oct from `product/01-discovery-memo.md` (rev 3, after a devil's advocate review): 01 vision, 02 failure mode, 03 business problem, 04 market landscape and sizing, 05 competition, 06 judgement calls. The memo is the source; change it first, then the report.
 
-**02 Business problem.** The same failure in the language of the person who pays for it. Who is affected (often more than one party: the operator, their customer, compliance), why it matters, the impact. Add the "why now".
+**02 Failure mode.** One sentence describing an observable behaviour of LLM systems or agents, with no solution in it. Then evidence it is real, sourced. The candidates table shows the alternatives considered and why one won: that table is where judgment is visible. Selection test: frequent, expensive, invisible to the victim until late, and containable by a product rather than only by a better model. If the next model release fixes it, it is not a product.
 
-**03 User and JTBD.** One primary user. Jobs in the form *When [situation], I want to [motivation], so I can [outcome].* Plus what they do today. Name the decision this changes.
+**03 Business problem.** The same failure in the language of the person who pays for it. Who is affected (often more than one party: the operator, their customer, compliance), why it matters, the impact. Add the "why now".
 
-**04 Goal and non-goals.** Three non-goals, each with half a line of reason. "Not fixing the model itself" is almost always one of them. The assumptions note underneath is not optional.
+**07 User and JTBD.** One primary user. Jobs in the form *When [situation], I want to [motivation], so I can [outcome].* Plus what they do today. Name the decision this changes.
 
-**05 The model.** Edit the SVG labels, keep the shape. Top row: the actors in the agentic workflow and where trust is handed off. Bottom row: the state flow with one exception branch where the failure is caught. The caption must name the trap, for example that the agent reports success at a state the user does not care about.
+**08 Goal and non-goals.** Three non-goals, each with half a line of reason. "Not fixing the model itself" is almost always one of them. The assumptions note underneath is not optional.
 
-**06 Solution and prototype.** One paragraph on the solution, one line on the surface and why it fits where the user already works. The "real vs mocked" table is mandatory: a live demo that hides what is staged loses trust the moment someone asks. Build the demo shell in `prototype.html`, inside its `<main>`, and set its `<h1>`. The report links to it; add one line per screen there once built. Default three screens behind the existing tabs (`.tabs` > `button.tab[data-screen]`, each screen a `div.screen` with an id, the first with class `on`):
+**09 The model.** Edit the SVG labels, keep the shape. Top row: the actors in the agentic workflow and where trust is handed off. Bottom row: the state flow with one exception branch where the failure is caught. The caption must name the trap, for example that the agent reports success at a state the user does not care about.
+
+**10 Solution and prototype.** One paragraph on the solution, one line on the surface and why it fits where the user already works. The "real vs mocked" table is mandatory: a live demo that hides what is staged loses trust the moment someone asks. Build the demo shell in `prototype.html`, inside its `<main>`, and set its `<h1>`. The report links to it; add one line per screen there once built. Default three screens behind the existing tabs (`.tabs` > `button.tab[data-screen]`, each screen a `div.screen` with an id, the first with class `on`):
 - **Screen 1, normal.** The agent completes the task and the check passes. Nobody needs to look.
 - **Screen 2, caught.** The failure that would have been silent, held, with the system naming the exact step and field it does not trust. This is the screen that proves the thesis; demo it slowly.
 - **Screen 3, correction and audit.** A person fixes it, the trail records it, and the correction becomes an eval case.
 
 If the prototype lives in Slack or Notion, the screens in `prototype.html` are the storyboard and the fallback if the live integration fails on the call. The stylesheet defines a list plus detail plus action shell (`.mock`, `.mock-bar`, `.mock-top`, `.mock-body`, `.side`, `.main`, `.panel`, `table.grid`, `.pill`, `.banner`, `.conf`, `.trail`). Use Tailwind for anything else.
 
-**Building it in parallel.** When asked to build the prototype in the background, launch a background agent with a self-contained brief: read `index.html` sections 01 to 05 and this file's section 06 note, edit only `prototype.html` (or only its named files in `ai-stack`), use only data the report states or mark fields assumed, and report back the screen names. Do not edit those files from the main conversation while it runs.
+**Building it in parallel.** When asked to build the prototype in the background, launch a background agent with a self-contained brief: read `index.html` sections 01 to 09 and this file's section 10 note, edit only `prototype.html` (or only its named files in `ai-stack`), use only data the report states or mark fields assumed, and report back the screen names. Do not edit those files from the main conversation while it runs.
 
-**07 Decisions and trade-offs.** Four rows. Each: what I chose, what I gave up, and what would make me switch. Typical forks: surface, autonomy level, which model and why, build vs integrate, where verification runs.
+**11 Decisions and trade-offs.** Four rows. Each: what I chose, what I gave up, and what would make me switch. Typical forks: surface, autonomy level, which model and why, build vs integrate, where verification runs.
 
-**08 Requirements and guardrails.** Grammar: *When [condition], the system must [observable behaviour]. Test: [method and data].* The must-not table is where risk awareness becomes visible. N3, the kill switch with a defined trigger, is the single most credible control.
+**12 Requirements and guardrails.** Grammar: *When [condition], the system must [observable behaviour]. Test: [method and data].* The must-not table is where risk awareness becomes visible. N3, the kill switch with a defined trigger, is the single most credible control.
 
-**09 Metrics and evals.** Always three: leading, lagging, counter. Plus the eval set: size, source, share of known failures, pass definition. An agent product without an eval set is measuring itself with its own judgment.
+**13 Metrics and evals.** Always three: leading, lagging, counter. Plus the eval set: size, source, share of known failures, pass definition. An agent product without an eval set is measuring itself with its own judgment.
 
-**10 Risks.** Each row needs a mitigation or an owner, not a worry. The "where this plan is weak" note is said out loud before Q&A.
+**14 Risks.** Each row needs a mitigation or an owner, not a worry. The "where this plan is weak" note is said out loud before Q&A.
 
-**11 Conclusions and phasing.** De-risking sequence; P1 is the smallest build that tests the riskiest assumption. Then the three-part close.
+**15 Conclusions and phasing.** De-risking sequence; P1 is the smallest build that tests the riskiest assumption. Then the three-part close.
 
 ## Slides
 

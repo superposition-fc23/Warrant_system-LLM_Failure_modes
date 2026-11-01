@@ -622,6 +622,25 @@ tailwind.config = {
 <section id="proto"><div class="wrap">
   <div class="sh"><span class="sn">10</span><h2>Solution and prototype</h2></div>
   <p class="lede">What it is in one paragraph, the surface it lives on and why, and an honest line between what is working and what is staged.</p>
+
+  <h3>Design step 4: UX map, information then decision then action</h3>
+  <p class="text-fg-2" style="font-size:14px">One row per moment on the job map, for the three people in section 07. Moments, not screens: the screens come from this, not the other way round.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Moment</th><th>Who</th><th>Information they need</th><th>Decision</th><th>Action</th><th>Goal</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Set the boundary</strong><br><span class="text-fg-3">define</span></td><td>Support or applied AI engineer</td><td>Money action types and amounts; which system governs which fact; how fresh each fact must be; who holds authority per type and amount</td><td>What may an agent commit alone, and on whose evidence?</td><td>Write the authority map; start in shadow mode</td><td>G1, G4</td></tr>
+      <tr><td><strong>An action is contested</strong><br><span class="text-fg-3">confirm</span></td><td>Gate, then the owner of the governing fact</td><td>The proposed action and amount; each conflicting belief side by side, with its source, timestamp and asserting agent; the one fact that would settle it; the cost of being wrong</td><td>Act, gather the named fact, or hold for a ruling</td><td>Commit, fetch, or route one question to the authority</td><td>G1, G3</td></tr>
+      <tr><td><strong>Rule on a hold</strong><br><span class="text-fg-3">confirm</span></td><td>Billing, RevOps or finance analyst</td><td>One question, the contract clause and billing record cited, the amount, earlier rulings on the same pattern</td><td>Which evidence governs here, and does it govern next time?</td><td>Rule with a reason code; optionally make it a standing rule with an owner and an expiry</td><td>G2, G3</td></tr>
+      <tr><td><strong>The customer is waiting</strong><br><span class="text-fg-3">execute</span></td><td>CSM</td><td>That an action on the account is held, why in one line, who owns the ruling, when it is due</td><td>What do I tell the customer now?</td><td>Send a holding reply; raise the priority of the ruling</td><td>G3; O4 in v2</td></tr>
+      <tr><td><strong>An action was reversed</strong><br><span class="text-fg-3">monitor</span></td><td>Engineer, with finance</td><td>The decision record: which agent, which evidence at what timestamp, which rule or person authorised it</td><td>Was it the gate, the data, or the policy?</td><td>Label the cause; the case becomes an eval case</td><td>G2; loop 2</td></tr>
+      <tr><td><strong>Weekly review</strong><br><span class="text-fg-3">monitor</span></td><td>VP of Support</td><td>Against the pre-launch baseline: automation rate, reversals and clawbacks, hold rate, over-hold rate, time to ruling, leakage the shadow gate would have stopped</td><td>Widen autonomy for an action type, hold it, or narrow it</td><td>Approve a widening proposal; trigger the kill switch</td><td>G4; loop 3</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note ok"><span class="tag">UX rules this map produces</span>
+    <p><strong>1. One question per hold, never a dashboard.</strong> The hold names the single fact that would settle it, so a ruling takes seconds (G3, approval fatigue). <strong>2. Show the dissent, do not average it away.</strong> Both beliefs appear with source and timestamp; the system never quietly picks one. <strong>3. Every ruling is attributable and becomes state.</strong> It is stored with provenance, an owner and an expiry, not as a prompt edit (G2, loop 2). <strong>4. Go to where people already work.</strong> The hold reaches the analyst and the CSM in their existing queue or channel; only setup and review need a console of their own. <strong>5. Safe by default.</strong> Shadow first, and the kill switch sits on the buyer's view, not buried in settings.</p>
+  </div>
+  <p class="text-fg-2" style="font-size:14px"><strong>Moments to demo screens:</strong> screen 1 is a clean money action committing with nobody involved; screen 2 is "an action is contested", demoed slowly; screen 3 is "rule on a hold" plus "an action was reversed", where the ruling becomes a standing rule and an eval case. Setup and the weekly review appear on slides. General: every row except the evidence named in it, which is vertical-specific (billing and contract here, demurrage in freight, payee history in banking).</p>
+
   <p>SOLUTION PARAGRAPH.</p>
   <p><strong>Surface:</strong> SURFACE (for example Slack, Notion, web), because REASON tied to where the user already works.</p>
   <p><a class="btn pri" href="prototype.html" target="_blank" style="text-decoration:none">Open the prototype &rarr;</a> &nbsp; <a class="btn" href="slides.html" target="_blank" style="text-decoration:none">Open the slides &rarr;</a></p>

@@ -1,7 +1,7 @@
 """Voice of customer from public forums: a stand-in for JTBD interviews until real ones are run.
 
 Collects public opinions about AI agents in support and multi-agent workflows, classifies each into a desired
-outcome (O1 to O8 from index.html step 3d) with an inferred job performer, importance and satisfaction (1 to 10,
+outcome (O1 to O9 from index.html step 3d; O9 added for P3) with an inferred job performer, importance and satisfaction (1 to 10,
 Ulwick's sense: how much the outcome matters to them; how well today's tools deliver it), and aggregates an
 opportunity score per outcome. Sources: Hacker News (Algolia API, no auth); Reddit via its official Data API (app-only OAuth, keys in .env);
 Medium tag RSS where it responds. Medium and Substack are otherwise gathered by domain-restricted search and read
@@ -35,6 +35,10 @@ QUERIES = [
     "agents overwriting each other", "AI agent took wrong action production", "AI support bot contradicts", "LLM agent permissions RBAC",
     "AI agent audit trail", "when to let AI agents act autonomously", "AI agents shared state coordination", "AI customer service escalation to human",
     "AI agent cost of mistakes", "AI agents billing errors", "trust AI agents enterprise",
+    # P3, severity and SLA (added 1 Nov). Short on purpose: Algolia matches every word, and the first long phrasings
+    # returned zero hits (a recall failure, not evidence). The last two are written to disconfirm: they look for satisfaction.
+    "ticket triage", "SLA breach", "incident severity", "auto triage", "ticket priority AI", "on-call severity",
+    "triage LLM", "AI ticket triage works well", "PagerDuty severity automation",
 ]
 FEEDS = ["ai-agents", "agentic-ai", "customer-support", "multi-agent-systems"]
 OUTCOMES = {
@@ -46,6 +50,7 @@ OUTCOMES = {
     "O6": "Maximise confidence that widening autonomy has not raised reopens or clawbacks",
     "O7": "Minimise exposure of restricted data when a case is escalated",
     "O8": "Minimise the effort to trace a reversed action to its evidence",
+    "O9": "Minimise the time a ticket or incident sits at the wrong severity or SLA tier",
 }
 PERFORMERS = ["support or applied AI engineer", "CSM", "finance or RevOps", "VP or exec buyer", "end customer", "other"]
 UA = {"User-Agent": "voc-research/0.1 (product discovery; contact via repo owner)"}
@@ -157,7 +162,7 @@ def report():
     rows = [r for r in json.load(open("evals/voc_classified.json")) if r.get("relevant") and r.get("outcome") in OUTCOMES]
     # All relevant rows. Never select on importance: ranking by the scored field and then averaging it inflates the mean.
     lines = [f"# Voice of customer: {len(rows)} public opinions classified\n",
-             "Opinion mining from Hacker News, Reddit and Medium, classified by Haiku. Not interviews. See biases at the end.\n",
+             "Opinion mining from Hacker News and Substack (Reddit and Medium pending), classified by Haiku. Not interviews. See biases at the end.\n",
              "| Outcome | n | Mean importance | Mean satisfaction | Opportunity | Top performer |", "|---|---|---|---|---|---|"]
     agg = {}
     for k in OUTCOMES:

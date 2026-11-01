@@ -364,6 +364,17 @@ tailwind.config = {
     </tbody>
   </table></div>
   <p class="text-fg-2" style="font-size:14px">Agents in this workflow (assumed for design): ticket classifier, CS agent, refund and credit agent, retention agent, risk agent, engineering on-call agent, PM agent. Each reads a different system of record: CRM, billing, contract repository, risk service, issue tracker, product backlog. The buyer pays for the agents and owns the metrics they move, so payer and beneficiary are the same person.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Buying centre</th><th>Who, depending on the org</th><th>Why they are in it</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Economic buyer</strong>, beachhead</td><td>VP of Support or CX</td><td>Owns the agent budget and eats the cost of reversals</td></tr>
+      <tr><td><strong>Expansion buyer</strong></td><td>CRO or VP RevOps; VP of CS where renewals sit post-sale</td><td>Revenue leakage across billing and contract</td></tr>
+      <tr><td><strong>Veto</strong></td><td>CFO or controller</td><td>Signs off money authority; audit and SOX exposure</td></tr>
+      <tr><td><strong>Rising buyer</strong></td><td>Head of AI or agent platform</td><td>Runs several agent vendors, so a vendor-neutral layer is theirs to own</td></tr>
+      <tr><td><strong>Influencer only</strong></td><td>VP Sales, VP Business Development</td><td>Discounts touch deals, but they rarely buy support tooling</td></tr>
+    </tbody>
+  </table></div>
+  <p class="text-fg-2" style="font-size:14px">The goals are general, so the mechanism transfers; the buying centre does not. It is drawn per vertical, and for the story there is one buyer.</p>
 
   <h3>Step 2: pain points, as agent conflicts</h3>
   <div class="tbl"><table>
@@ -461,7 +472,26 @@ tailwind.config = {
     <p><strong>1.</strong> My importance scores were about 2 to 3 points too high across the board: the assumption was inflated, as a hypothesis-holder's always is. <strong>2.</strong> The confirm step holds: O2 and O1 stay in the top three. <strong>3.</strong> O8 is overturned: not a generic tracer, but an <strong>attributable decision record</strong> (which agent, on which evidence, under whose authority) is underserved, so it moves into wave 1 as part of what the intervention writes. <strong>4.</strong> Approval fatigue is the loudest theme, which validates escalating only real disagreements. <strong>5.</strong> O6, the buyer's outcome, is neither confirmed nor refuted: the people who hold it do not post.</p>
   </div>
   <div class="note stop"><span class="tag">This evidence is itself a failure mode, so it is labelled as one</span>
-    <p><strong>Selection:</strong> authors are developers and commentators; 1 of 181 read as finance, 10 as executives, 90 could not be placed. <strong>Query bias:</strong> I wrote the search terms from my hypothesis. <strong>Judge bias:</strong> a model inferred every score, and its scores compress toward the middle (all opportunities fall between 6.8 and 9.7); belief is bias, and so is the judge. <strong>Caught in the build:</strong> the first report averaged the top 100 by importance, which inflated importance by 0.6 to 1.0 per outcome; it now uses every relevant item. <strong>Not our customers:</strong> nothing shows these authors run multi-agent support. Use it to rank and to falsify, not to size. Interviews still decide.</p>
+    <p><strong>Selection:</strong> authors are developers and commentators; 1 of 181 read as finance, 10 as executives, 90 could not be placed. <strong>Query bias:</strong> I wrote the search terms from my hypothesis. <strong>Judge bias:</strong> a model inferred every score, and its scores compress toward the middle (all opportunities fall between 6.8 and 9.7); belief is bias, and so is the judge. <strong>Caught in the build:</strong> the first report averaged the top 100 by importance, which inflated importance by 0.6 to 1.0 per outcome; it now uses every relevant item. <strong>Caught again on the rerun:</strong> Algolia matches every word, so 7 of 10 long severity queries returned nothing; that was a recall failure, not evidence, and they were shortened before the rule was applied. <strong>Not our customers:</strong> nothing shows these authors run multi-agent support. Use it to rank and to falsify, not to size. Interviews still decide.</p>
+  </div>
+  <h3>Step 3d, rerun: is severity and SLA (P3) a v1 problem?</h3>
+  <p class="lede">P3 was deferred on my assumed scores, and no outcome in O1 to O8 could capture it, so the deferral had no evidence behind it. The rerun on 1 Nov adds <strong>O9: minimise the time a ticket or incident sits at the wrong severity or SLA tier</strong>, nine severity queries (two written to find satisfaction, not pain), and reclassifies every item so O9 competes fairly: 214 relevant of 396. <strong>Rule set before the run:</strong> P3 joins v1 if O9 has at least 10 opinions and an opportunity of at least 9.4, the lowest wave-1 score in the first run.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>ID</th><th>n, first run / rerun</th><th>Opportunity, first run / rerun</th><th>Reading</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">O9</td><td class="num">none / <strong>4</strong></td><td class="num">none / <strong>9.0</strong></td><td><span class="pill warn">Fails the rule</span> on volume first: 151 items mention triage, severity or SLA, but only 4 express this outcome about agents</td></tr>
+      <tr><td class="mono">O2</td><td class="num">14 / 17</td><td class="num">9.7 / 9.8</td><td rowspan="4">Top band holds, inside a tie: O1, O2, O4, O8 sit within 0.2 of each other</td></tr>
+      <tr><td class="mono">O4</td><td class="num">13 / 13</td><td class="num">9.1 / 9.8</td></tr>
+      <tr><td class="mono">O1</td><td class="num">32 / 27</td><td class="num">9.4 / 9.7</td></tr>
+      <tr><td class="mono">O8</td><td class="num">21 / 25</td><td class="num">9.7 / 9.6</td></tr>
+      <tr><td class="mono">O3</td><td class="num">46 / 67</td><td class="num">8.7 / 8.3</td><td>Absorbed most of the severity items: triage talk is review load</td></tr>
+      <tr><td class="mono">O5</td><td class="num">33 / 34</td><td class="num">8.6 / 9.3</td><td rowspan="3">Moved by the judge, not the data: O6 kept n = 10 and still moved 1.9</td></tr>
+      <tr><td class="mono">O6</td><td class="num">10 / 10</td><td class="num">6.8 / 8.7</td></tr>
+      <tr><td class="mono">O7</td><td class="num">12 / 17</td><td class="num">8.1 / 8.4</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note ok"><span class="tag">What the rerun changed</span>
+    <p><strong>1. P3 stays out of v1 by the rule I set before looking.</strong> In public, severity pain is voiced as human triage and review load (O3), or as cloud SLAs, not as agents disagreeing about severity. One author notes SLA credits are negligible next to the cost of the outage, which fits the claim that P3 costs trust more than money. <strong>2. It is named as the candidate first pilot</strong>, because a routing gate never writes to a ledger and so asks less of the buyer; the interviews must test that adoption claim directly. <strong>3. The judge moves scores by up to 2 points on a rerun</strong>, so differences under about 1 point are noise: rank in bands, never by decimals. "O6 lowest" from the first run does not survive. <strong>4. O4 joins the top band</strong>, which strengthens it as first in line for v2.</p>
   </div>
   <div class="note ok"><span class="tag">What the opportunity scores changed</span>
     <p>Problem value ranked money conflicts first, and opportunity agrees (O1). But it also lifts <strong>proving improvement over time (O6, O5)</strong> to second and third: the buyer's job is not catching one conflict, it is knowing automation is safe to grow. So the v1 must show loop 3, not only loop 1. And it demotes tracing (O8): observability is served, so it is an input, never the product.</p>
@@ -521,6 +551,7 @@ tailwind.config = {
 <section id="scope"><div class="wrap">
   <div class="sh"><span class="sn">08</span><h2>Goals and non-goals</h2></div>
   <p><strong>Goal.</strong> Let support agents take money actions alone only when the evidence across systems agrees and is current, so the VP of Support can widen automation without raising reversals, and prove it week on week.</p>
+  <p class="text-fg-2" style="font-size:14px"><strong>Money action</strong>: an agent action that writes a value someone owes or is owed, such as a credit, refund, discount, entitlement grant, plan change, write-off or SLA credit. <strong>Money consequence</strong>: a case outcome that costs money without a ledger write, such as a severity downgrade that ends in an SLA breach, or churn. G1 gates money actions; money consequences are measured in G4.</p>
   <div class="tbl"><table>
     <thead><tr><th style="width:44px">ID</th><th>Goal for v1</th><th>Serves</th><th>General or vertical</th></tr></thead>
     <tbody>
@@ -532,11 +563,11 @@ tailwind.config = {
   </table></div>
   <h3>Non-goals for v1</h3>
   <ul>
-    <li><strong>Not replacing the CRM vendor's agents or orchestrator</strong>, because habit is the strongest force against us; it sits beside them at the tool layer.</li>
+    <li><strong>Not replacing the CRM vendor's agents or orchestrator</strong>, because it is not the same job: their agents resolve the ticket; this decides whether the evidence across billing, contract and risk, systems the CRM does not own, is good enough to commit, independently of the vendor whose agent is being checked. It is separation of duties. It ships inside the CRM as a marketplace app, so the user sees one tool. It targets customers with two or more agent vendors or systems of record outside the CRM; a single-vendor shop is where the incumbent bundles this and we lose.</li>
     <li><strong>Not a tracing or observability product</strong>, because generic tracing is served; it consumes existing traces and writes only the decision record.</li>
     <li><strong>Not changing models, weights or prompts</strong>, because what the loop learns is stored as revisable state with provenance, which is the line between this and a harness.</li>
   </ul>
-  <p class="text-fg-2" style="font-size:14px"><strong>Deferred to v2, on evidence:</strong> classification and severity disputes (P2, P3; vertical-specific, cost is time) and customer-facing contradiction checks (O4; the evidence check rated it higher than I assumed, so it is first in line). The v1 data model must already support both.</p>
+  <p class="text-fg-2" style="font-size:14px"><strong>Deferred to v2, on evidence:</strong> customer-facing contradiction checks (O4; top band in both runs, so first in line) and classification and severity disputes (P2, P3). P3 failed the rule set before the rerun (4 opinions against a bar of 10), but it stays the candidate first pilot, because a severity gate never writes to a ledger and so is easier for a buyer to say yes to. The interviews decide between that pilot and money actions. The v1 data model must already support both.</p>
   <div class="note warn"><span class="tag">Assumptions I am making, correct me</span>
     <p>1. Money actions leave the agents as tool calls we can see before they commit (MCP or API layer). &nbsp; 2. Billing, contract and risk systems expose read access with timestamps. &nbsp; 3. The workflow owner can name who has authority for each action type and amount. &nbsp; 4. Security will allow shadow-mode read access to those systems for a pilot.</p>
   </div>

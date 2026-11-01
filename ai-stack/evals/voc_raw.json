@@ -1,5 +1,95 @@
 [
  {
+  "source": "substack",
+  "url": "https://cobusgreyling.substack.com/p/humans-cannot-keep-up-with-agents",
+  "date": "2026-10-22"
+ },
+ {
+  "source": "substack",
+  "url": "https://adrianlerer.substack.com/p/the-human-is-still-in-the-loop-the",
+  "date": "2026-09-07"
+ },
+ {
+  "source": "substack",
+  "url": "https://paice.substack.com/p/agentic-ai-approval-fatigue-and-rubber",
+  "date": "2026-08-25"
+ },
+ {
+  "source": "substack",
+  "url": "https://kanupriyayakhmi.substack.com/p/the-limits-of-human-in-the-loop",
+  "date": "2026-09-17"
+ },
+ {
+  "source": "substack",
+  "url": "https://operatingmodeldispatch.substack.com/p/human-in-the-loop-isnt-real-oversight",
+  "date": "2026-09-10"
+ },
+ {
+  "source": "substack",
+  "url": "https://promptperimeter.substack.com/p/approval-theater",
+  "date": "2026-10-02"
+ },
+ {
+  "source": "substack",
+  "url": "https://inferenceprotocol.substack.com/p/the-human-in-the-loop-is-burning-out",
+  "date": "2026-07-18"
+ },
+ {
+  "source": "substack",
+  "url": "https://gradientflow.substack.com/p/real-world-lessons-from-agentic-ai",
+  "date": "2025-04-17"
+ },
+ {
+  "source": "substack",
+  "url": "https://mirelaxhota01.substack.com/p/beyond-the-hype-hard-won-lessons",
+  "date": "2026-02-02"
+ },
+ {
+  "source": "substack",
+  "url": "https://nexo.substack.com/p/what-i-learned-building-ai-agents",
+  "date": "2026-05-21"
+ },
+ {
+  "source": "substack",
+  "url": "https://servicematters.substack.com/p/forget-about-handoffs-the-future",
+  "date": "2026-07-03"
+ },
+ {
+  "source": "substack",
+  "url": "https://bhavishyapandit9.substack.com/p/who-owns-an-ai-agents-actions",
+  "date": "2026-08-18"
+ },
+ {
+  "source": "substack",
+  "url": "https://kiteworks.substack.com/p/ai-agent-audit-trail-compliance-attribution-gap",
+  "date": "2026-06-09"
+ },
+ {
+  "source": "substack",
+  "url": "https://cobusgreyling.substack.com/p/the-ai-agent-reality-gap",
+  "date": "2026-04-30"
+ },
+ {
+  "source": "substack",
+  "url": "https://qubytes.substack.com/p/beyond-mlops-how-to-monitor-debug",
+  "date": "2025-10-29"
+ },
+ {
+  "source": "substack",
+  "url": "https://pravitech.substack.com/p/agentic-ai-intent-object",
+  "date": "2026-02-24"
+ },
+ {
+  "source": "substack",
+  "url": "https://thetruststack.substack.com/p/your-ai-agent-needs-an-identity-before",
+  "date": "2026-08-23"
+ },
+ {
+  "source": "substack",
+  "url": "https://efficiencyplaybook.substack.com/p/the-customer-support-teardown-ai",
+  "date": "2026-08-28"
+ },
+ {
   "source": "hackernews",
   "url": "https://news.ycombinator.com/item?id=48841178",
   "date": "2026-07-09"
@@ -33,16 +123,6 @@
   "source": "hackernews",
   "url": "https://news.ycombinator.com/item?id=20112668",
   "date": "2019-06-06"
- },
- {
-  "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=42649126",
-  "date": "2025-01-09"
- },
- {
-  "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=48362908",
-  "date": "2026-06-01"
  },
  {
   "source": "hackernews",
@@ -173,6 +253,16 @@
   "source": "hackernews",
   "url": "https://news.ycombinator.com/item?id=47066085",
   "date": "2026-02-18"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49376967",
+  "date": "2026-08-20"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48352228",
+  "date": "2026-06-01"
  },
  {
   "source": "hackernews",
@@ -861,31 +951,6 @@
  },
  {
   "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=50009690",
-  "date": "2026-10-08"
- },
- {
-  "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=49163914",
-  "date": "2026-08-04"
- },
- {
-  "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=48117786",
-  "date": "2026-05-13"
- },
- {
-  "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=44433223",
-  "date": "2025-07-01"
- },
- {
-  "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=13702922",
-  "date": "2017-02-22"
- },
- {
-  "source": "hackernews",
   "url": "https://news.ycombinator.com/item?id=47914267",
   "date": "2026-04-26"
  },
@@ -1031,11 +1096,6 @@
  },
  {
   "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=38201591",
-  "date": "2023-11-09"
- },
- {
-  "source": "hackernews",
   "url": "https://news.ycombinator.com/item?id=46987832",
   "date": "2026-02-12"
  },
@@ -1143,21 +1203,6 @@
   "source": "hackernews",
   "url": "https://news.ycombinator.com/item?id=48169252",
   "date": "2026-05-17"
- },
- {
-  "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=33939916",
-  "date": "2022-12-11"
- },
- {
-  "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=14077701",
-  "date": "2017-04-10"
- },
- {
-  "source": "hackernews",
-  "url": "https://news.ycombinator.com/item?id=33271798",
-  "date": "2022-10-20"
  },
  {
   "source": "hackernews",
@@ -1378,5 +1423,560 @@
   "source": "hackernews",
   "url": "https://news.ycombinator.com/item?id=44330178",
   "date": "2025-06-20"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=50080233",
+  "date": "2026-10-13"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49794787",
+  "date": "2026-09-21"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49794769",
+  "date": "2026-09-21"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49157727",
+  "date": "2026-08-03"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49145855",
+  "date": "2026-08-02"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48505744",
+  "date": "2026-06-12"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48316221",
+  "date": "2026-05-28"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48005938",
+  "date": "2026-05-04"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=47767195",
+  "date": "2026-04-14"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46940204",
+  "date": "2026-02-09"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46516157",
+  "date": "2026-01-06"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46328972",
+  "date": "2025-12-19"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46083389",
+  "date": "2025-11-28"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46082786",
+  "date": "2025-11-28"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=8421962",
+  "date": "2014-10-07"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=8421328",
+  "date": "2014-10-07"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=679797",
+  "date": "2009-06-29"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49331180",
+  "date": "2026-08-17"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49206880",
+  "date": "2026-08-07"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48626933",
+  "date": "2026-06-22"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48624057",
+  "date": "2026-06-22"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48056462",
+  "date": "2026-05-07"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=47978074",
+  "date": "2026-05-01"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=47304214",
+  "date": "2026-03-09"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46309695",
+  "date": "2025-12-18"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46261120",
+  "date": "2025-12-14"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46158704",
+  "date": "2025-12-05"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=45647847",
+  "date": "2025-10-20"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=50309273",
+  "date": "2026-10-30"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49547089",
+  "date": "2026-09-03"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=47602660",
+  "date": "2026-04-01"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46068053",
+  "date": "2025-11-27"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=45513733",
+  "date": "2025-10-08"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=43527917",
+  "date": "2025-03-30"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=43074537",
+  "date": "2025-02-17"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=42172623",
+  "date": "2024-11-18"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=41929741",
+  "date": "2024-10-23"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=39258368",
+  "date": "2024-02-05"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=38368317",
+  "date": "2023-11-21"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=38293079",
+  "date": "2023-11-16"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=35631643",
+  "date": "2023-04-19"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49289801",
+  "date": "2026-08-13"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48960043",
+  "date": "2026-07-18"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48772971",
+  "date": "2026-07-03"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=47539022",
+  "date": "2026-03-27"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=44155641",
+  "date": "2025-06-02"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=16466232",
+  "date": "2018-02-26"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=13178853",
+  "date": "2016-12-14"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49938943",
+  "date": "2026-10-02"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48241194",
+  "date": "2026-05-22"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=44577043",
+  "date": "2025-07-15"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46724753",
+  "date": "2026-01-22"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=8134875",
+  "date": "2014-08-05"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=8038791",
+  "date": "2014-07-15"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=7657777",
+  "date": "2014-04-28"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=7388564",
+  "date": "2014-03-12"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=31684963",
+  "date": "2022-06-09"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=47638850",
+  "date": "2026-04-04"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46150058",
+  "date": "2025-12-04"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=46073115",
+  "date": "2025-11-27"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=36943324",
+  "date": "2023-07-31"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=19133163",
+  "date": "2019-02-11"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=672043",
+  "date": "2009-06-24"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49920135",
+  "date": "2026-10-01"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=4402767",
+  "date": "2012-08-19"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=43935904",
+  "date": "2025-05-09"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=2944904",
+  "date": "2011-08-31"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=14986921",
+  "date": "2017-08-11"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=33795899",
+  "date": "2022-11-30"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=24609763",
+  "date": "2020-09-27"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=41096621",
+  "date": "2024-07-28"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=5248217",
+  "date": "2013-02-20"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=43901776",
+  "date": "2025-05-06"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=45810781",
+  "date": "2025-11-04"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=45648078",
+  "date": "2025-10-20"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=41677452",
+  "date": "2024-09-28"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=41653934",
+  "date": "2024-09-26"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=41232703",
+  "date": "2024-08-13"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=41022302",
+  "date": "2024-07-21"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=3784924",
+  "date": "2012-04-01"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=37422548",
+  "date": "2023-09-07"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=33639693",
+  "date": "2022-11-17"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=6717027",
+  "date": "2013-11-12"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=39123828",
+  "date": "2024-01-24"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=50080446",
+  "date": "2026-10-13"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49240162",
+  "date": "2026-08-10"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49008846",
+  "date": "2026-07-22"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=45483345",
+  "date": "2025-10-05"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=45482301",
+  "date": "2025-10-05"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=45473885",
+  "date": "2025-10-04"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=45473079",
+  "date": "2025-10-04"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=44540358",
+  "date": "2025-07-12"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=42707018",
+  "date": "2025-01-15"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=50067023",
+  "date": "2026-10-13"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49239102",
+  "date": "2026-08-10"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48991108",
+  "date": "2026-07-21"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48861849",
+  "date": "2026-07-10"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48486306",
+  "date": "2026-06-11"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=48484355",
+  "date": "2026-06-10"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49050473",
+  "date": "2026-07-25"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=50115317",
+  "date": "2026-10-16"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=49757013",
+  "date": "2026-09-18"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=47517548",
+  "date": "2026-03-25"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=3653167",
+  "date": "2012-03-01"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=3300911",
+  "date": "2011-12-01"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=23645425",
+  "date": "2020-06-25"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=10495187",
+  "date": "2015-11-02"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=47906092",
+  "date": "2026-04-26"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=35534813",
+  "date": "2023-04-12"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=23891160",
+  "date": "2020-07-19"
+ },
+ {
+  "source": "hackernews",
+  "url": "https://news.ycombinator.com/item?id=20458831",
+  "date": "2019-07-17"
  }
 ]

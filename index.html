@@ -302,7 +302,7 @@ tailwind.config = {
   <div class="tbl"><table>
     <thead><tr><th>Category</th><th>Examples</th><th>What they do</th><th>Price</th><th>What they miss</th></tr></thead>
     <tbody>
-      <tr><td>Status quo</td><td>Reviewers, approval queues, hard-coded gates</td><td>People and static rules</td><td>Headcount</td><td>Does not scale with agent volume; rules blind to age</td></tr>
+      <tr><td>Status quo, most dangerous</td><td>Keep agents advisory-only; reviewers, approval queues, hard-coded gates</td><td>People act, agents suggest; static rules</td><td>Headcount</td><td>Does not scale with agent volume; rules blind to age</td></tr>
       <tr><td>Orchestrators</td><td>Agentforce, Copilot Studio, ServiceNow</td><td>Coordinate agents inside one estate</td><td class="num">$0.10 per action; $200 per 25k credits</td><td>Cannot see evidence in other vendors' systems</td></tr>
       <tr><td>Governance and control</td><td>Zenity, Credo, Lakera, White Circle</td><td>Check one agent or model against a policy</td><td>Not public</td><td>No notion of two agents disagreeing</td></tr>
       <tr><td>Observability and evals</td><td>LangSmith, Langfuse, Arize</td><td>Trace and score after the run</td><td class="num">$29 to $39 per seat a month</td><td>After the write, not before</td></tr>
@@ -398,30 +398,78 @@ tailwind.config = {
     </tbody>
   </table></div>
 
-  <h3>Step 3b: jobs to be done, CRM service</h3>
+  <h3>Step 3b: jobs to be done, after a devil's advocate pass</h3>
+  <div class="note stop"><span class="tag">Devil's advocate: where my first JTBD pass fell short, and what changed</span>
+    <p>1. <strong>Personas, not jobs:</strong> I segmented by role; JTBD segments by circumstance. Now one core job, with roles as job performer, approver and buyer. 2. <strong>Solutions in the job:</strong> "set who outranks whom" and "see who concluded what" are features. Rewritten solution-free. 3. <strong>Functional only:</strong> no emotional or social dimension. Added. 4. <strong>Scored pains, not outcomes:</strong> problem value ranked conflicts, but JTBD prioritises desired outcomes by importance and satisfaction. Added opportunity scores. 5. <strong>Competitors as vendors:</strong> the most dangerous alternative is not a product; it is keeping agents advisory-only. Added. 6. <strong>No forces, no trigger:</strong> nothing on what pushes, pulls, worries or habituates the buyer, or the moment they switch. Added. 7. <strong>No switch evidence:</strong> all scores remain assumed; the interview guide below is how they get replaced.</p>
+  </div>
+
+  <p><strong>Core functional job.</strong> <em>Get customer issues resolved by agents correctly as the agent workforce grows.</em> Job performer: the support or applied AI engineer, with the CSM. Approver: the finance analyst. Buyer: the VP of Support.</p>
   <div class="tbl"><table>
-    <thead><tr><th>User</th><th>Job to be done</th><th>What they do today</th></tr></thead>
+    <thead><tr><th>Performer</th><th>Job story, solution-free</th><th>Emotional</th><th>Social</th></tr></thead>
     <tbody>
-      <tr><td><strong>Support or applied AI engineer</strong></td><td>When agents disagree on a ticket, I want to see who concluded what on which evidence and set who outranks whom under which conditions, so I can widen agent autonomy without causing reversals</td><td>Reads traces after the incident; hard-codes precedence in prompts and routing rules</td></tr>
-      <tr><td><strong>CSM</strong></td><td>When my account raises an issue, I want one consistent answer and no promise one agent makes and another breaks, so I can protect the renewal</td><td>Finds out from the customer; apologises</td></tr>
-      <tr><td><strong>Finance analyst</strong></td><td>When an agent wants to grant a non-standard credit, I want to approve only true exceptions with the evidence in front of me, so I can keep close clean without reviewing everything</td><td>Reviews credits in bulk at month end; claws back</td></tr>
-      <tr><td><strong>VP of Support</strong></td><td>When I expand automation, I want proof it is not raising reopens, clawbacks or SLA misses, so I can justify the agent budget</td><td>Tracks automation rate alone</td></tr>
+      <tr><td><strong>Support or applied AI engineer</strong></td><td>When two of my agents reach different conclusions about the same customer, I want the action to wait for the evidence that settles it, so I can let agents do more without cleaning up after them</td><td>Not lie awake over an agent's credit going out</td><td>Be the one who scaled automation safely, not the one blamed for the incident</td></tr>
+      <tr><td><strong>CSM</strong></td><td>When my account raises an issue, I want everything we tell them to agree, so I can protect the renewal</td><td>No surprise escalations</td><td>Look in control in front of the customer</td></tr>
+      <tr><td><strong>Finance analyst</strong></td><td>When an agent is about to give away money outside policy, I want to be involved only when it really is an exception, so I can keep close clean</td><td>Confidence that nothing slipped through</td><td>Seen as an enabler, not the team that blocks support</td></tr>
+      <tr><td><strong>VP of Support</strong></td><td>When I am asked to automate more of support, I want to know it is not quietly creating rework and leakage, so I can keep growing the agent budget</td><td>Sleep through the night of a big launch</td><td>Defend the numbers in front of the CFO</td></tr>
     </tbody>
   </table></div>
 
-  <h3>Step 3c: aggregation across verticals</h3>
+  <h3>Step 3c: job map, with pains placed on the steps</h3>
   <div class="tbl"><table>
-    <thead><tr><th>General job</th><th>CRM service</th><th>Freight</th><th>Banking</th><th>Abstracts?</th></tr></thead>
+    <thead><tr><th>Job step</th><th>What happens</th><th>Pains that land here</th></tr></thead>
     <tbody>
-      <tr><td>Commit a money action only on uncontested, current evidence</td><td>P1, P5, P6 credits, discounts, entitlements</td><td>Storage or demurrage credits and disputes</td><td>Instant payment to a new payee</td><td><span class="pill ok">General</span></td></tr>
-      <tr><td>Settle a classification dispute with a stated basis and owner</td><td>P2, P3 bug or feature, severity</td><td>Exception category and priority</td><td>Fraud or genuine</td><td><span class="pill ok">General</span></td></tr>
-      <tr><td>Keep customer-facing statements consistent across agents</td><td>P7 fix promises</td><td>Release notice vs hold</td><td>Payment status messages</td><td><span class="pill ok">General</span></td></tr>
-      <tr><td>Calibrate the autonomy boundary from outcomes</td><td>P4</td><td>Same</td><td>Same</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td>Define</td><td>Understand and classify the issue</td><td>P2 bug or feature, P3 severity</td></tr>
+      <tr><td>Locate</td><td>Gather evidence from CRM, billing, contracts, risk, issue tracker</td><td>P8 stale or superseded, P9 hierarchy and RBAC</td></tr>
+      <tr><td><strong>Confirm</strong></td><td>Decide whether the evidence warrants the action, and who has authority</td><td><strong>P1 credit vs risk vs contract, P6 entitlement vs billing</strong></td></tr>
+      <tr><td>Execute</td><td>Credit, route, message the customer</td><td>P5 stacked compensation, P7 broken promise</td></tr>
+      <tr><td>Monitor and modify</td><td>See whether it held; adjust autonomy and policy</td><td>P4 autonomy boundary</td></tr>
+    </tbody>
+  </table></div>
+  <p class="text-fg-2" style="font-size:14px">The confirm step has no owner today. Define, execute and monitor are served by agents, routing and dashboards; nothing sits at confirm when agents disagree.</p>
+
+  <h3>Step 3d: desired outcomes and opportunity scores</h3>
+  <p class="lede">Opportunity = importance + max(importance minus satisfaction, 0), on 1 to 10 (Ulwick). <strong>Importance and satisfaction are assumed</strong> until a short survey of support engineers and VPs replaces them.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>ID</th><th>Desired outcome</th><th>Imp.</th><th>Sat.</th><th>Opp.</th><th>Read</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">O1</td><td>Minimise money actions committed while evidence across systems disagrees</td><td>9</td><td>2</td><td class="num"><strong>16</strong></td><td><span class="pill ok">Underserved</span> Loop 1</td></tr>
+      <tr><td class="mono">O6</td><td>Maximise confidence that widening autonomy has not raised reopens or clawbacks</td><td>9</td><td>3</td><td class="num"><strong>15</strong></td><td><span class="pill ok">Underserved</span> Loop 3, the buyer's outcome</td></tr>
+      <tr><td class="mono">O5</td><td>Minimise the time to detect that an autonomy boundary is set wrong</td><td>8</td><td>2</td><td class="num"><strong>14</strong></td><td><span class="pill ok">Underserved</span> Loops 2 and 3</td></tr>
+      <tr><td class="mono">O2</td><td>Minimise the time to know which conclusion should govern a disputed ticket, and on what basis</td><td>8</td><td>3</td><td class="num">13</td><td><span class="pill ok">Underserved</span> Loop 1</td></tr>
+      <tr><td class="mono">O3</td><td>Minimise human reviews spent on cases agents could have settled</td><td>8</td><td>4</td><td class="num">12</td><td><span class="pill new">Strong</span> Throughput value</td></tr>
+      <tr><td class="mono">O4</td><td>Minimise contradictory statements made to the same customer</td><td>7</td><td>4</td><td class="num">10</td><td><span class="pill new">Wave 2</span></td></tr>
+      <tr><td class="mono">O7</td><td>Minimise exposure of restricted data when a case is escalated</td><td>7</td><td>6</td><td class="num">8</td><td><span class="pill warn">Table stakes</span> RBAC exists; must not regress</td></tr>
+      <tr><td class="mono">O8</td><td>Minimise the effort to trace a reversed action to its evidence</td><td>6</td><td>5</td><td class="num">7</td><td><span class="pill warn">Served</span> Observability tools already do this; do not build a tracer</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note ok"><span class="tag">What the opportunity scores changed</span>
+    <p>Problem value ranked money conflicts first, and opportunity agrees (O1). But it also lifts <strong>proving improvement over time (O6, O5)</strong> to second and third: the buyer's job is not catching one conflict, it is knowing automation is safe to grow. So the v1 must show loop 3, not only loop 1. And it demotes tracing (O8): observability is served, so it is an input, never the product.</p>
+  </div>
+
+  <h3>Step 3e: forces of progress, trigger, and the real competition</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Push (away from today)</th><th>Pull (toward new)</th><th>Anxiety (about new)</th><th>Habit (keeping today)</th></tr></thead>
+    <tbody>
+      <tr><td>Reversals, clawbacks and SLA misses rising with agent count; mandate to raise automation rate</td><td>Widen autonomy with proof; fewer human reviews</td><td>Added latency; false holds; another vendor; unclear accountability when the layer holds and the customer waits</td><td>Precedence hard-coded in prompts and routing; approval queues; trusting the CRM vendor's own agent platform</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Trigger (the struggling moment).</strong> A second action-taking agent is added to the same queue, or the first stacked credit or downgraded Sev 1 reaches the VP. <span class="pill warn">assumed, to verify in interviews</span></p>
+  <p><strong>Competing alternatives for the job</strong>, most dangerous first: keep agents advisory-only and let humans act; hard-code precedence rules; route every disagreement to a human queue; let the CRM platform's native agent features handle it; do nothing and claw back at month end.</p>
+  <p><strong>Switch interview prompts</strong> (five interviews, before the design is committed): when did you first realise two agents had acted against each other, and what went wrong that day? What did you try instead: rules, queues, turning autonomy down? What almost stopped you adding the second agent?</p>
+
+  <h3>Step 3f: aggregation across verticals</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>General outcome</th><th>CRM service</th><th>Freight</th><th>Banking</th><th>Abstracts?</th></tr></thead>
+    <tbody>
+      <tr><td>O1 No money action on contested evidence</td><td>Credits, discounts, entitlements</td><td>Storage and demurrage credits</td><td>Instant payment to a new payee</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td>O6, O5 Prove autonomy is safe to widen</td><td>Reopens, clawbacks</td><td>False release notices</td><td>Fraud losses, false declines</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td>O2 Know which conclusion governs, on what basis</td><td>Bug or feature, severity</td><td>Exception category and priority</td><td>Fraud or genuine</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td>O4 Consistent customer statements</td><td>Fix promises</td><td>Status notices</td><td>Payment status</td><td><span class="pill ok">General</span></td></tr>
       <tr><td>Bug versus feature, release priority</td><td>P2 specifics</td><td>n/a</td><td>n/a</td><td><span class="pill warn">Vertical</span></td></tr>
     </tbody>
   </table></div>
-  <div class="note"><span class="tag">Step 3d, deferred on purpose</span>
-    <p>Value is re-estimated against engineering effort and complexity after requirements and the solution are charted (step 5). Until then the ranking is value only: <strong>wave 1 is money actions (P1, P5, P6)</strong>, where evidence spans billing, contract and risk, which is the cross-system wedge; <strong>wave 2 is classification and severity disputes (P2, P3)</strong>; staleness (P8) and RBAC (P9) are built into every wave; P4 is what loops 2 and 3 tune.</p>
+  <div class="note"><span class="tag">Step 3g, deferred on purpose</span>
+    <p>Value is re-estimated against engineering effort after requirements and the solution are charted (step 5). Until then: <strong>wave 1 is money actions at the confirm step (O1, P1, P5, P6) plus proving improvement over time (O6, O5)</strong>; wave 2 is classification and severity disputes (O2, P2, P3); staleness (P8) and RBAC (P9, O7) are built in; tracing (O8) is an input from existing tools.</p>
   </div>
   <p><strong>The decision this changes:</strong> DECISION SENTENCE.</p>
 </div></section>

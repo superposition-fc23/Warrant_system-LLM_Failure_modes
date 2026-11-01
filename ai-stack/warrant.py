@@ -1,16 +1,23 @@
-"""Warrant v1: a gate in front of support agents' money actions. LangGraph orchestrates the gate's own steps, never the agents.
+"""Warrant: a gate in front of support agents' money actions. LangGraph orchestrates the gate's own steps, never the agents.
 
     read_sources -> freshness -> checks -> rules -> compare -> decide -> (commit | route) -> record
 
 Split by design (index.html section 11): deterministic code reads sources, judges freshness, checks authority, prior
-compensation and currency, applies standing rules, and makes the final decision. The model only does what code cannot:
-reads contract text into limits, and judges whether conflicting values are material and which source governs. The model
-proposes; code decides. Every source read goes through the MCP server in crm_mcp.py; every step is an OpenTelemetry span.
+compensation and currency, applies standing rules, decides what is material, and makes the final decision. The model
+only does what code cannot: reads contract text into limits, and reports conflicts with their kind and amount at stake.
+The model proposes; code decides. Every source read goes through the MCP server in crm_mcp.py; every step is an
+OpenTelemetry span.
+
+v2 changes, from the v1 run: a failed code check names the fact (the model only names one when every check passes);
+the model is skipped when code has already decided; a cheap first pass escalates to the large model only on a conflict
+or a complexity trigger; materiality is decided in code from the conflict's kind and amount; standing rules persist to
+state/rules.json and stop applying after expiry; people and account names are redacted before any model call.
 
     .venv/bin/python warrant.py PL-01      # one case from evals/crm_cases.json
 """
 import asyncio
 import json
+import os
 import re
 import sys
 import time
@@ -22,17 +29,34 @@ from mcp.client.client import Client
 
 import crm_mcp
 import llm
-from router import route
 from telemetry import tracer
 
 FRESHNESS = {"crm": timedelta(hours=6), "billing": timedelta(hours=6), "risk": timedelta(hours=24), "contracts": timedelta(days=30)}
 ASSERTION_WINDOW = timedelta(hours=1)    # an agent's remembered fact older than this is replaced by a source read
 FACT_OWNER = {"risk": "Risk analyst", "billing": "Billing analyst", "contracts": "Billing analyst", "crm": "Billing analyst"}
-RULES = []                               # standing rules, from rulings; v1 keeps them in memory per run
+FIRST_PASS, ESCALATE = "haiku-5.5", "opus-5.5"
+# Conflict kinds that can stop a money action. "unverifiable" (no system covers the fact) and "data_quality" are
+# recorded but never hold on their own.
+MATERIAL_KINDS = {"payment_risk", "contract_terms", "amount", "entitlement", "duplicate", "authority", "currency"}
+RULES_PATH = "state/rules.json"
 
 
 def ts(s):
     return datetime.fromisoformat(s.replace("Z", "+00:00"))
+
+
+def load_rules():
+    return json.load(open(RULES_PATH)) if os.path.exists(RULES_PATH) else []
+
+
+def save_rule(rule):
+    os.makedirs("state", exist_ok=True)
+    rules = [r for r in load_rules() if r["id"] != rule["id"]] + [rule]
+    json.dump(rules, open(RULES_PATH, "w"), indent=1)
+
+
+def active_rules(now):
+    return [r for r in load_rules() if ts(now).date().isoformat() < r["expires"]]
 
 
 class State(TypedDict, total=False):
@@ -105,7 +129,7 @@ def approver(authority, key, val):
 
 def rules(s: State) -> State:
     failed = {c["name"] for c in s["checks"] if c["result"] != "pass"}
-    for r in RULES:
+    for r in active_rules(s["now"]):
         if r["pattern"]["action_type"] in (s["case"]["proposal"]["type"], "*") and r["pattern"]["check"] in failed:
             return {"rule_applied": r["id"]}
     return {"rule_applied": None}
@@ -117,7 +141,9 @@ COMPARE_SYSTEM = (
     "what the proposal assumes and what the records say. Rules: a signed document governs over an unsigned one, whatever "
     "the dates; a signed amendment with a later effective date supersedes the clause it replaces; a closed flag, or a flag "
     "unrelated to payment, fraud, chargebacks or collections, is not a conflict; differences under 1% are not material. "
-    "Never pick a side silently: name both values and their sources. A clean case has no conflicts; say so rather than invent one.")
+    "An incident or claim that no system covers is 'unverifiable', not a contradiction. Names appear as tokens such as "
+    "PERSON_1 or ACCOUNT; keep them as given. Never pick a side silently: name both values and their sources. A clean "
+    "case has no conflicts; say so rather than invent one.")
 
 COMPARE_PROMPT = """Now: {now}
 Proposed action by {agent}: {summary}
@@ -130,8 +156,8 @@ Agent assertions still current: {assertions}
 
 Return JSON with:
 - limits: list of {{name ("credit_cap" | "sla_credit_rate" | "refund_window_days" | "seats" | "other"), value (number), unit ("pct_of_monthly_fee" | "currency" | "days" | "seats"), doc_id}} from signed, governing documents only
-- conflicts: list of {{fact, values: [{{value, source, record_id}}], material (true|false), governing_source, why}}
-- discriminating_fact: the one fact that would settle the most material conflict, as a sentence naming the record, or null
+- conflicts: list of {{fact, kind ("payment_risk" | "contract_terms" | "amount" | "entitlement" | "duplicate" | "authority" | "currency" | "unverifiable" | "data_quality"), amount_at_stake (number in the action's currency, or null), values: [{{value, source, record_id}}], governing_source, why}}
+- discriminating_fact: the one fact that would settle the most important conflict, as a sentence naming the record, or null
 - owner_role: who owns that fact ("Billing analyst" | "Risk analyst" | "RevOps manager" | "VP Finance" | "Finance controller"), or null
 - question: one question for that owner, under 30 words, or null"""
 
@@ -142,15 +168,23 @@ def summary(p):
     return f"{p['type'].replace('_', ' ')} of {next(v for v in what.values() if v)} on {p['account_id']}: {p['rationale']}"
 
 
-def compare(s: State) -> State:
-    if s.get("rule_applied"):
-        return {"compare": {"skipped": f"settled by {s['rule_applied']}"}, "usage": {}}
-    p = s["case"]["proposal"]
-    model, _, _ = route(task="reason", cost=1, latency=1, quality=2)
-    prompt = COMPARE_PROMPT.format(now=s["now"], agent=p["agent"], summary=summary(p), proposal=json.dumps(p),
-                                   sources=json.dumps(s["sources"], indent=1),
-                                   assertions=json.dumps([a for a in s["assertions"] if a["used"]]))
-    with tracer.start_as_current_span("llm.compare") as sp:
+def redaction_map(s):
+    """Names that never need to reach a model: people, the CSM, the account name. Tokens are restored afterwards."""
+    names = [x["name"] for x in s["authority"]["people"]] + [s["sources"]["crm"].get("csm")]
+    m = {n: f"PERSON_{i + 1}" for i, n in enumerate(n for n in names if n)}
+    if s["sources"]["crm"].get("name"):
+        m[s["sources"]["crm"]["name"]] = "ACCOUNT"
+    return m
+
+
+def swap(text, m, reverse=False):
+    for a, b in m.items():
+        text = text.replace(b, a) if reverse else text.replace(a, b)
+    return text
+
+
+def ask_compare(model, prompt, stage):
+    with tracer.start_as_current_span(f"llm.compare.{stage}") as sp:
         t = time.time()
         out = llm.ask(model, prompt, system=COMPARE_SYSTEM, max_tokens=4000, effort="low")
         tin, tout = llm.LAST_USAGE
@@ -163,7 +197,42 @@ def compare(s: State) -> State:
         data = json.loads(re.search(r"\{.*\}", out, re.S).group())
     except Exception:
         data = {"parse_error": out[:300], "conflicts": [], "limits": []}
-    return {"compare": data, "usage": {"model": model, "tokens_in": tin, "tokens_out": tout, "cost_usd": cost}}
+    return data, {"model": model, "tokens_in": tin, "tokens_out": tout, "cost_usd": cost}
+
+
+def material(conflict, amount):
+    if conflict.get("kind") not in MATERIAL_KINDS:
+        return False
+    at_stake = conflict.get("amount_at_stake")
+    return at_stake is None or not amount or abs(at_stake) >= max(0.01 * amount, 1)
+
+
+def compare(s: State) -> State:
+    if s.get("rule_applied"):
+        return {"compare": {"skipped": f"settled by {s['rule_applied']}"}, "usage": {}}
+    if any(c["result"] != "pass" for c in s["checks"]):
+        return {"compare": {"skipped": "a code check already failed; no model needed"}, "usage": {}}
+    p, src = s["case"]["proposal"], s["sources"]
+    m = redaction_map(s)
+    prompt = swap(COMPARE_PROMPT.format(now=s["now"], agent=p["agent"], summary=summary(p), proposal=json.dumps(p),
+                                        sources=json.dumps(src, indent=1), assertions=json.dumps([a for a in s["assertions"] if a["used"]])), m)
+    with tracer.start_as_current_span("pii.redact") as sp:
+        sp.set_attribute("pii.redacted_names", len(m))
+    data, u1 = ask_compare(FIRST_PASS, prompt, "first_pass")
+    # Escalate on a material conflict, or when the case is complex enough that a cheap model may miss one.
+    triggers = [t for t, hit in [("material conflict", any(material(c, p.get("amount")) for c in data.get("conflicts", []))),
+                                 ("several contract documents", len(src["contracts"]["documents"]) > 1),
+                                 ("agent assertions in play", any(a["used"] for a in s["assertions"])),
+                                 ("risk flags present", bool(src["risk"]["flags"])),
+                                 ("unparsable first pass", "parse_error" in data)] if hit]
+    usage = {"stages": [u1], "escalated": bool(triggers), "triggers": triggers}
+    if triggers:
+        data, u2 = ask_compare(ESCALATE, prompt, "escalated")
+        usage["stages"].append(u2)
+    data = json.loads(swap(json.dumps(data), m, reverse=True))
+    usage.update(model=usage["stages"][-1]["model"], tokens_in=sum(x["tokens_in"] for x in usage["stages"]),
+                 tokens_out=sum(x["tokens_out"] for x in usage["stages"]), cost_usd=sum(x["cost_usd"] for x in usage["stages"]))
+    return {"compare": data, "usage": usage}
 
 
 def decide(s: State) -> State:
@@ -176,33 +245,48 @@ def decide(s: State) -> State:
             extra.append({"name": "contract_cap", "result": "pass" if p["amount"] <= cap else "fail",
                           "detail": f"{p['amount']} against cap {cap:g} ({l['value']}% of {fee}, {l.get('doc_id')})"})
     checks = s["checks"] + extra
-    material = [c for c in s["compare"].get("conflicts", []) if c.get("material")]
+    for c in s["compare"].get("conflicts", []):
+        c["material"] = material(c, p.get("amount"))
     if s.get("rule_applied"):
-        r = next(r for r in RULES if r["id"] == s["rule_applied"])
+        r = next(r for r in load_rules() if r["id"] == s["rule_applied"])
         decision = "act" if r["effect"] == "act" else "hold"
     elif any(c["result"] == "stale" for c in checks):
         decision = "gather"
-    elif any(c["result"] == "fail" for c in checks) or material or "parse_error" in s["compare"]:
+    elif any(c["result"] == "fail" for c in checks) or any(c["material"] for c in s["compare"].get("conflicts", [])) \
+            or "parse_error" in s["compare"]:
         decision = "hold"
     else:
         decision = "act"
     return {"decision": decision, "checks": checks}
 
 
+def code_fact(checks):
+    """The fact a failed code check names; it outranks the model's choice."""
+    f = next((c for c in checks if c["result"] != "pass"), None)
+    if not f:
+        return None
+    return {"fresh": f"{f['name'].split('.')[-1].title()} data is past its freshness window: {f['detail']}",
+            "authority": f"Above agent authority: {f['detail']}",
+            "currency": f"Currency mismatch: {f['detail']}",
+            "prior_compensation": f"Earlier compensation for the same incident: {f['detail']}",
+            "contract_cap": f"Above the contract's credit cap: {f['detail']}"}[f["name"].split(".")[0]]
+
+
 def route_question(s: State) -> State:
     if s.get("rule_applied"):
         return {"question": None}
     c, people = s["compare"], s["authority"]["people"]
-    failed = [x for x in s["checks"] if x["result"] != "pass"]
-    if failed and failed[0]["name"].startswith("fresh."):
-        system = failed[0]["name"].split(".")[1]
-        role, text = FACT_OWNER[system], f"{system.title()} data is past its freshness window ({failed[0]['detail']}). Re-sync before this commits?"
-    elif failed and failed[0]["name"] == "authority":
-        role, text = failed[0]["detail"].split("needs ")[-1], f"Above agent authority: {failed[0]['detail']}. Approve?"
+    failed = next((x for x in s["checks"] if x["result"] != "pass"), None)
+    if failed and failed["name"].startswith("fresh."):
+        role, text = FACT_OWNER[failed["name"].split(".")[1]], code_fact(s["checks"]) + ". Re-sync before this commits?"
+    elif failed and failed["name"] == "authority":
+        role, text = failed["detail"].split("needs ")[-1], code_fact(s["checks"]) + ". Approve?"
+    elif failed:
+        role, text = "Billing analyst", code_fact(s["checks"]) + ". Commit anyway?"
     elif c.get("question"):
         role, text = c.get("owner_role") or "Billing analyst", c["question"]
     else:
-        role, text = "Billing analyst", f"Check failed: {failed[0]['detail'] if failed else 'unknown'}. Commit?"
+        role, text = "Billing analyst", "The comparison could not be read. Review before this commits?"
     name = next((x["name"] for x in people if x["active"] and x["role"] in role), None)
     return {"question": {"to_role": re.sub(r".*\((.*)\)", r"\1", role), "to_name": name or re.sub(r" \(.*", "", role), "text": text,
                          "options": ["Hold", "Commit as proposed", "Amend"]}}
@@ -210,7 +294,7 @@ def route_question(s: State) -> State:
 
 def commit(s: State) -> State:
     with tracer.start_as_current_span("commit") as sp:
-        sp.set_attribute("note", "v1 records the commit; it does not write to billing")
+        sp.set_attribute("note", "the prototype records the commit; it does not write to billing")
     return {"question": None}
 
 
@@ -233,11 +317,13 @@ def record(s: State) -> State:
     if mat:
         m = mat[0]
         conflict = {"fact": m.get("fact"), "values": [f"{v.get('value')} ({v.get('source')}{', ' + v['record_id'] if v.get('record_id') else ''})" for v in m.get("values", [])],
-                    "material": True, "governing_source": m.get("governing_source"), "why": m.get("why")}
+                    "material": True, "kind": m.get("kind"), "governing_source": m.get("governing_source"), "why": m.get("why")}
+    fact = code_fact(s["checks"]) if s["decision"] != "act" else None
     rec = {"record_id": f"DR-{_seq[0]:04d}", "case_id": c["id"], "decision": s["decision"], "action": p, "beliefs": beliefs,
            "checks": s["checks"], "conflict": conflict, "conflicts_all": s["compare"].get("conflicts", []),
-           "limits": s["compare"].get("limits", []), "discriminating_fact": s["compare"].get("discriminating_fact"),
-           "question": s.get("question"), "rule_applied": s.get("rule_applied"), "usage": s.get("usage", {}), "at": s["now"]}
+           "limits": s["compare"].get("limits", []), "discriminating_fact": fact or s["compare"].get("discriminating_fact"),
+           "fact_from": "code" if fact else "model", "question": s.get("question"), "rule_applied": s.get("rule_applied"),
+           "compare_skipped": s["compare"].get("skipped"), "usage": s.get("usage", {}), "at": s["now"]}
     return {"record": rec}
 
 
@@ -286,4 +372,4 @@ if __name__ == "__main__":
     telemetry.setup("runs/adhoc-traces.jsonl")
     c = next(x for x in d["cases"] if x["id"] == (sys.argv[1] if len(sys.argv) > 1 else "PL-01"))
     r = asyncio.run(run(c, d["now"], d["people"], d["authority"]))
-    print(json.dumps({k: r[k] for k in ("case_id", "decision", "checks", "conflict", "discriminating_fact", "question", "latency_ms", "usage")}, indent=1))
+    print(json.dumps({k: r[k] for k in ("case_id", "decision", "discriminating_fact", "fact_from", "question", "latency_ms", "usage")}, indent=1))

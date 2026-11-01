@@ -541,10 +541,29 @@ tailwind.config = {
       <tr><td>Bug versus feature, release priority</td><td>P2 specifics</td><td>n/a</td><td>n/a</td><td><span class="pill warn">Vertical</span></td></tr>
     </tbody>
   </table></div>
-  <div class="note"><span class="tag">Step 3g, deferred on purpose</span>
-    <p>Value is re-estimated against engineering effort after requirements and the solution are charted (step 5). Until then: <strong>wave 1 is money actions at the confirm step (O1, O2, P1, P5, P6), with an attributable decision record (O8, promoted by the evidence check), plus proving improvement over time (O5; O6 unvalidated)</strong>; wave 2 is classification and severity disputes (O2, P2, P3); staleness (P8) and RBAC (P9, O7) are built in; generic tracing stays with existing tools.</p>
+  <h3>Step 3g: value against effort, after requirements</h3>
+  <p class="text-fg-2" style="font-size:14px">Value comes from the opportunity bands (3d) and the goal each requirement serves. Effort is for a production v1 with a small team: S under 2 engineer-weeks, M 2 to 6, L over 6, all <strong>assumed</strong> until an engineer corrects them. The last column is the separate question of what gets built for the demo on 3 Nov.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Item</th><th>Value</th><th>Effort</th><th>Why the effort</th><th>Priority</th><th>For the demo</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">R3 commit on agreement</td><td>High</td><td class="num">S</td><td>The default path once beliefs are read</td><td><span class="pill ok">Now</span></td><td>Working</td></tr>
+      <tr><td class="mono">R2 freshness</td><td>High</td><td class="num">S</td><td>Timestamps plus a window per fact</td><td><span class="pill ok">Now</span></td><td>Working</td></tr>
+      <tr><td class="mono">R5 decision record</td><td>High</td><td class="num">S</td><td>A write per decision; the schema is the work</td><td><span class="pill ok">Now</span></td><td>Working</td></tr>
+      <tr><td class="mono">N3 kill switch</td><td>High</td><td class="num">S</td><td>A rolling count and a mode flag</td><td><span class="pill ok">Now</span></td><td>Mocked on the VP view</td></tr>
+      <tr><td class="mono">R7 counterfactual pairs</td><td>Medium for the buyer, high for trust</td><td class="num">S</td><td>Eval harness only; reuses the gate</td><td><span class="pill ok">Now</span></td><td>Working, shows the PD-07 flip</td></tr>
+      <tr><td class="mono">R1 cross-system conflict</td><td>Highest</td><td class="num">L</td><td>Connectors to billing, contract and risk, and turning records into comparable beliefs</td><td><span class="pill new">Big bet</span></td><td>Working on the synthetic corpus</td></tr>
+      <tr><td class="mono">R9 shadow mode and report</td><td>High: it is the entry wedge</td><td class="num">M</td><td>Historical replay needs data access, the slowest thing to get</td><td><span class="pill new">Big bet</span></td><td>Report mocked</td></tr>
+      <tr><td class="mono">R4 one question, existing queue</td><td>High</td><td class="num">M</td><td>One integration per queue (CRM case, Slack)</td><td><span class="pill new">Big bet</span></td><td>Mocked card</td></tr>
+      <tr><td class="mono">R6 standing rules with expiry</td><td>Medium now, high by month three</td><td class="num">M</td><td>Matching a rule to the next case is the hard part</td><td><span class="pill warn">Thin v1</span>: exact-pattern rules only</td><td>One rule, working</td></tr>
+      <tr><td class="mono">R8 field-level RBAC</td><td>Required to sell, not to pilot</td><td class="num">M to L</td><td>Depends on the customer's identity setup</td><td><span class="pill warn">Pilot uses redaction</span></td><td>Slide only</td></tr>
+      <tr><td class="mono">O4 contradiction check</td><td>Top band</td><td class="num">L</td><td>Reads outbound messages, a new surface</td><td><span class="pill">v2, first</span></td><td>Slide only</td></tr>
+      <tr><td class="mono">P3 severity pilot</td><td>Unproven (n = 4)</td><td class="num">M</td><td>New connector to the incident tool</td><td><span class="pill">Alternative pilot</span></td><td>Slide only</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note ok"><span class="tag">What the re-estimate changed</span>
+    <p><strong>1. Shadow mode (R9) moved from a feature to the entry wedge.</strong> It answers the objection that a customer will not let a new tool touch a money flow: in shadow it touches nothing and still prices what it would have stopped. That removes most of the case for starting with severity instead. <strong>2. The riskiest assumption is not the gate, it is R1's inputs:</strong> that conflicting evidence is frequent and readable from tool calls and timestamped records. So P1 is shadow mode with R1, R2 and R5 on historical tickets, no blocking. <strong>3. R6 ships thin.</strong> Exact-pattern rules prove that learning is stored as state; generalising rules waits for real rulings to learn from. <strong>4. R8 is a sales requirement, not a pilot one,</strong> so the pilot redacts and the full version follows the first paying customer.</p>
   </div>
-  <p><strong>The decision this changes:</strong> DECISION SENTENCE.</p>
+  <p><strong>The decision this changes:</strong> today the engineer decides once, for all money actions, whether agents may act alone, in a prompt or a permission toggle, and never revisits it with evidence. With this, the decision is made per action type, from shadow evidence, and widened or narrowed week by week.</p>
 </div></section>
 
 <!-- 8 -->

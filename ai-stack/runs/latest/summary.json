@@ -1,7 +1,7 @@
 {
- "run_id": "v1-20261101T0823",
- "version": "v1",
- "started_at": "2026-11-01T08:23:48+00:00",
+ "run_id": "v2-20261101T0837",
+ "version": "v2",
+ "started_at": "2026-11-01T08:37:19+00:00",
  "summary": {
   "cases": 27,
   "planted": 10,
@@ -9,19 +9,30 @@
   "pairs": 6,
   "held_planted": 10,
   "expected_planted": 10,
-  "fact_named": 8,
-  "over_held": 3,
+  "fact_named": 9,
+  "over_held": 1,
   "pairs_invariant": 6,
   "pairs_flipped": 0,
   "replay_settled_by_rule": true,
-  "p50_ms": 6719,
-  "p95_ms": 11949,
-  "cost_usd_total": 0.5676,
-  "cost_usd_per_decision": 0.02102,
-  "tokens_in": 36147,
-  "tokens_out": 21151,
+  "rule_expiry_enforced": true,
+  "model_skipped": 5,
+  "escalated": 17,
+  "first_pass_only": 5,
+  "fact_from_code": 9,
+  "eval_audit": {
+   "controls_clean": 10,
+   "controls": 10,
+   "planted_with_incidental_defects": 8
+  },
+  "p50_ms": 14494,
+  "p95_ms": 19495,
+  "cost_usd_total": 0.4657,
+  "cost_usd_per_decision": 0.01725,
+  "tokens_in": 61662,
+  "tokens_out": 55392,
   "models": {
-   "compare": "opus-5.5",
+   "first_pass": "haiku-5.5",
+   "escalation": "opus-5.5",
    "judge": "haiku-5.5"
   }
  },
@@ -82,10 +93,7 @@
   }
  ],
  "failures": [
-  "CT-02 Refund on a paid invoice inside 30 days: expected act, got hold",
   "CT-04 Seat grant matching contract and billing: expected act, got hold",
-  "CT-10 EUR refund on an EUR invoice: expected act, got hold",
-  "PL-02 Credit above the contract cap: right decision, wrong fact named (The gate named the measured uptime and SLA breach count from the incident record as the discriminating fact, not the order form's 10% (600 USD) service-credit cap that the expected fact specifies. The cap appears only in the failed check and conflict data, not as the named discriminating fact.)",
-  "PL-06 Refund while the risk feed is three days stale: right decision, wrong fact named (The gate named the billing invoice line and its date for ACC-1006, not the expected fact that risk data was last synced three days ago, past its 24-hour freshness window.)"
+  "PL-05 SLA credit under a superseded clause: right decision, wrong fact named (The gate names incident record INC-1105 and whether an October 2026 breach occurred after the AM-1005-2 effective date, but it never identifies the amendment's 3% (180 USD) credit rate superseding the 5% rate, which is the expected discriminating fact.)"
  ]
 }

@@ -20,6 +20,8 @@ In each case enterprise structure makes the conflict harder, not easier. Agents 
 
 The share of organisations orchestrating multiple agents across workflows doubled from 9% to 18% in one quarter (KPMG AI Pulse, Q2 2026, via aggregator, to verify). Gartner expects over 40% of agentic AI projects to be cancelled by the end of 2027, partly over inadequate risk controls (Gartner, Jun 2025). Agent-native companies show where volume goes next: Spawn, ten people, lands about 108 changes an hour, resolves agent conflicts by letting whoever lands second reconcile, and needed AI judges because its founder woke to 700 open questions in a morning (Spawn CEO blog, 28 Oct 2026, pp. 3 to 10). **Spawn is the leading indicator, not the customer.** Enterprises will reach that conflict volume with far more regulation around them.
 
+Large companies are already treating agents as first-class workers rather than tools. Block cut about 4,000 roles, close to half its workforce, in February 2026, framing it as a move to an "intelligence-native" operating model built around its MCP-based agent, goose (Euronews, 27 Feb 2026). Microsoft now issues agents their own directory identities alongside employees (Entra Agent ID, preview May 2025), and Workday registers agents in an Agent System of Record next to its human worker records (Workday and Microsoft, Sep 2025). **Agents are getting identities, permissions and a place in the org chart. Nothing yet decides between two of them when they disagree.**
+
 ## The direction
 
 A layer between specialist agents and the systems of record that, when agents disagree about the same object, keeps both positions explicit with evidence, provenance, age and the authority of the agent that holds them, then returns a bounded decision: **act** when the governing belief is current and uncontested, **gather** when one named fact would settle it, **hold** when only a person with the right authority can. Each decision leaves a record a later agent or person can read back, with PII redacted to the reader's scope, and each human ruling becomes an eval case. It fits the reference architecture as one new box beside authorization, rather than a replacement for the coordinator. For Dyssonance, this is the half of the thesis stated but not shown: whether a system "knows enough to act."
@@ -70,6 +72,9 @@ Whether accountable owners trust a hold enough to stop overriding it. How often 
 - Pricing: Agentforce https://www.salesforce.com/agentforce/pricing/ ; Copilot Studio https://www.microsoft.com/en-us/microsoft-365-copilot/microsoft-copilot-studio/ ; LangSmith https://www.costbench.com/compare/arize-phoenix-vs-langsmith/ ; Langfuse https://latitude.so/blog/best-langfuse-alternatives
 - Zenity Series C: https://www.businesswire.com/news/home/20260803963850/en/
 - MPAC protocol: https://arxiv.org/pdf/2604.09744
+- Block restructuring: https://euronews.com/business/2026/02/27/jack-dorseys-block-cuts-roughly-50-of-jobs-as-it-embraces-ai-and-shares-jump ; https://www.staffingindustry.com/news/global-daily-news/jack-dorseys-block-slashes-nearly-half-its-staff-in-ai-bet
+- Microsoft Entra Agent ID: https://learn.microsoft.com/lt-lt/entra/agent-id/agent-users
+- Workday Agent System of Record: https://investor.workday.com/news-and-events/press-releases/news-details/2025/Workday-and-Microsoft-to-Deliver-Unified-AI-Agent-Experience-for-the-Enterprise-09-16-2025/default.aspx
 - C. Lozano, "Classification Is Not New. So What?", Medium, 24 Sep 2026: https://lecharles.medium.com/classification-is-not-new-so-what-b14d2b8740a1
 
 *Caveat: the market figures came from search snippets of press releases and aggregators; check the primary pages before any number goes on a slide.*

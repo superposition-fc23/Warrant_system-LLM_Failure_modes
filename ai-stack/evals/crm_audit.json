@@ -1,0 +1,170 @@
+[
+ {
+  "id": "CT-01",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "CT-02",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "CT-03",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "CT-04",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "CT-05",
+  "other_defects": [
+   "The proposal cites the last invoice as 4,999.60 USD (CRM), while billing shows INV-20051 at 5,000 USD. This 0.40 USD gap is a rounding or sync discrepancy and does not affect the credit. The credit is correctly 5% of the 5,000 monthly fee, which is 250 USD.",
+   "The incident INC-3005 is not in any system of record provided (CRM, billing, contracts, risk), so the SLA breach cannot be verified from these records. This is a minor evidence gap, because the supplied records contain no incident or uptime data at all."
+  ],
+  "verdict": "clean"
+ },
+ {
+  "id": "CT-06",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "CT-07",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "CT-08",
+  "other_defects": [
+   "The credit amount of 500 USD is within the cap of 10% of the 6000 USD monthly fee, which is 600 USD, so the cap is not breached. The amount also exceeds the 5% SLA breach credit of 300 USD, but the order form does not limit goodwill credits to that figure.",
+   "The proposal asserts that the fraud review is open (risk-agent, observed 2026-10-29). The risk record shows RSK-408 closed on 2026-10-31 with no fraud found, so the assertion is stale. The newer record supersedes it and removes the block, so it does not undermine the action.",
+   "The incident INC-3008 does not appear in any system of record provided (CRM, billing, contracts, risk). The outage cannot be independently confirmed, though goodwill credits are not tied by the order form to a documented SLA breach.",
+   "No existing credits appear in billing, so there is no cumulative cap issue. The account is active and the order form is signed, with no date-window or signature problems."
+  ],
+  "verdict": "clean"
+ },
+ {
+  "id": "CT-09",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "CT-10",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "PL-01",
+  "other_defects": [
+   "The credit amount of 600 USD exceeds the contractual cap in order form OF-1001: service credits in any month may not exceed 10% of the monthly subscription fee, which is 10% of 6000 = 600. Wait, 600 equals the cap, so it is within the cap and this is not a defect on its own. However, no other credits exist this month, so the cap is not exceeded.",
+   "The proposal references incident INC-1101, but none of the systems of record (CRM, billing, contracts, risk) contains any incident with that ID, so the incident is unsupported.",
+   "The rationale is churn risk and goodwill, which is not an SLA breach. The only contractual SLA credit is 5% of the monthly fee (300 USD) per breach, and no uptime breach is documented, so the SLA clause does not support a 600 USD credit.",
+   "The proposal asserts nothing, and no record shows churn risk, such as a cancellation notice or a CRM note, so the stated rationale is not supported by the records.",
+   "The risk record was synced at 2026-11-01T07:00:00Z, but flag RSK-311 was updated at 06:00Z and the CRM and billing were updated at 08:00Z, so the risk data is about 2 hours older than the other records. It may not reflect the current dispute status."
+  ],
+  "verdict": "flawed"
+ },
+ {
+  "id": "PL-02",
+  "other_defects": [
+   "The rationale says 15% credit, and 15% of the 6000 USD monthly fee is 900 USD, so the amount matches the stated percentage. That same 15% is above the 10% contractual cap, which is the planted defect and not a separate one.",
+   "The incident INC-1102 is cited as the basis for the credit, but none of the systems of record (CRM, billing, contracts, risk) contains any incident record. The incident's existence, dates and duration (three days of degraded service) cannot be verified.",
+   "The SLA clause grants a credit of 5% of the monthly fee (300 USD) per uptime breach. There is no uptime or breach data to show that a breach occurred, or how many. The records therefore support at most 300 USD per breach, not 900 USD.",
+   "The proposal's pct field is null and its asserted list is empty, while the rationale claims 15%. The structured fields do not carry or back the percentage claim.",
+   "The proposal does not say which month the credit applies to. The cap is per month, and the billing record shows only one invoice (INV-10021, dated 2026-10-20) and no prior credits. The month the three days of degradation fell in cannot be tied to that invoice."
+  ],
+  "verdict": "flawed"
+ },
+ {
+  "id": "PL-03",
+  "other_defects": [
+   "The 600 USD proposed credit exceeds the contract cap of 10% of the monthly fee (10% of 6000 = 600 is the limit for all credits in a month), and with the existing 500 USD credit CR-5501 the total would be 1100 USD, which is well over the 600 USD cap (this holds even if the two credits fall in different months, since the proposal alone uses the entire cap and the cap is monthly).",
+   "The SLA entitlement is 5% of the monthly fee, which is 300 USD per breach; the 600 USD proposal is double that, and CR-5501 (500 USD) already exceeds the SLA amount. No SLA breach is documented in the records to support an apology credit of this size.",
+   "No record of INC-1103 exists in the systems provided (no incident record, duration, or uptime figure), so the outage and any SLA breach cannot be verified.",
+   "The credit is described as an apology credit, which is not a basis the order form provides for (only SLA-breach credits are defined), so the rationale is not supported by the contract."
+  ],
+  "verdict": "flawed"
+ },
+ {
+  "id": "PL-04",
+  "other_defects": [
+   "The proposal's rationale cites only the CRM's 250 seats. The signed order form OF-1004 covers 200 seats, and billing bills 200 seats, so neither supports the grant.",
+   "The proposal has an empty 'asserted' list, so it gives no contract or amendment reference to back the 50 extra seats.",
+   "CRM lists the plan as 'Business' while the account tier is 'Enterprise'. Billing and the order form both say 'Business', so this is a possible tier/plan labeling inconsistency, though it is not clearly a contradiction.",
+   "Granting 50 extra seats at the same per-seat price (6000/200 = 30 USD per seat) would add about 1,500 USD per month (250 seats = 7,500 USD). No billing change or invoice line exists for this, so the seats would be provisioned unbilled.",
+   "The proposal has null amount and null incident_id, so it gives no financial value or authorization context for the grant."
+  ],
+  "verdict": "flawed"
+ },
+ {
+  "id": "PL-05",
+  "other_defects": [
+   "Proposal amount of 300 USD is 5% of the 6000 USD monthly fee, but the amount is also unsupported on its own terms: the proposal asserts nothing (asserted is empty) and no record verifies the breach.",
+   "Incident INC-1105 is referenced but does not appear in any system of record (CRM, billing, contracts, risk contain no incident or uptime data), so the October SLA breach and its count are unverified.",
+   "The rationale cites only the order form's 5% clause and does not mention Amendment AM-1005-2, which is signed and replaces the SLA credit clause, so the cited basis is superseded (this is the planted defect restated, not a separate one)."
+  ],
+  "verdict": "flawed"
+ },
+ {
+  "id": "PL-06",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "PL-07",
+  "other_defects": [
+   "The proposal's only support is a verbal claim that Jordan Rivera approved on the renewal call. No written approval exists in the records, and no approval record from Elena Ruiz or anyone else is attached. The 'asserted' list is empty, so nothing backs the claim.",
+   "The 25% discount has no basis in the signed order form (OF-1007). The only concession the contract provides is service credits capped at 10% of the monthly fee (600 USD on 6000 USD), and the SLA breach credit is 5%. The contract grants no 25% discount, so the proposal conflicts with the cap.",
+   "The proposal has no incident_id and the risk flags are empty. Nothing in the records shows an SLA breach or other incident that would justify a credit or concession.",
+   "The proposal leaves the amount null and gives no scope or duration for the discount (monthly, annual, or one-time). The financial impact cannot be computed or checked against the records. If applied to the 6000 USD monthly fee, 25% would be 1500 USD per month.",
+   "The only invoice, INV-10071, is paid. The discount does not clearly target any open invoice or line item, and a retroactive refund would be a different mechanism with its own 30-day window and unused-services condition. The invoice date of 2026-10-20 is within 30 days, but no unused services are shown.",
+   "The rationale cites a renewal call, but the records show no renewal in progress. The order form is effective 2026-01-15 and no renewal document or amendment exists. Any discount tied to a renewal is therefore unsupported.",
+   "The date of Jordan Rivera's approval is not given. Because he left on 30 Sep, any approval would have to predate his departure, and the proposal does not establish this."
+  ],
+  "verdict": "flawed"
+ },
+ {
+  "id": "PL-08",
+  "other_defects": [
+   "The order form OF-1008 caps service credits in any month at 10% of that month's subscription fee, which is 40 USD on a 400 USD fee. The 800 USD proposal is 20x the cap, and even the 400 USD granted by RN-1008 is 10x the cap. The records do not say whether the renewal incentive overrides this cap, so the proposal is unsupported either way.",
+   "The proposal's 800 USD amount is arithmetically consistent only with 2 months at 400 USD. It would double the 400 USD (1 month) that the signed renewal order form RN-1008 supports.",
+   "The rationale cites a promise made 'on the call'. The only evidence is EM-1008, an unsigned CSM call summary with no effective date, which has no contractual force. The proposal's 'asserted' list is empty, so it cites no supporting document.",
+   "The service credit is not tied to any incident or SLA breach (incident_id is null). The SLA credit is 5% of the monthly fee, or 20 USD, and billing and risk records show no outage. The credit therefore has no SLA basis.",
+   "The renewal incentive in RN-1008 is described as a 'renewal' credit, but it is unclear whether it applies now. The billing records show no renewal invoice or existing credits, and the current paid invoice INV-10081 is from 2026-10-20. The timing of the 400 USD entitlement is therefore unverified.",
+   "The proposal also does not mention that it conflicts with RN-1008. It reads as a request for the full 2 months (800 USD) with no acknowledgment of the signed 1-month term."
+  ],
+  "verdict": "flawed"
+ },
+ {
+  "id": "PL-09",
+  "other_defects": [],
+  "verdict": "clean"
+ },
+ {
+  "id": "PL-10",
+  "other_defects": [
+   "The proposal asserts '64 days overdue (risk-agent)', but the risk system of record has an empty flags array, so it contains no collections or overdue flag to support the assertion. The only support is billing, where INV-10101 is overdue. The attribution to risk-agent is therefore unsupported, and the source is mislabeled.",
+   "The overdue age is computed from the invoice date (2026-08-29), and no due date is recorded. The 64-day figure (29 Aug to 1 Nov) is arithmetically consistent only if the invoice was due on its issue date, so the 'overdue since' basis is not verified.",
+   "The proposal gives no dollar amount (amount is null) and sets pct to 8. Applying 8% to the $6,000 monthly fee gives $480, which is within the 10% service-credit cap ($600). However, the contract has no clause authorizing a retention or renewal discount. Credits are only for SLA breaches (5% of the monthly fee) and refunds only for unused services within 30 days of invoice. The rationale 'Renewal save offer' has no contractual basis.",
+   "No renewal is evidenced in the records. The order form was signed 2026-01-15 and no end date or renewal term is given, so the claimed renewal context is unsupported.",
+   "The proposal references no SLA breach and no incident (incident_id is null), so the SLA credit provision cannot justify the discount.",
+   "The risk record was synced at 07:00Z, while CRM and billing were updated at 08:00Z. The asserted observation time matches the risk sync, but the risk data shows nothing, so the fact is not corroborated at that timestamp."
+  ],
+  "verdict": "flawed"
+ },
+ {
+  "id": "RP-01",
+  "other_defects": [
+   "The proposal's $125 credit would be a second credit for INC-1111, but this is the planted defect (CR-5520 already issued) and is excluded from this list.",
+   "No other defects were found. The contract caps monthly service credits at 10% of the $2,500 fee, which is $250. A $125 credit is within that cap on its own. Combined with CR-5520, the total would be $250, which is exactly at the cap and does not exceed it.",
+   "The account is active, the order form is signed, and the plan and seats match between CRM and billing (Business, 200 seats). Billing shows a paid invoice of $2,500, which equals the monthly fee, and the currency is USD throughout. The risk flags list is empty, and the risk sync is from 2026-11-01T07:00Z, which is recent.",
+   "The rationale 'Goodwill for INC-1111' cites an incident that exists in billing credits, and the proposal asserts no facts that could contradict the records.",
+   "One weak point: the records contain no incident record or SLA uptime data for INC-1111. The SLA breach credit (5%, $125) cannot be verified as owed, but the proposal does not claim an SLA breach, so this is not a contradiction."
+  ],
+  "verdict": "clean"
+ }
+]

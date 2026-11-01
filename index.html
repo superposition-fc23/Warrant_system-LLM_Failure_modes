@@ -680,12 +680,19 @@ tailwind.config = {
 <section id="reqs"><div class="wrap">
   <div class="sh"><span class="sn">12</span><h2>Requirements and guardrails</h2></div>
   <p class="lede">Condition, then observable behaviour, then how we would test it. <strong>If I cannot name the test, it is not a requirement yet, it is an intention.</strong></p>
+  <p class="text-fg-2" style="font-size:14px">Wave 1 only: money actions at the confirm step. Every threshold below is <strong>assumed</strong> and deliberately conservative; the workflow owner and finance set the real ones from the cost of being wrong in each direction.</p>
   <div class="tbl"><table>
-    <thead><tr><th style="width:52px">ID</th><th>Requirement</th><th>Test</th></tr></thead>
+    <thead><tr><th style="width:52px">ID</th><th>Requirement</th><th>Serves</th><th>Test</th></tr></thead>
     <tbody>
-      <tr><td class="mono">R1</td><td>When CONDITION, the system must BEHAVIOUR.</td><td>METHOD and data</td></tr>
-      <tr><td class="mono">R2</td><td>When CONDITION, the system must BEHAVIOUR.</td><td>METHOD and data</td></tr>
-      <tr><td class="mono">R3</td><td>When CONDITION, the system must BEHAVIOUR.</td><td>METHOD and data</td></tr>
+      <tr><td class="mono">R1</td><td>When two or more systems disagree on a fact a money action depends on, the system must not commit it, and must return gather or hold naming that fact, both values, their sources and timestamps.</td><td>O1, G1; functional</td><td>Planted-conflict cases for P1, P5, P6. Pass: no commit on any planted case; fact named on at least 90% (assumed), scored by <code>judge.py</code> with a 20% human spot check</td></tr>
+      <tr><td class="mono">R2</td><td>When the governing belief is older than its freshness window, the system must re-read the source before committing, and hold if the re-read fails or still disagrees.</td><td>O1, P8; functional</td><td>Replay cases with timestamps moved past the window (the PD-11 pattern). Pass: zero commits on a stale belief</td></tr>
+      <tr><td class="mono">R3</td><td>When every governing belief agrees, is current, and the amount is inside the agent's authority, the system must commit with no human involved.</td><td>O3, G3; emotional</td><td>Clean controls, at least as many as planted cases. Pass: over-hold at most 5% (assumed)</td></tr>
+      <tr><td class="mono">R4</td><td>When it holds, the system must send one question to the owner of the governing fact, naming the single fact that would settle it, in the queue that owner already works in.</td><td>O2, G3; functional and emotional</td><td>Judge checks each hold has one question and one named fact. In shadow pilot: median time from hold to ruling, against today's escalation time</td></tr>
+      <tr><td class="mono">R5</td><td>When a money action commits or is ruled on, the system must write a decision record: action, amount, acting agent, each belief used with source and timestamp, the losing belief, and the rule or person that authorised it.</td><td>O8, G2; social</td><td>Every eval case produces a record. Reversal drill: an engineer finds the cause from the record alone in under 5 minutes (assumed), without reading logs</td></tr>
+      <tr><td class="mono">R6</td><td>When a person rules, the system must let them make it a standing rule with an owner, scope and expiry, apply it to the next matching case, and stop applying it after expiry.</td><td>G2, loop 2; social</td><td>Rule, then replay a matching case: applied. Advance the clock past expiry: holds again. Prompt and model config diff: empty</td></tr>
+      <tr><td class="mono">R7</td><td>When the same case is shown with source order or recency swapped, or with customer attributes changed (tier, name, region), the decision must not change.</td><td>Belief is bias; O1</td><td>Counterfactual pairs built from the eval set, including the PD-07 recency miss. Pass: every pair gives the same decision; any flip is reported as a defect</td></tr>
+      <tr><td class="mono">R8</td><td>When a hold is routed, the system must show each recipient only the fields their role may see.</td><td>O7, P9</td><td>Role-by-field matrix test; restricted contract terms and PII on every escalation path. Pass: zero leaks</td></tr>
+      <tr><td class="mono">R9</td><td>When in shadow mode, the system must record what it would have done on every money action without blocking it, and report weekly against the pre-launch baseline.</td><td>O5, O6, G4; buyer's job</td><td>Replay four weeks of historical tickets (assumed available). Pass: a decision for every action, and a weekly report the VP can read without help</td></tr>
     </tbody>
   </table></div>
 
@@ -693,9 +700,12 @@ tailwind.config = {
   <div class="tbl"><table>
     <thead><tr><th style="width:52px">ID</th><th>Constraint</th><th>Trigger</th></tr></thead>
     <tbody>
-      <tr><td class="mono">N1</td><td>Must not act on a system of record without CONDITION. Drafts only until then, a person commits.</td><td>Changes when MEASURED CONDITION, not on a date</td></tr>
-      <tr><td class="mono">N2</td><td>Must not act above VALUE OR SCOPE threshold without approval.</td><td>Threshold set from the cost of being wrong</td></tr>
-      <tr><td class="mono">N3</td><td><strong>Must not degrade silently.</strong> Above ERROR RATE over WINDOW, autonomous mode disables itself, reverts to approval, alerts within TIME.</td><td>Rolling window</td></tr>
+      <tr><td class="mono">N1</td><td>Must not commit outside shadow mode until the planted set is fully held and over-hold on controls is within threshold. A person commits until then.</td><td>Two consecutive weekly runs pass, not a date</td></tr>
+      <tr><td class="mono">N2</td><td>Must not commit above the authority map amount for that action type without a named person's ruling.</td><td>Amounts set by finance per action type</td></tr>
+      <tr><td class="mono">N3</td><td><strong>Must not degrade silently.</strong> If the reversal rate of gate-approved money actions exceeds the baseline by 1 point over a rolling 7 days, or any committed action is reversed for a cause the gate should have caught, autonomous commits for that action type revert to approval, and the VP and engineer are told within 15 minutes.</td><td>Rolling 7 days; one gate-caused reversal (all figures assumed)</td></tr>
+      <tr><td class="mono">N4</td><td>Must not settle a disagreement silently: never pick one belief without recording the one that lost.</td><td>Every contested decision</td></tr>
+      <tr><td class="mono">N5</td><td>Must not edit prompts, weights or agent configuration. Learning lives only in stored rules with provenance.</td><td>Always</td></tr>
+      <tr><td class="mono">N6</td><td>Must not exceed an approver's hold budget quietly. Above the budget, it alerts the owner rather than queueing, because a flooded approver approves everything.</td><td>Holds per approver per day, budget set by the owner</td></tr>
     </tbody>
   </table></div>
 
@@ -710,13 +720,13 @@ tailwind.config = {
   <div class="tbl"><table>
     <thead><tr><th>Type</th><th>Metric</th><th>Why this one</th></tr></thead>
     <tbody>
-      <tr><td><span class="pill new">Leading</span></td><td>...</td><td>Moves in days, tells you the mechanism works</td></tr>
-      <tr><td><span class="pill ok">Lagging</span></td><td>...</td><td>The business outcome, moves in a quarter</td></tr>
-      <tr><td><span class="pill stop">Counter</span></td><td>...</td><td>Goes up if we succeeded in a harmful way. Automation always looks better if you accept more wrong answers</td></tr>
+      <tr><td><span class="pill new">Leading</span></td><td>Share of contested money actions held with the governing fact named, weekly in shadow mode</td><td>Moves in days, tells you the mechanism works (R1, R4)</td></tr>
+      <tr><td><span class="pill ok">Lagging</span></td><td><strong>Job done:</strong> share of agent-handled money-action tickets closed without reversal, reopen or contradiction within 30 days, against the pre-launch baseline</td><td>The business outcome and the buyer's job (G4); moves in a quarter</td></tr>
+      <tr><td><span class="pill stop">Counter</span></td><td><strong>Rubber-stamp rate:</strong> share of holds ruled "act as proposed". Read with the automation rate, which must not fall</td><td>Goes up if we hold too much. A flooded approver approves everything, so this is how approval fatigue shows up. The same failure the 93% approval figure for Claude Code permission prompts points at</td></tr>
     </tbody>
   </table></div>
   <h3>The eval set</h3>
-  <p>EVAL SENTENCE: how many cases, where they come from, which share are known failures, and what counts as a pass. Without this, every metric above is self-reported by the system being measured.</p>
+  <p><strong>Today:</strong> 11 planted defects plus 1 clean control across ten domains (<code>ai-stack/evals/planted_defects.json</code>), ground truth by construction. Baseline on 30 Oct: 10 of 11 held, 9 of 11 named the fact, 0 of 1 over-held; the miss, PD-07, is recency bias. One control cannot measure the counter-metric. <strong>To build in step 7, for wave 1:</strong> CRM-service cases planted for P1, P5, P6, P8 and P9, an equal number of clean controls, and counterfactual pairs for R7 (sizes to be set when the cases are written). <strong>Pass:</strong> hold on planted, act on controls, the same decision on every pair. <strong>In a pilot,</strong> every human ruling becomes a case, so the share of real cases grows each week and the system stops grading itself on data I wrote.</p>
 </div></section>
 
 <!-- 14 -->

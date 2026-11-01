@@ -443,7 +443,7 @@ tailwind.config = {
     </tbody>
   </table></div>
   <h3>Step 3d, evidence check: 181 public opinions instead of interviews</h3>
-  <p class="lede">Best available stand-in until interviews: 163 Hacker News comments and 18 Substack posts about AI agents acting in business workflows, each classified by a small model into an outcome with inferred importance and satisfaction (<code>ai-stack/voc.py</code>, data in <code>ai-stack/evals/</code>, collected 31 Oct). Medium refused automated reads and Reddit needs its official API keys, so neither is in yet.</p>
+  <p class="lede">Best available stand-in until interviews: 163 Hacker News comments and 18 Substack posts about AI agents acting in business workflows, each classified by a small model into an outcome with inferred importance and satisfaction (<code>ai-stack/voc.py</code>, data in <code>ai-stack/evals/</code>, collected 31 Oct). Medium refused automated reads, and Reddit API access is pending under its Responsible Builder Policy (needs a registered automated account), so neither is in yet; both are named gaps.</p>
   <div class="tbl"><table>
     <thead><tr><th>ID</th><th>n</th><th>Assumed imp. / sat. / opp.</th><th>Evidence imp. / sat. / opp.</th><th>What it says</th></tr></thead>
     <tbody>
@@ -519,16 +519,26 @@ tailwind.config = {
 
 <!-- 8 -->
 <section id="scope"><div class="wrap">
-  <div class="sh"><span class="sn">08</span><h2>Goal and non-goals</h2></div>
-  <p><strong>Goal.</strong> One line, with the decision it changes.</p>
+  <div class="sh"><span class="sn">08</span><h2>Goals and non-goals</h2></div>
+  <p><strong>Goal.</strong> Let support agents take money actions alone only when the evidence across systems agrees and is current, so the VP of Support can widen automation without raising reversals, and prove it week on week.</p>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:44px">ID</th><th>Goal for v1</th><th>Serves</th><th>General or vertical</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">G1</td><td>No credit, refund, discount or entitlement commits while billing, contract, risk and CRM evidence disagrees or is stale; the decision is act, gather one named fact, or hold</td><td>O1; P1, P5, P6; functional</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td class="mono">G2</td><td>Every contested decision records which conclusion governed, on what evidence, under whose authority, attributable to the agent and the human</td><td>O2, O8; social (accountability)</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td class="mono">G3</td><td>Escalate only real disagreements: holds are rare, right, and cheap to rule on</td><td>O3; approval fatigue; emotional</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td class="mono">G4</td><td>Show week on week, against the pre-launch baseline, whether widening autonomy raised reopens or clawbacks; start in shadow mode</td><td>O5, O6; buyer's job</td><td><span class="pill ok">General</span></td></tr>
+    </tbody>
+  </table></div>
   <h3>Non-goals for v1</h3>
   <ul>
-    <li><strong>Not fixing the model itself</strong>, because REASON.</li>
-    <li><strong>Not handling X</strong>, because REASON.</li>
-    <li><strong>Not replacing Z</strong>, because REASON.</li>
+    <li><strong>Not replacing the CRM vendor's agents or orchestrator</strong>, because habit is the strongest force against us; it sits beside them at the tool layer.</li>
+    <li><strong>Not a tracing or observability product</strong>, because generic tracing is served; it consumes existing traces and writes only the decision record.</li>
+    <li><strong>Not changing models, weights or prompts</strong>, because what the loop learns is stored as revisable state with provenance, which is the line between this and a harness.</li>
   </ul>
+  <p class="text-fg-2" style="font-size:14px"><strong>Deferred to v2, on evidence:</strong> classification and severity disputes (P2, P3; vertical-specific, cost is time) and customer-facing contradiction checks (O4; the evidence check rated it higher than I assumed, so it is first in line). The v1 data model must already support both.</p>
   <div class="note warn"><span class="tag">Assumptions I am making, correct me</span>
-    <p>1. ... &nbsp; 2. ... &nbsp; 3. ...</p>
+    <p>1. Money actions leave the agents as tool calls we can see before they commit (MCP or API layer). &nbsp; 2. Billing, contract and risk systems expose read access with timestamps. &nbsp; 3. The workflow owner can name who has authority for each action type and amount. &nbsp; 4. Security will allow shadow-mode read access to those systems for a pilot.</p>
   </div>
 </div></section>
 

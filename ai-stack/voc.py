@@ -24,6 +24,7 @@ from concurrent.futures import ThreadPoolExecutor
 import httpx
 
 from llm import ask  # also loads .env
+from pii import scrub
 
 QUERIES = [
     "AI agents conflicting decisions", "multi-agent system conflict", "AI support agent refund mistake",
@@ -57,7 +58,7 @@ UA = {"User-Agent": "voc-research/0.1 (product discovery; contact via repo owner
 
 
 def clean(text):
-    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(text or ""))).strip()
+    return scrub(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(text or ""))).strip())
 
 
 def hacker_news(q):

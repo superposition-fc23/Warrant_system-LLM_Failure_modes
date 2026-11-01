@@ -173,27 +173,361 @@ table.grid th{font-size:11px}
 <body>
 <header class="top"><div class="wrap">
   <p class="kick">Prototype &middot; <a href="index.html">back to the case artifact</a> &middot; <a href="slides.html">slides</a></p>
-  <h1>PROTOTYPE TITLE</h1>
+  <h1>Warrant: money actions that wait when the evidence disagrees</h1>
+  <p class="sub">A gate in front of support agents' credits, refunds, discounts and entitlements. It reads billing, contract, risk and CRM evidence through MCP tools and decides act, gather or hold.</p>
 </div></header>
 
 <main class="wrap" style="padding-top:24px;padding-bottom:48px">
-  <!-- Skeleton only. Replace each screen's placeholder with the mock (see CLAUDE.md, section 06). -->
+  <div class="mb-4 rounded border border-solid border-rule bg-surface px-4 py-3 text-sm">
+    <div class="flex flex-wrap gap-x-6 gap-y-1">
+      <span><span class="pill ok">Real</span> <span class="text-fg-2">the gate, MCP reads, model calls, traces and evals, on synthetic systems of record</span></span>
+      <span><span class="pill warn">Staged</span> <span class="text-fg-2">the human ruling and the question delivery</span></span>
+    </div>
+    <div id="runline" class="mt-2 font-mono text-xs text-fg-3"></div>
+  </div>
+
   <div class="tabs">
-    <button class="tab" data-screen="s1" aria-selected="true">1 &middot; SCREEN 1 NAME</button>
-    <button class="tab" data-screen="s2" aria-selected="false">2 &middot; SCREEN 2 NAME</button>
-    <button class="tab" data-screen="s3" aria-selected="false">3 &middot; SCREEN 3 NAME</button>
+    <button class="tab" data-screen="s1" aria-selected="true">1 &middot; Clean action commits</button>
+    <button class="tab" data-screen="s2" aria-selected="false">2 &middot; Contested action held</button>
+    <button class="tab" data-screen="s3" aria-selected="false">3 &middot; Ruling becomes a rule</button>
+    <button class="tab" data-screen="s4" aria-selected="false">4 &middot; Run and evals</button>
   </div>
 
   <div class="screen on" id="s1">
-    <p class="text-fg-2">SCREEN 1, NORMAL: the agent completes the task and the check passes. Nobody needs to look.</p>
+    <div class="mock">
+      <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mock-url">crm / apps / warrant / decisions / committed</span></div>
+      <div class="mock-top"><span class="brand">Warrant &middot; money actions</span><div class="right" id="s1-count"></div></div>
+      <div class="mock-body max-[860px]:!grid-cols-1">
+        <div class="side" id="s1-side"></div>
+        <div class="main" id="s1-main"></div>
+        <div class="panel" id="s1-panel"></div>
+      </div>
+    </div>
   </div>
+
   <div class="screen" id="s2">
-    <p class="text-fg-2">SCREEN 2, CAUGHT: the agent would have failed silently; the system holds the action and names the exact step and field it does not trust.</p>
+    <div class="mock">
+      <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mock-url">crm / apps / warrant / decisions / held</span></div>
+      <div class="mock-top"><span class="brand">Warrant &middot; money actions</span><div class="right" id="s2-count"></div></div>
+      <div class="mock-body max-[860px]:!grid-cols-1">
+        <div class="side" id="s2-side"></div>
+        <div class="main" id="s2-main"></div>
+        <div class="panel" id="s2-panel"></div>
+      </div>
+    </div>
   </div>
+
   <div class="screen" id="s3">
-    <p class="text-fg-2">SCREEN 3, CORRECTION AND AUDIT: a person fixes it, the trail records who, what and why, and the correction becomes an eval case.</p>
+    <div class="mock">
+      <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mock-url">crm / apps / warrant / rulings</span></div>
+      <div class="mock-top"><span class="brand">Warrant &middot; rulings and standing rules</span><div class="right" id="s3-count"></div></div>
+      <div id="s3-body"></div>
+    </div>
+  </div>
+
+  <div class="screen" id="s4">
+    <div class="mock">
+      <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mock-url">ai-stack / runs / <span id="s4-url">latest</span></span></div>
+      <div class="mock-top"><span class="brand">Warrant &middot; run and evals</span><div class="right" id="s4-count"></div></div>
+      <div id="s4-body"></div>
+    </div>
   </div>
 </main>
+
+<script src="ai-stack/runs/sample/prototype-data.js"></script>
+<script src="ai-stack/runs/latest/prototype-data.js"></script>
+<script>
+(function(){
+var RUN = window.RUN;
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+if(!RUN || !RUN.decisions){
+  ['s1','s2','s3','s4'].forEach(function(id){
+    $(id).innerHTML = '<div class="banner stop">No run data found. Expected ai-stack/runs/sample/prototype-data.js or ai-stack/runs/latest/prototype-data.js next to this page.</div>';
+  });
+  return;
+}
+var D = RUN.decisions || [], S = RUN.summary || {}, T = RUN.traces || {};
+var byCase = {}; D.forEach(function(d){ byCase[d.case_id] = d; });
+var nowMs = Date.parse(RUN.now || RUN.started_at || '') || Date.now();
+
+function money(a){
+  if(!a) return '';
+  if(!a.amount) return 'no amount (' + esc(a.type) + ')';
+  return esc(Number(a.amount).toLocaleString('en-US')) + ' ' + esc(a.currency || '');
+}
+function when(iso){
+  var t = Date.parse(iso); if(isNaN(t)) return esc(iso || '');
+  var d = new Date(t), mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()];
+  var hh = ('0'+d.getUTCHours()).slice(-2), mm = ('0'+d.getUTCMinutes()).slice(-2);
+  return d.getUTCDate() + ' ' + mo + ' ' + hh + ':' + mm + ' UTC';
+}
+function age(iso){
+  var t = Date.parse(iso); if(isNaN(t)) return '';
+  var m = Math.round((nowMs - t) / 60000);
+  if(m < 0) return 'after reference clock';
+  if(m < 90) return m + ' min old';
+  var h = Math.round(m / 60); if(h < 48) return h + ' h old';
+  return Math.round(h / 24) + ' d old';
+}
+function decPill(dec){
+  var c = dec === 'act' ? 'ok' : dec === 'gather' ? 'warn' : 'stop';
+  return '<span class="pill ' + c + '">' + esc(dec) + '</span>';
+}
+function resPill(r){
+  var c = r === 'pass' ? 'ok' : r === 'warn' ? 'warn' : r === 'fail' ? 'stop' : 'new';
+  return '<span class="pill ' + c + '">' + esc(r) + '</span>';
+}
+function passPill(p){ return p ? '<span class="pill ok">pass</span>' : '<span class="pill stop">fail</span>'; }
+function freshPill(b){ return b.fresh ? '<span class="pill ok">fresh</span>' : '<span class="pill stop">stale</span>'; }
+function kindLabel(d){ return d.kind + (d.pain ? ' ' + d.pain : ''); }
+function ms(n){ return n == null ? '' : (n >= 1000 ? (n/1000).toFixed(2) + ' s' : n + ' ms'); }
+function usd(n){ return n == null ? '' : '$' + Number(n).toFixed(4); }
+
+function checksHtml(d){
+  return '<div class="flex flex-col gap-2">' + (d.checks || []).map(function(c){
+    return '<div class="flex items-start gap-2 text-sm"><span class="shrink-0" style="min-width:52px">' + resPill(c.result) + '</span>' +
+      '<div><span class="font-mono text-xs text-fg">' + esc(c.name) + '</span><div class="text-fg-2 text-sm leading-snug">' + esc(c.detail) + '</div></div></div>';
+  }).join('') + '</div>';
+}
+function actionKv(d){
+  var a = d.action || {};
+  return '<dl class="kv px-4 pt-3">' +
+    '<dt>Account</dt><dd>' + esc(a.account) + ' <span class="font-mono text-xs text-fg-3">' + esc(a.account_id) + '</span></dd>' +
+    '<dt>Tier</dt><dd>' + esc(a.tier) + '</dd>' +
+    '<dt>Action</dt><dd><span class="font-mono text-xs">' + esc(a.type) + '</span>, ' + money(a) + '</dd>' +
+    '<dt>Proposed by</dt><dd class="font-mono text-sm">' + esc(a.agent) + '</dd>' +
+  '</dl>';
+}
+function beliefsTable(list, hiFact){
+  if(!list.length) return '';
+  return '<div class="overflow-x-auto"><table class="grid"><thead><tr><th>Fact</th><th>Value</th><th>Source</th><th>Record</th><th>Observed</th><th>Fresh</th><th>Asserted by</th></tr></thead><tbody>' +
+    list.map(function(b){
+      return '<tr' + (hiFact && b.fact === hiFact ? ' class="r flag"' : '') + '><td class="font-mono text-xs">' + esc(b.fact) + '</td><td style="min-width:180px">' + esc(b.value) + '</td><td class="font-mono text-xs">' + esc(b.source) +
+        '</td><td class="font-mono text-xs whitespace-nowrap">' + esc(b.record_id) + '</td><td class="font-mono text-xs whitespace-nowrap">' + when(b.observed_at) + '<div class="text-fg-3">' + age(b.observed_at) + '</div></td><td>' + freshPill(b) +
+        '</td><td class="font-mono text-xs">' + esc(b.asserted_by) + '</td></tr>';
+    }).join('') + '</tbody></table></div>';
+}
+function sideList(el, list, sel, onPick, head){
+  el.innerHTML = '<div class="side-h">' + esc(head) + '</div>' + list.map(function(d){
+    return '<div class="side-i' + (d.case_id === sel ? ' on' : '') + '" data-case="' + esc(d.case_id) + '">' +
+      '<div class="font-mono text-xs">' + esc(d.case_id) + ' ' + decPill(d.decision) + '</div>' +
+      '<div class="text-xs leading-snug">' + esc((d.action && d.action.account || '').replace(' (fictional)', '')) + '</div></div>';
+  }).join('') + (list.length ? '' : '<div class="side-i">none in this run</div>');
+  el.querySelectorAll('.side-i[data-case]').forEach(function(n){ n.addEventListener('click', function(){ onPick(n.getAttribute('data-case')); }); });
+}
+
+/* ---------- run line ---------- */
+var isSample = RUN.run_id === 'sample';
+$('runline').innerHTML = 'run ' + esc(RUN.run_id) + ' &middot; ' + esc(RUN.version) + ' &middot; started ' + when(RUN.started_at) +
+  ' &middot; reference clock of the synthetic systems ' + when(RUN.now) +
+  (isSample ? ' &middot; <span class="text-warn">SAMPLE DATA: fictional accounts and people, illustrative numbers, not a real run</span>' : '');
+
+/* ---------- screen 1: clean action commits ---------- */
+var acts = D.filter(function(d){ return d.decision === 'act'; });
+$('s1-count').innerHTML = '<span class="pill ok">' + acts.length + ' committed</span>';
+function renderS1(id){
+  var d = byCase[id] || acts[0];
+  sideList($('s1-side'), acts, d && d.case_id, renderS1, 'Committed');
+  if(!d){ $('s1-main').innerHTML = '<div class="banner warn">No act decisions in this run.</div>'; $('s1-panel').innerHTML = ''; return; }
+  var ruleNote = d.rule_applied ? '<div class="banner ok">Settled by standing rule <span class="font-mono">' + esc(d.rule_applied) + '</span>, no person asked. The disagreement is still recorded.</div>' : '';
+  $('s1-main').innerHTML =
+    '<div class="main-h"><h4>' + esc(d.action && d.action.summary) + '</h4>' + decPill(d.decision) + '</div>' + ruleNote +
+    '<div class="px-4 pt-3 text-sm text-fg-2">' + esc(d.title) + ' <span class="font-mono text-xs text-fg-3">' + esc(d.case_id) + ', ' + esc(kindLabel(d)) + '</span></div>' +
+    actionKv(d) +
+    '<div class="side-h" style="margin-top:4px">Beliefs read through MCP</div>' + beliefsTable(d.beliefs || [], d.conflict && d.conflict.fact);
+  $('s1-panel').innerHTML =
+    '<div class="rounded bg-ok-soft text-ok px-3 py-2 mb-3"><div class="font-semibold">Committed, no human needed</div><div class="text-sm">Every governing belief agrees, is current, and the amount is inside the agent\'s authority.</div></div>' +
+    '<h5>Deterministic checks</h5><div class="meta">run after the model compare; any fail blocks the commit</div>' + checksHtml(d) +
+    '<div class="actions"><dl class="kv w-full" style="margin:0"><dt>Decision record</dt><dd class="font-mono">' + esc(d.record_id) + '</dd>' +
+    '<dt>Trace</dt><dd class="font-mono text-xs">' + esc(d.trace_id) + '</dd><dt>Latency</dt><dd class="font-mono">' + ms(d.latency_ms) + '</dd><dt>Cost</dt><dd class="font-mono">' + usd(d.cost_usd) + '</dd>' +
+    '<dt>Eval</dt><dd>expected ' + esc(d.expected) + ', ' + passPill(d.pass) + '</dd></dl></div>';
+}
+renderS1();
+
+/* ---------- screen 2: contested action held ---------- */
+var held = D.filter(function(d){ return d.decision === 'hold' || d.decision === 'gather'; });
+$('s2-count').innerHTML = '<span class="pill stop">' + held.length + ' waiting</span>';
+function conflictPair(d){
+  var c = d.conflict, bs = d.beliefs || [];
+  if(!c) return [];
+  var same = bs.filter(function(b){ return b.fact === c.fact; });
+  if(same.length >= 2) return same.slice(0, 2);
+  var gov = bs.filter(function(b){ return b.source === c.governing_source && b.fact !== c.fact; })[0];
+  return same.concat(gov ? [gov] : []).slice(0, 2);
+}
+function beliefCard(b, governs){
+  return '<div class="rounded border border-solid ' + (governs ? 'border-accent' : 'border-rule') + ' bg-surface p-4 flex flex-col gap-2">' +
+    '<div class="flex items-center justify-between gap-2"><span class="font-mono text-xs uppercase tracking-wider text-fg-3">' + esc(b.source) + (governs ? ' &middot; governing source' : '') + '</span>' + freshPill(b) + '</div>' +
+    '<div class="font-mono text-xs text-fg-3">' + esc(b.fact) + '</div>' +
+    '<div class="text-lg font-semibold text-fg leading-snug">' + esc(b.value) + '</div>' +
+    '<dl class="kv" style="margin:0"><dt>Record</dt><dd class="font-mono text-sm">' + esc(b.record_id) + '</dd>' +
+    '<dt>Observed</dt><dd class="font-mono text-sm">' + when(b.observed_at) + ' <span class="text-fg-3">(' + age(b.observed_at) + ')</span></dd>' +
+    '<dt>Asserted by</dt><dd class="font-mono text-sm">' + esc(b.asserted_by === 'source' ? 'source system' : b.asserted_by) + '</dd></dl></div>';
+}
+function renderS2(id){
+  var d = byCase[id] && (byCase[id].decision !== 'act') ? byCase[id] : held[0];
+  sideList($('s2-side'), held, d && d.case_id, renderS2, 'Held or gathering');
+  if(!d){ $('s2-main').innerHTML = '<div class="banner warn">No held decisions in this run.</div>'; $('s2-panel').innerHTML = ''; return; }
+  var c = d.conflict, pair = conflictPair(d);
+  var banner = c
+    ? '<div class="banner stop"><b>' + (d.decision === 'gather' ? 'Gathering' : 'Held') + '.</b> The one fact that would settle it: <span class="font-mono">' + esc(c.fact) + '</span>, governed by <span class="font-mono">' + esc(c.governing_source) + '</span>' + (c.material ? ', material to this action.' : '.') + '</div>'
+    : '<div class="banner warn"><b>' + esc(d.decision) + '.</b> No cross-system conflict recorded; see the checks.</div>';
+  var cards = pair.length
+    ? '<div class="grid gap-3 md:grid-cols-2 px-4 pt-4">' + pair.map(function(b){ return beliefCard(b, c && b.source === c.governing_source); }).join('') + '</div>'
+    : (c ? '<div class="px-4 pt-4 text-sm">' + (c.values || []).map(esc).join(' <b>against</b> ') + '</div>' : '');
+  var others = (d.beliefs || []).filter(function(b){ return pair.indexOf(b) < 0; });
+  $('s2-main').innerHTML =
+    '<div class="main-h"><h4>' + esc(d.action && d.action.summary) + '</h4>' + decPill(d.decision) + '</div>' + banner +
+    '<div class="px-4 pt-3 text-sm text-fg-2">' + esc(d.title) + ' <span class="font-mono text-xs text-fg-3">' + esc(d.case_id) + ', ' + esc(kindLabel(d)) + '</span></div>' +
+    actionKv(d) +
+    '<div class="side-h" style="margin-top:4px">The disagreement, both sides kept</div>' + cards +
+    (c && c.why ? '<div class="mx-4 mt-3 rounded bg-surface-2 px-3 py-2 text-sm text-fg-2"><span class="font-mono text-xs text-fg-3">Why it matters</span><br>' + esc(c.why) + '</div>' : '') +
+    '<div class="mx-4 mt-3 text-sm text-fg-2">The gate does not pick a side. Neither belief is discarded; both are written to <span class="font-mono">' + esc(d.record_id) + '</span> and the person who owns the governing fact decides.</div>' +
+    (others.length ? '<div class="side-h" style="margin-top:14px">Other beliefs read</div>' + beliefsTable(others) : '') +
+    '<div class="pb-4"></div>';
+  var q = d.question;
+  var qHtml = q
+    ? '<div class="rounded border border-solid border-accent bg-accent-soft p-3 mb-4">' +
+        '<div class="font-mono text-xs uppercase tracking-wider text-accent">One question, to the owner of the fact</div>' +
+        '<div class="mt-1 font-semibold text-fg">' + esc(q.to_name) + '</div><div class="text-sm text-fg-2">' + esc(q.to_role) + '</div>' +
+        '<p class="mt-2 mb-3 text-fg">' + esc(q.text) + '</p>' +
+        '<div class="flex flex-col gap-2">' + (q.options || []).map(function(o){ return '<button class="btn text-left" type="button" disabled style="cursor:not-allowed">' + esc(o) + '</button>'; }).join('') + '</div>' +
+        '<div class="hint mt-2">Buttons are inert in v1: question delivery and the ruling are staged. The ruling on screen 3 is scripted.</div></div>'
+    : '<div class="rounded bg-warn-soft text-warn px-3 py-2 mb-4 text-sm">No question sent: gathering the named fact from its source first.</div>';
+  var judge = d.judge
+    ? '<div class="mt-3 text-sm">' + (d.judge.fact_named ? '<span class="pill ok">fact named</span>' : '<span class="pill stop">wrong fact named</span>') + ' <span class="text-fg-2">' + esc(d.judge.note) + '</span> <span class="hint">(judge, ' + esc(S.models && S.models.judge || '') + ')</span></div>'
+    : '';
+  $('s2-panel').innerHTML = qHtml +
+    '<h5>Deterministic checks</h5><div class="meta">any fail blocks the commit</div>' + checksHtml(d) + judge +
+    '<div class="actions"><dl class="kv w-full" style="margin:0"><dt>Decision record</dt><dd class="font-mono">' + esc(d.record_id) + '</dd>' +
+    '<dt>Latency</dt><dd class="font-mono">' + ms(d.latency_ms) + '</dd><dt>Cost</dt><dd class="font-mono">' + usd(d.cost_usd) + '</dd>' +
+    '<dt>Eval</dt><dd>expected ' + esc(d.expected) + ', ' + passPill(d.pass) + '</dd></dl></div>';
+}
+renderS2();
+
+/* ---------- screen 3: ruling becomes a rule ---------- */
+(function(){
+  var R = (RUN.rulings || [])[0];
+  if(!R){ $('s3-body').innerHTML = '<div class="banner warn">No rulings in this run.</div>'; return; }
+  var c = byCase[R.case_id] || {}, sr = R.standing_rule || {};
+  var replay = D.filter(function(d){ return sr.id && d.rule_applied === sr.id; })[0];
+  $('s3-count').innerHTML = '<span class="pill new">' + (RUN.rulings || []).length + ' ruling' + ((RUN.rulings || []).length === 1 ? '' : 's') + '</span>';
+  var exp = Date.parse(sr.expires), days = isNaN(exp) ? null : Math.round((exp - nowMs) / 86400000);
+  var pat = sr.pattern || {};
+  var patKv = Object.keys(pat).map(function(k){ return '<dt class="font-mono text-xs">' + esc(k) + '</dt><dd class="font-mono text-sm">' + esc(pat[k]) + '</dd>'; }).join('');
+  function card(step, title, body, tone){
+    return '<div class="rounded border border-solid border-rule bg-surface p-4 flex flex-col gap-2">' +
+      '<div class="font-mono text-xs uppercase tracking-wider ' + (tone || 'text-fg-3') + '">' + step + '</div><div class="font-semibold text-fg">' + title + '</div>' + body + '</div>';
+  }
+  var trail = [];
+  if(c.record_id) trail.push('<b>' + esc(c.record_id) + '</b> ' + esc(c.case_id) + ' ' + esc(c.decision) + ': ' + esc(c.action && c.action.agent) + ' proposed ' + esc(c.action && c.action.type) + ' ' + money(c.action) + ' on ' + esc(c.action && c.action.account_id) +
+    (c.conflict ? '; conflict on ' + esc(c.conflict.fact) + ' [' + (c.conflict.values || []).map(esc).join(' | ') + ']' : ''));
+  if(c.question) trail.push('<b>question</b> to ' + esc(c.question.to_role) + ' ' + esc(c.question.to_name) + ' <span class="text-warn">(delivery staged)</span>');
+  trail.push('<b>ruling</b> ' + esc(R.ruling) + ' by ' + esc(R.ruled_by) + ', ' + esc(R.role) + ', reason ' + esc(R.reason_code) + (R.scripted ? ' <span class="text-warn">(scripted ruling)</span>' : ''));
+  if(sr.id) trail.push('<b>' + esc(sr.id) + '</b> standing rule created: effect ' + esc(sr.effect) + ', owner ' + esc(sr.owner) + ', expires ' + esc(sr.expires) + '; prompts, weights and agent config unchanged');
+  if(replay) trail.push('<b>' + esc(replay.record_id) + '</b> ' + esc(replay.case_id) + ' ' + esc(replay.decision) + ': ' + esc(sr.id) + ' applied, no person asked, losing belief kept; ' + ms(replay.latency_ms) + ', ' + usd(replay.cost_usd));
+  if(replay) trail.push('<b>eval</b> ' + esc(replay.case_id) + ' kept in the eval set as the regression case for this ruling');
+  $('s3-body').innerHTML =
+    (R.scripted ? '<div class="banner warn"><b>Scripted ruling.</b> The person\'s ruling below is scripted for the demo. The standing rule it creates, and the replay that rule settles, ran for real in this run.</div>' : '') +
+    '<div class="grid gap-3 p-4 lg:grid-cols-3">' +
+      card('1 &middot; held', esc(c.case_id) + ': ' + esc(c.title),
+        '<div class="text-sm text-fg-2">' + esc(c.action && c.action.summary) + ', ' + money(c.action) + '</div>' +
+        (c.question ? '<div class="text-sm rounded bg-surface-2 px-3 py-2">' + esc(c.question.text) + '</div>' : '') +
+        '<div class="font-mono text-xs text-fg-3">record ' + esc(c.record_id) + ' &middot; ' + decPill(c.decision) + '</div>', 'text-stop') +
+      card('2 &middot; ruled' + (R.scripted ? ' (scripted ruling)' : ''), esc(R.ruled_by) + ', ' + esc(R.role),
+        '<dl class="kv" style="margin:0"><dt>Ruling</dt><dd><span class="pill ' + (R.ruling === 'approve' ? 'ok' : 'stop') + '">' + esc(R.ruling) + '</span></dd>' +
+        '<dt>Reason code</dt><dd class="font-mono text-sm">' + esc(R.reason_code) + '</dd><dt>On record</dt><dd class="font-mono text-sm">' + esc(R.record_id) + '</dd></dl>', 'text-warn') +
+      card('3 &middot; standing rule', esc(sr.id) + ', effect ' + esc(sr.effect),
+        '<dl class="kv" style="margin:0">' + patKv + '<dt>Effect</dt><dd>' + decPill(sr.effect) + '</dd><dt>Owner</dt><dd>' + esc(sr.owner) + '</dd>' +
+        '<dt>Expires</dt><dd class="font-mono text-sm">' + esc(sr.expires) + (days != null ? ' <span class="text-fg-3">(' + days + ' days)</span>' : '') + '</dd></dl>' +
+        '<div class="hint">Stored as state with provenance. After expiry the pattern holds again.</div>', 'text-accent') +
+    '</div>' +
+    (replay
+      ? '<div class="mx-4 rounded border border-solid border-ok bg-ok-soft p-4"><div class="font-mono text-xs uppercase tracking-wider text-ok">4 &middot; replay, settled without a human</div>' +
+        '<div class="mt-1 font-semibold text-fg">' + esc(replay.case_id) + ': ' + esc(replay.title) + '</div>' +
+        '<div class="text-sm text-fg-2 mt-1">' + esc(replay.action && replay.action.summary) + ' on ' + esc(replay.action && replay.action.account) + ', ' + money(replay.action) + '. Decision ' + decPill(replay.decision) +
+        ' by rule <span class="font-mono">' + esc(replay.rule_applied) + '</span>, record <span class="font-mono">' + esc(replay.record_id) + '</span>, ' + ms(replay.latency_ms) + ', ' + usd(replay.cost_usd) + '. Expected ' + esc(replay.expected) + ' ' + passPill(replay.pass) + '</div></div>'
+      : '<div class="mx-4 banner warn">No replay decision in this run used ' + esc(sr.id) + '.</div>') +
+    '<div class="side-h" style="margin-top:14px">Decision record trail</div>' +
+    '<div class="trail px-4 pb-4">' + trail.map(function(t, i){ return '<div>' + (i + 1) + '. ' + t + '</div>'; }).join('') + '</div>';
+})();
+
+/* ---------- screen 4: run and evals ---------- */
+(function(){
+  $('s4-url').textContent = RUN.run_id;
+  var failing = D.filter(function(d){ return !d.pass; }).length;
+  $('s4-count').innerHTML = '<span class="pill ' + (failing || (RUN.failures || []).length ? 'warn' : 'ok') + '">' + (RUN.failures || []).length + ' failures</span>';
+  function tile(label, val, sub, tone){
+    return '<div class="rounded border border-solid border-rule bg-surface p-3"><div class="font-mono text-xs uppercase tracking-wider text-fg-3">' + esc(label) + '</div>' +
+      '<div class="text-2xl font-semibold ' + (tone || 'text-fg') + '">' + val + '</div><div class="text-xs text-fg-3">' + sub + '</div></div>';
+  }
+  var models = S.models ? Object.keys(S.models).map(function(k){ return esc(k) + ': ' + esc(S.models[k]); }).join('<br>') : '';
+  var tiles =
+    tile('Planted held', esc(S.held_planted) + ' / ' + esc(S.planted), 'not committed (hold or gather)', S.held_planted === S.planted ? 'text-ok' : 'text-stop') +
+    tile('Fact named', esc(S.fact_named) + ' / ' + esc(S.held_planted), 'planted holds naming the right fact, per judge', S.fact_named === S.held_planted ? 'text-ok' : 'text-warn') +
+    tile('Over-held controls', esc(S.over_held) + ' / ' + esc(S.controls), 'clean controls held (counter)', S.over_held ? 'text-warn' : 'text-ok') +
+    tile('Pairs invariant', esc(S.pairs_invariant) + ' / ' + esc(S.pairs), esc(S.pairs_flipped) + ' flipped', S.pairs_flipped ? 'text-stop' : 'text-ok') +
+    tile('Latency', ms(S.p50_ms) + ' <span class="text-base text-fg-3">p50</span>', ms(S.p95_ms) + ' p95') +
+    tile('Cost per decision', '$' + Number(S.cost_usd_per_decision || 0).toFixed(4), '$' + Number(S.cost_usd_total || 0).toFixed(3) + ' total, ' + esc(Number(S.tokens_in || 0).toLocaleString('en-US')) + ' in / ' + esc(Number(S.tokens_out || 0).toLocaleString('en-US')) + ' out tokens') +
+    tile('Cases', esc(S.cases), esc(S.planted) + ' planted, ' + esc(S.controls) + ' controls, ' + esc(S.pairs) + ' pairs') +
+    '<div class="rounded border border-solid border-rule bg-surface p-3"><div class="font-mono text-xs uppercase tracking-wider text-fg-3">Models</div><div class="font-mono text-sm text-fg mt-1">' + models + '</div></div>';
+  var rows = D.map(function(d){
+    var fn = d.judge ? (d.judge.fact_named ? '<span class="pill ok">yes</span>' : '<span class="pill stop">no</span>') : '<span class="text-fg-3">n/a</span>';
+    var cls = 'r' + (!d.pass ? ' flag' : (d.judge && !d.judge.fact_named ? ' soft' : ''));
+    return '<tr class="' + cls + '" data-trace="' + esc(d.trace_id) + '" data-case="' + esc(d.case_id) + '"><td class="font-mono text-xs whitespace-nowrap">' + esc(d.case_id) + '</td><td class="font-mono text-xs whitespace-nowrap">' + esc(kindLabel(d)) + '</td><td>' + esc(d.title) +
+      '</td><td>' + decPill(d.expected) + '</td><td>' + decPill(d.decision) + '</td><td>' + passPill(d.pass) + '</td><td>' + fn + '</td><td class="font-mono text-xs whitespace-nowrap">' + ms(d.latency_ms) + '</td><td class="font-mono text-xs">' + usd(d.cost_usd) + '</td></tr>';
+  }).join('');
+  var pairs = (RUN.pairs || []).map(function(p){
+    var b = byCase[p.base];
+    return '<tr' + (p.same ? '' : ' class="r flag"') + '><td class="font-mono text-xs whitespace-nowrap">' + esc(p.pair_id) + '</td><td class="font-mono text-xs whitespace-nowrap">' + esc(p.base) + '</td><td class="font-mono text-xs whitespace-nowrap">' + esc(p.variant) + '</td><td>' + esc(p.change) +
+      '</td><td>' + (b ? decPill(b.decision) : '') + '</td><td>' + (p.same ? '<span class="pill ok">invariant</span>' : '<span class="pill stop">flipped</span>') + '</td></tr>';
+  }).join('');
+  var fails = (RUN.failures || []).map(function(f){ return '<li class="text-sm">' + esc(f) + '</li>'; }).join('');
+  $('s4-body').innerHTML =
+    '<div class="grid gap-3 p-4 grid-cols-2 md:grid-cols-4">' + tiles + '</div>' +
+    '<div class="side-h">Every case, expected against decision &middot; click a row for its trace</div>' +
+    '<div class="overflow-x-auto"><table class="grid"><thead><tr><th>Case</th><th>Kind</th><th>Title</th><th>Expected</th><th>Decision</th><th>Result</th><th>Fact named</th><th>Latency</th><th>Cost</th></tr></thead><tbody id="s4-cases">' + rows + '</tbody></table></div>' +
+    '<div class="side-h" style="margin-top:14px">Trace waterfall</div><div id="s4-trace" class="px-4 pb-2"></div>' +
+    '<div class="grid gap-4 lg:grid-cols-2 mt-2">' +
+      '<div><div class="side-h">Counterfactual pairs: the decision must not change</div><div class="overflow-x-auto"><table class="grid"><thead><tr><th>Pair</th><th>Base</th><th>Variant</th><th>Change</th><th>Base decision</th><th>Result</th></tr></thead><tbody>' + pairs + '</tbody></table></div></div>' +
+      '<div><div class="side-h">What this run got wrong</div><ul class="px-4 pl-8 text-fg-2">' + (fails || '<li class="text-sm">none reported</li>') + '</ul></div>' +
+    '</div><div class="pb-4"></div>';
+  function color(n){
+    if(n.indexOf('mcp.') === 0) return 'bg-accent';
+    if(n.indexOf('llm.') === 0) return 'bg-warn';
+    if(n.indexOf('question') === 0) return 'bg-stop';
+    if(n.indexOf('gate.') === 0) return 'bg-fg-3';
+    return 'bg-ok';
+  }
+  function renderTrace(caseId){
+    var d = byCase[caseId], spans = d && T[d.trace_id];
+    if(!spans || !spans.length){ $('s4-trace').innerHTML = '<div class="text-sm text-fg-3">No trace recorded for ' + esc(caseId) + '.</div>'; return; }
+    var total = Math.max.apply(null, spans.map(function(s){ return (s.start_ms || 0) + (s.dur_ms || 0); })) || 1;
+    $('s4-trace').innerHTML =
+      '<div class="text-sm mb-2"><span class="font-mono">' + esc(d.case_id) + '</span> &middot; trace <span class="font-mono text-xs">' + esc(d.trace_id) + '</span> &middot; ' + ms(total) + ' end to end &middot; ' + decPill(d.decision) + '</div>' +
+      spans.map(function(s){
+        var left = (s.start_ms || 0) / total * 100, w = Math.max((s.dur_ms || 0) / total * 100, 0.4);
+        var staged = s.attrs && s.attrs.staged ? ' <span class="text-warn">(staged)</span>' : '';
+        return '<div class="grid items-center gap-2 py-1" style="grid-template-columns:minmax(120px,240px) 1fr 64px">' +
+          '<div class="font-mono text-xs truncate ' + (s.parent ? 'pl-3 text-fg-2' : 'text-fg') + '" title="' + esc(s.name) + '">' + esc(s.name) + staged + '</div>' +
+          '<div class="relative h-3 rounded bg-surface-2"><div class="absolute top-0 h-3 rounded ' + color(s.name) + '" style="left:' + left.toFixed(2) + '%;width:' + w.toFixed(2) + '%"></div></div>' +
+          '<div class="font-mono text-xs text-fg-3 text-right">' + ms(s.dur_ms) + '</div></div>';
+      }).join('') +
+      '<div class="flex flex-wrap gap-3 mt-2 text-xs text-fg-3"><span><i class="inline-block w-3 h-2 rounded bg-accent"></i> MCP read</span><span><i class="inline-block w-3 h-2 rounded bg-warn"></i> model call</span><span><i class="inline-block w-3 h-2 rounded bg-ok"></i> checks, rules, record, commit</span><span><i class="inline-block w-3 h-2 rounded bg-stop"></i> question route</span></div>';
+  }
+  var tb = $('s4-cases');
+  tb.querySelectorAll('tr.r').forEach(function(r){
+    r.addEventListener('click', function(){
+      tb.querySelectorAll('tr.r').forEach(function(x){ x.classList.remove('sel'); });
+      r.classList.add('sel'); renderTrace(r.getAttribute('data-case'));
+    });
+  });
+  var first = (held[0] || D[0]);
+  if(first){ var fr = tb.querySelector('tr[data-case="' + first.case_id + '"]'); if(fr) fr.classList.add('sel'); renderTrace(first.case_id); }
+})();
+})();
+</script>
 
 <script>
 document.querySelectorAll('.tab').forEach(function(t){

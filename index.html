@@ -358,13 +358,71 @@ tailwind.config = {
   <div class="tbl"><table>
     <thead><tr><th>Who</th><th>Role in the agent-run workflow</th><th>What they see today</th><th>General role (abstracts to)</th></tr></thead>
     <tbody>
-      <tr><td><strong>Support operations lead</strong> <span class="pill ok">Primary user</span></td><td>Accountable for what the agent workforce does: which actions agents may take alone, the policies they follow, and the queue when they cannot</td><td>Reversed credits, reopened tickets, finance clawbacks, an escalation backlog; never the conflict itself</td><td>Workflow owner</td></tr>
-      <tr><td><strong>Tier-2 support specialist</strong></td><td>Rules on the cases agents hold; the person with authority on one ticket</td><td>Four tabs (CRM, billing, contract, risk) to reconstruct what each agent saw</td><td>Resolver with authority</td></tr>
-      <tr><td><strong>Billing and revenue operations analyst</strong></td><td>Owns credit policy and contract terms; their systems hold the evidence agents contradict</td><td>Credits that breach contract terms, found at month-end close</td><td>Policy and evidence owner</td></tr>
-      <tr><td><strong>VP of Customer Support</strong> <span class="pill new">Buyer</span></td><td>Owns the agent budget and the outcomes: handle time, backlog, CSAT, credit leakage. Head of AI platform is the technical approver</td><td>Agent automation rate rising while reopen and clawback rates are not tracked against it</td><td>Business owner of the workflow</td></tr>
+      <tr><td><strong>Support or applied AI engineer</strong>, with the <strong>CSM</strong> as account-side co-user <span class="pill ok">Primary</span></td><td>Configures and owns the agent workforce: what each agent may do alone, who outranks whom, when a human is pulled in. The CSM lives with the consequences on the account</td><td>Reversed credits, reopened tickets, tickets bouncing between agents, contradicting messages to the customer; never the conflict itself</td><td>Owner of the agent workflow</td></tr>
+      <tr><td><strong>Billing, RevOps or finance analyst</strong> <span class="pill warn">Cross-functional approver</span></td><td>Owns credit policy and contract terms; approves exceptions; their systems hold the evidence agents contradict</td><td>Credits that breach contract terms, found at month-end close</td><td>Policy and evidence owner</td></tr>
+      <tr><td><strong>VP of Customer Support</strong> <span class="pill new">Buyer</span></td><td>Owns the agent budget and the outcomes: handle time, backlog, SLA, CSAT, credit leakage. Head of AI platform approves the technical side</td><td>Automation rate rising with no view of reopens, clawbacks and SLA misses against it</td><td>Business owner</td></tr>
     </tbody>
   </table></div>
-  <p class="text-fg-2" style="font-size:14px">The agents in this workflow (assumed for design): triage, refund and credit, risk, and account and contract agents, each reading a different system of record: the CRM, billing, the contract repository and the risk service. Why this buyer: the VP of Support pays for the agents and owns the metrics they move, so payer and beneficiary are the same person.</p>
+  <p class="text-fg-2" style="font-size:14px">Agents in this workflow (assumed for design): ticket classifier, CS agent, refund and credit agent, retention agent, risk agent, engineering on-call agent, PM agent. Each reads a different system of record: CRM, billing, contract repository, risk service, issue tracker, product backlog. The buyer pays for the agents and owns the metrics they move, so payer and beneficiary are the same person.</p>
+
+  <h3>Step 2: pain points, as agent conflicts</h3>
+  <div class="tbl"><table>
+    <thead><tr><th style="width:44px">ID</th><th>Conflict</th><th>Family</th><th>Who feels it</th><th>Symptom today</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">P1</td><td>Refund agent approves a credit while the risk agent has flagged the account and the contract overrides standard terms</td><td>Money</td><td>Finance analyst, CSM</td><td>Clawbacks at close; credits that breach contract</td></tr>
+      <tr><td class="mono">P2</td><td>CS agent classifies a concern as a bug; engineering on-call agent sets severity and starts a fix or pulls in an engineer; PM agent reclassifies it as a feature request and routes it to the backlog. Who overrides whom, on what basis, and what happens next?</td><td>Routing and ownership</td><td>Engineer, PM, support engineer</td><td>Tickets bouncing between queues; engineers pulled into solution mode on non-bugs</td></tr>
+      <tr><td class="mono">P3</td><td>Classifier sets Sev 1; CS agent downgrades to Sev 2 from the account SLA after clarifying with a human; meanwhile the support engineering agent attempts a fix and escalates, and the PM agent is pulled into the dispute and either errs on a judgement call or escalates</td><td>Severity and SLA</td><td>Support engineer, engineer, CSM</td><td>Human time blocked on the wrong severity; SLA breach or wasted escalation</td></tr>
+      <tr><td class="mono">P4</td><td>Autonomy boundary misread: too tight wastes human time; too loose causes repeated errors until the loop is tuned (Spawn's lesson)</td><td>Autonomy calibration</td><td>Support engineer, VP</td><td>Either a growing queue or a run of reversals</td></tr>
+      <tr><td class="mono">P5</td><td>Refund agent issues a credit and the retention agent offers a discount on the same account in the same hour</td><td>Money</td><td>Finance analyst</td><td>Stacked compensation found at close</td></tr>
+      <tr><td class="mono">P6</td><td>CS agent grants a premium SLA from the CRM tier while billing shows the account past due or downgraded</td><td>Entitlement</td><td>Finance analyst, CSM</td><td>Paid service delivered to a non-paying account</td></tr>
+      <tr><td class="mono">P7</td><td>CS agent tells the customer a fix ships next release while the PM agent has deprioritised it</td><td>Customer promise</td><td>CSM</td><td>Broken commitment surfacing at renewal</td></tr>
+      <tr><td class="mono">P8</td><td>An agent applies the refund policy or product docs that a newer version superseded</td><td>Stale or superseded</td><td>Support engineer</td><td>Wrong answer that looks well sourced</td></tr>
+      <tr><td class="mono">P9</td><td>An agent with access to a child account cannot see the parent contract's terms, and escalating would expose another business unit's data</td><td>Hierarchy and RBAC</td><td>Finance analyst, support engineer</td><td>Wrong terms applied; or an escalation that leaks data</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Step 3a: problem value</h3>
+  <p class="lede">Scored 1 to 3 on four criteria. All scores are assumed from desk research and my own support experience until interviews replace them.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>ID</th><th>Frequency</th><th>Cost when wrong</th><th>Invisible until late</th><th>Tangible value</th><th>Total</th><th>Read</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">P1</td><td>2</td><td>3</td><td>3</td><td>3</td><td class="num"><strong>11</strong></td><td><span class="pill ok">Wave 1</span> Money leaves; evidence spans billing, contract, risk</td></tr>
+      <tr><td class="mono">P5</td><td>2</td><td>3</td><td>3</td><td>3</td><td class="num"><strong>11</strong></td><td><span class="pill ok">Wave 1</span> Same family, two agents acting at once</td></tr>
+      <tr><td class="mono">P3</td><td>3</td><td>2</td><td>2</td><td>3</td><td class="num">10</td><td><span class="pill new">Wave 2</span> Frequent; costs SLA credits and engineer time</td></tr>
+      <tr><td class="mono">P4</td><td>3</td><td>3</td><td>2</td><td>2</td><td class="num">10</td><td><span class="pill new">The loop</span> Not a conflict but the calibration loops 2 and 3 exist to tune</td></tr>
+      <tr><td class="mono">P6</td><td>2</td><td>2</td><td>3</td><td>3</td><td class="num">10</td><td><span class="pill ok">Wave 1</span> Money family, entitlement form</td></tr>
+      <tr><td class="mono">P2</td><td>3</td><td>2</td><td>2</td><td>2</td><td class="num">9</td><td><span class="pill new">Wave 2</span> High frequency, cost is time</td></tr>
+      <tr><td class="mono">P7</td><td>2</td><td>3</td><td>2</td><td>2</td><td class="num">9</td><td><span class="pill warn">Later</span> Trust cost, slow to show</td></tr>
+      <tr><td class="mono">P8</td><td>2</td><td>2</td><td>3</td><td>2</td><td class="num">9</td><td><span class="pill warn">Built in</span> Staleness is a check inside every wave</td></tr>
+      <tr><td class="mono">P9</td><td>1</td><td>3</td><td>3</td><td>2</td><td class="num">9</td><td><span class="pill warn">Built in</span> RBAC and redaction are constraints, not a feature</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Step 3b: jobs to be done, CRM service</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>User</th><th>Job to be done</th><th>What they do today</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Support or applied AI engineer</strong></td><td>When agents disagree on a ticket, I want to see who concluded what on which evidence and set who outranks whom under which conditions, so I can widen agent autonomy without causing reversals</td><td>Reads traces after the incident; hard-codes precedence in prompts and routing rules</td></tr>
+      <tr><td><strong>CSM</strong></td><td>When my account raises an issue, I want one consistent answer and no promise one agent makes and another breaks, so I can protect the renewal</td><td>Finds out from the customer; apologises</td></tr>
+      <tr><td><strong>Finance analyst</strong></td><td>When an agent wants to grant a non-standard credit, I want to approve only true exceptions with the evidence in front of me, so I can keep close clean without reviewing everything</td><td>Reviews credits in bulk at month end; claws back</td></tr>
+      <tr><td><strong>VP of Support</strong></td><td>When I expand automation, I want proof it is not raising reopens, clawbacks or SLA misses, so I can justify the agent budget</td><td>Tracks automation rate alone</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Step 3c: aggregation across verticals</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>General job</th><th>CRM service</th><th>Freight</th><th>Banking</th><th>Abstracts?</th></tr></thead>
+    <tbody>
+      <tr><td>Commit a money action only on uncontested, current evidence</td><td>P1, P5, P6 credits, discounts, entitlements</td><td>Storage or demurrage credits and disputes</td><td>Instant payment to a new payee</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td>Settle a classification dispute with a stated basis and owner</td><td>P2, P3 bug or feature, severity</td><td>Exception category and priority</td><td>Fraud or genuine</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td>Keep customer-facing statements consistent across agents</td><td>P7 fix promises</td><td>Release notice vs hold</td><td>Payment status messages</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td>Calibrate the autonomy boundary from outcomes</td><td>P4</td><td>Same</td><td>Same</td><td><span class="pill ok">General</span></td></tr>
+      <tr><td>Bug versus feature, release priority</td><td>P2 specifics</td><td>n/a</td><td>n/a</td><td><span class="pill warn">Vertical</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><span class="tag">Step 3d, deferred on purpose</span>
+    <p>Value is re-estimated against engineering effort and complexity after requirements and the solution are charted (step 5). Until then the ranking is value only: <strong>wave 1 is money actions (P1, P5, P6)</strong>, where evidence spans billing, contract and risk, which is the cross-system wedge; <strong>wave 2 is classification and severity disputes (P2, P3)</strong>; staleness (P8) and RBAC (P9) are built into every wave; P4 is what loops 2 and 3 tune.</p>
+  </div>
   <p><strong>The decision this changes:</strong> DECISION SENTENCE.</p>
 </div></section>
 

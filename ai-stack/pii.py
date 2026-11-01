@@ -15,7 +15,7 @@ SECRETS = {"Anthropic key": r"sk-ant-[A-Za-z0-9_-]{10,}", "OpenAI key": r"sk-[A-
            "GitHub token": r"gh[pousr]_[A-Za-z0-9]{20,}", "AWS key": r"AKIA[0-9A-Z]{16}", "Private key": r"-----BEGIN [A-Z ]*PRIVATE KEY-----",
            "Assigned secret": r"(?:API_KEY|SECRET|TOKEN)=[A-Za-z0-9_-]{12,}"}
 ALLOWED_EMAIL = re.compile(r"(^|@|\.)(users\.noreply\.github\.com|anthropic\.com|example\.(com|org|net))$", re.I)
-BLOCKED_PATHS = re.compile(r"(^|/)(\.env|reference/.*|.*\.pem)$")
+BLOCKED_PATHS = re.compile(r"(^|/)(\.env|reference/.*|\.voc_cache/.*|.*\.pem)$")
 
 
 def scrub(text):

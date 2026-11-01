@@ -26,6 +26,10 @@ import httpx
 from llm import ask  # also loads .env
 from pii import scrub
 
+# Full third-party text stays in this gitignored cache; committed files keep the link and classification only
+CACHE = ".voc_cache"
+RAW_CACHE, WEB_CACHE = f"{CACHE}/voc_raw.json", f"{CACHE}/voc_web.json"
+
 QUERIES = [
     "AI agents conflicting decisions", "multi-agent system conflict", "AI support agent refund mistake",
     "AI agent issued credit wrong", "Agentforce agents production", "Zendesk AI agent", "AI customer support agent escalation",
@@ -103,8 +107,12 @@ def medium(tag):
              "text": clean((i.findtext("title") or "") + ". " + (i.findtext(ns) or ""))[:2500]} for i in items]
 
 
+def _public(rows):
+    return [{k: v for k, v in r.items() if k != "text"} for r in rows]
+
+
 def collect():
-    web = json.load(open("evals/voc_web.json")) if os.path.exists("evals/voc_web.json") else []
+    web = json.load(open(WEB_CACHE)) if os.path.exists(WEB_CACHE) else []
     jobs = [(hacker_news, q) for q in QUERIES] + [(reddit, q) for q in QUERIES] + [(medium, t) for t in FEEDS]
     items, seen = [], set()
     for it in web:
@@ -115,7 +123,9 @@ def collect():
             for it in res:
                 if it["url"] not in seen and len(it["text"]) > 120:
                     seen.add(it["url"]); items.append(it)
-    json.dump(items, open("evals/voc_raw.json", "w"), indent=1)
+    os.makedirs(CACHE, exist_ok=True)
+    json.dump(items, open(RAW_CACHE, "w"), indent=1)
+    json.dump(_public(items), open("evals/voc_raw.json", "w"), indent=1)
     by = {}
     for it in items:
         by[it["source"].split()[0]] = by.get(it["source"].split()[0], 0) + 1
@@ -151,10 +161,10 @@ def classify_one(it):
 
 
 def classify():
-    items = json.load(open("evals/voc_raw.json"))
+    items = json.load(open(RAW_CACHE))
     with ThreadPoolExecutor(8) as ex:
         rows = list(ex.map(classify_one, items))
-    json.dump(rows, open("evals/voc_classified.json", "w"), indent=1)
+    json.dump(_public(rows), open("evals/voc_classified.json", "w"), indent=1)
     rel = [r for r in rows if r.get("relevant") and r.get("outcome") in OUTCOMES]
     print(f"classified {len(rows)}; relevant with an outcome: {len(rel)}")
 

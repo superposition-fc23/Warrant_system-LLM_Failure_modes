@@ -4,3 +4,4 @@
 .models/
 *.mp3
 __pycache__/
+.voc_cache/

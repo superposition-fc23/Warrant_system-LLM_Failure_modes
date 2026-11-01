@@ -407,7 +407,7 @@ tailwind.config = {
   <div class="tbl"><table>
     <thead><tr><th>Performer</th><th>Job story, solution-free</th><th>Emotional</th><th>Social</th></tr></thead>
     <tbody>
-      <tr><td><strong>Support or applied AI engineer</strong></td><td>When two of my agents reach different conclusions about the same customer, I want the action to wait for the evidence that settles it, so I can let agents do more without cleaning up after them</td><td>Not lie awake over an agent's credit going out</td><td>Be the one who scaled automation safely, not the one blamed for the incident</td></tr>
+      <tr><td><strong>Support or applied AI engineer</strong></td><td>When two of my agents reach different conclusions about the same customer, I want what my agents do to match what is actually true across our systems, so I can let them do more without cleaning up after them</td><td>Not lie awake over an agent's credit going out</td><td>Be the one who scaled automation safely, not the one blamed for the incident</td></tr>
       <tr><td><strong>CSM</strong></td><td>When my account raises an issue, I want everything we tell them to agree, so I can protect the renewal</td><td>No surprise escalations</td><td>Look in control in front of the customer</td></tr>
       <tr><td><strong>Finance analyst</strong></td><td>When an agent is about to give away money outside policy, I want to be involved only when it really is an exception, so I can keep close clean</td><td>Confidence that nothing slipped through</td><td>Seen as an enabler, not the team that blocks support</td></tr>
       <tr><td><strong>VP of Support</strong></td><td>When I am asked to automate more of support, I want to know it is not quietly creating rework and leakage, so I can keep growing the agent budget</td><td>Sleep through the night of a big launch</td><td>Defend the numbers in front of the CFO</td></tr>
@@ -455,7 +455,29 @@ tailwind.config = {
   </table></div>
   <p><strong>Trigger (the struggling moment).</strong> A second action-taking agent is added to the same queue, or the first stacked credit or downgraded Sev 1 reaches the VP. <span class="pill warn">assumed, to verify in interviews</span></p>
   <p><strong>Competing alternatives for the job</strong>, most dangerous first: keep agents advisory-only and let humans act; hard-code precedence rules; route every disagreement to a human queue; let the CRM platform's native agent features handle it; do nothing and claw back at month end.</p>
-  <p><strong>Switch interview prompts</strong> (five interviews, before the design is committed): when did you first realise two agents had acted against each other, and what went wrong that day? What did you try instead: rules, queues, turning autonomy down? What almost stopped you adding the second agent?</p>
+  <p><strong>Switch interview prompts</strong> (ten timeline interviews, past events only, never hypotheticals; five before the design is committed): when did you first realise two agents had acted against each other, and what went wrong that day? What did you try instead: rules, queues, turning autonomy down? What almost stopped you adding the second agent?</p>
+
+  <h3>Step 3e, continued: Big Hire, Little Hire, and interventions for anxiety and habit</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Moment</th><th>Who decides</th><th>What wins it</th><th>Signal we track</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Big Hire</strong>, once</td><td>VP of Support buys; head of AI platform approves</td><td>Proof on their own history: replay last quarter's tickets and show the reversals it would have held</td><td>Pilot to contract conversion</td></tr>
+      <tr><td><strong>Little Hire</strong>, every conflict</td><td>Support engineer keeps the layer in the path instead of bypassing it; finance analyst rules on a hold instead of ignoring it</td><td>Holds that are right, cheap to rule on, and rare</td><td>Bypass and override rate; share of holds ruled within the SLA; share of holds later judged unnecessary</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Force to reduce</th><th>Design intervention</th></tr></thead>
+    <tbody>
+      <tr><td>Anxiety: false holds and added latency</td><td>Start in shadow mode, scoring without acting, so the first weeks cost nothing; acting only after the replay proves it</td></tr>
+      <tr><td>Anxiety: unclear accountability</td><td>Every hold names the person with authority and the one fact that would settle it</td></tr>
+      <tr><td>Habit: precedence hard-coded in prompts and queues</td><td>Import existing precedence rules as the starting policy instead of replacing them</td></tr>
+      <tr><td>Habit: trusting the CRM vendor's agents</td><td>Sit beside the vendor's agents at the tool layer; no migration</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn"><span class="tag">JTBD skill check (jobs-to-be-done, Christensen): 5 of 10 before this pass, 7 of 10 after</span>
+    <p><strong>Passes:</strong> job stated without the product; all four forces mapped, now with interventions for anxiety and habit; non-obvious competition including non-consumption (advisory-only, do nothing); Big Hire and Little Hire tracked separately; the solution-free statement and non-consumption depth points. <strong>Rule from here:</strong> every requirement in step 5 names the outcome ID and job dimension it serves, or it is cut. <strong>Still failing, honestly:</strong> emotional and social dimensions are assumed, not evidenced, and no timeline interviews have been run. Those two rows only move with real interviews, so 9 or 10 is not reachable on desk research, and the deck will say so.</p>
+    <p><strong>Also from the skill:</strong> integrate where performance is not good enough (the confirm step) and modularise where it is good enough (tracing, from existing tools). Price against the job's value, review minutes and clawbacks avoided, not per action. Measure "did the job get done": share of agent-handled tickets closed without reversal, reopen or contradiction.</p>
+  </div>
 
   <h3>Step 3f: aggregation across verticals</h3>
   <div class="tbl"><table>

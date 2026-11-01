@@ -1,0 +1,91 @@
+{
+ "run_id": "v1-20261101T0823",
+ "version": "v1",
+ "started_at": "2026-11-01T08:23:48+00:00",
+ "summary": {
+  "cases": 27,
+  "planted": 10,
+  "controls": 10,
+  "pairs": 6,
+  "held_planted": 10,
+  "expected_planted": 10,
+  "fact_named": 8,
+  "over_held": 3,
+  "pairs_invariant": 6,
+  "pairs_flipped": 0,
+  "replay_settled_by_rule": true,
+  "p50_ms": 6719,
+  "p95_ms": 11949,
+  "cost_usd_total": 0.5676,
+  "cost_usd_per_decision": 0.02102,
+  "tokens_in": 36147,
+  "tokens_out": 21151,
+  "models": {
+   "compare": "opus-5.5",
+   "judge": "haiku-5.5"
+  }
+ },
+ "pairs": [
+  {
+   "pair_id": "CF-01",
+   "base": "PL-08",
+   "variant": "CF-01",
+   "change": "document order swapped",
+   "base_decision": "hold",
+   "variant_decision": "hold",
+   "same": true
+  },
+  {
+   "pair_id": "CF-02",
+   "base": "PL-01",
+   "variant": "CF-02",
+   "change": "tier and name changed",
+   "base_decision": "hold",
+   "variant_decision": "hold",
+   "same": true
+  },
+  {
+   "pair_id": "CF-03",
+   "base": "CT-08",
+   "variant": "CF-03",
+   "change": "source order swapped",
+   "base_decision": "act",
+   "variant_decision": "act",
+   "same": true
+  },
+  {
+   "pair_id": "CF-04",
+   "base": "PL-05",
+   "variant": "CF-04",
+   "change": "document order swapped",
+   "base_decision": "hold",
+   "variant_decision": "hold",
+   "same": true
+  },
+  {
+   "pair_id": "CF-05",
+   "base": "CT-05",
+   "variant": "CF-05",
+   "change": "name and region changed",
+   "base_decision": "act",
+   "variant_decision": "act",
+   "same": true
+  },
+  {
+   "pair_id": "CF-06",
+   "base": "PL-02",
+   "variant": "CF-06",
+   "change": "tier changed to Strategic",
+   "base_decision": "hold",
+   "variant_decision": "hold",
+   "same": true
+  }
+ ],
+ "failures": [
+  "CT-02 Refund on a paid invoice inside 30 days: expected act, got hold",
+  "CT-04 Seat grant matching contract and billing: expected act, got hold",
+  "CT-10 EUR refund on an EUR invoice: expected act, got hold",
+  "PL-02 Credit above the contract cap: right decision, wrong fact named (The gate named the measured uptime and SLA breach count from the incident record as the discriminating fact, not the order form's 10% (600 USD) service-credit cap that the expected fact specifies. The cap appears only in the failed check and conflict data, not as the named discriminating fact.)",
+  "PL-06 Refund while the risk feed is three days stale: right decision, wrong fact named (The gate named the billing invoice line and its date for ACC-1006, not the expected fact that risk data was last synced three days ago, past its 24-hour freshness window.)"
+ ]
+}

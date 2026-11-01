@@ -54,6 +54,8 @@ Customers pay for this today in reviewers and approval queues, hand-coded hard g
 
 Conflicts must be frequent outside agent-native companies, and accountable owners must trust a hold enough to stop overriding it. Before committing the design: **five interviews** with operations owners across the three verticals, and **one log pull** counting reversals and overrides on agent actions, to replace the assumed write volume with a measured rate. Until then, the problem is a well-argued projection, and the deck will say so.
 
+**Key fork, recorded 31 Oct.** *Decision:* narrow to one vertical with three users; design for one primary user and one buyer; label every element vertical-specific or general so it abstracts later; keep TAM horizontal and resize SAM and SOM to the beachhead in design. *Assumption:* three verticals made the persona vague, and the shared failure means one concrete vertical still abstracts. *Vertical:* recommended CRM customer service (audience fit, the author's own domain, and a VP of Support owns both the agent budget and the handle-time metrics), pending decision; freight stays as a second use case, banking as an abstraction example.
+
 **Decision requested:** commit to the direction, a closed reliability loop at three time scales, with acting on contested or stale beliefs (agent disagreement as the lead trigger) as the first known failure it intervenes on. Leave the solution open for the design iteration.
 
 ---

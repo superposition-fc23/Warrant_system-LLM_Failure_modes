@@ -1,0 +1,3 @@
+#!/bin/sh
+# Blocks commits containing PII or secrets. Enable once per clone: git config core.hooksPath .githooks
+exec python3 "$(git rev-parse --show-toplevel)/ai-stack/pii.py" scan --staged

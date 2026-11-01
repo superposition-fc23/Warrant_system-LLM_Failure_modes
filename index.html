@@ -201,9 +201,23 @@ tailwind.config = {
     <tbody>
       <tr><td>Agents are becoming first-class workers with identities and permissions (Entra Agent ID, Workday Agent System of Record)</td><td>Conflicts between agents become an operating problem, not a research curiosity</td></tr>
       <tr><td>The scarce resource is the person with authority, not compute</td><td>Sell throughput: more decisions act safely without them</td></tr>
-      <tr><td>Convergence should be a state update, not a longer conversation</td><td>Read the belief state; never add another debate loop or harness</td></tr>
+      <tr><td>Convergence should be a state update, not a longer conversation</td><td>Read the evidence behind an action; never add another debate loop</td></tr>
+      <tr><td>Reliability is earned in a loop, not shipped in a release</td><td>Intervene at inference, evaluate in shadow, prove improvement over time</td></tr>
     </tbody>
   </table></div>
+  <h3>The direction I am committing to, before the solution</h3>
+  <p><strong>A closed reliability loop for multi-agent workflows, at three time scales,</strong> built from today's agents and LLMs:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Loop</th><th>When</th><th>What it does</th><th>Parallel in Dyssonance's thesis</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1. Intervene</strong></td><td>At inference</td><td>Before a high-impact write, check the evidence: contested by another agent or a newer source, or stale. Return act, gather or hold</td><td>Whether the system "knows enough to act"; dissonance and decay</td></tr>
+      <tr><td><strong>2. Learn</strong></td><td>During and after the run</td><td>Trace every run; judges score in shadow without acting; offline replay of traces and planted defects; human rulings become eval cases</td><td>Belief revision as evidence arrives</td></tr>
+      <tr><td><strong>3. Prove</strong></td><td>Over weeks</td><td>Online evals on live runs, benchmarked against the past; regressions trip the kill switch</td><td>Transitions between states as learning signals</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><span class="tag">Why build the harness-era version on purpose</span>
+    <p>Loops 1 to 3 are the best version possible with today's tools. The deliverable is the evidence: what the loop costs, where it still fails, and a <strong>replacement map</strong> of which parts a persistent belief state would subsume, improve, or leave untouched. It need not be their architecture to test their hypothesis.</p>
+  </div>
 </div></section>
 
 <!-- 2 -->
@@ -263,9 +277,10 @@ tailwind.config = {
   <div class="tbl"><table>
     <thead><tr><th>Bottom-up</th><th>Value</th><th>How</th></tr></thead>
     <tbody>
-      <tr><td><strong>TAM</strong></td><td class="num">$0.58B (range $0.14B to $2.9B)</td><td>12,000 multi-agent enterprises × 50k to 1M high-impact writes a month × $0.02 <span class="pill warn">assumed</span>; 2% to 6% of 2030 governance plus observability spend</td></tr>
-      <tr><td><strong>SAM</strong></td><td class="num">$0.23B</td><td>40% in regulated or high-consequence operations <span class="pill warn">assumed</span></td></tr>
-      <tr><td><strong>SOM, year 3</strong></td><td class="num">about $7M ARR</td><td>100 accounts at about $73k, roughly 3% of SAM <span class="pill warn">assumed</span></td></tr>
+      <tr><td><strong>Reliability pool, 2030</strong></td><td class="num">$10B to $25B</td><td>Observability over $9B plus governance $1B to $15.8B (sources above)</td></tr>
+      <tr><td><strong>TAM</strong></td><td class="num">$3.0B (range $1.2B to $6.0B)</td><td>12,000 multi-agent enterprises × $100k to $500k a year, platform plus usage <span class="pill warn">assumed</span>; 12% to 30% of the pool</td></tr>
+      <tr><td><strong>SAM</strong></td><td class="num">$1.2B</td><td>40% in regulated or high-consequence operations <span class="pill warn">assumed</span></td></tr>
+      <tr><td><strong>SOM, year 3</strong></td><td class="num">$25M ARR</td><td>100 accounts at $250k, about 2% of SAM <span class="pill warn">assumed</span></td></tr>
     </tbody>
   </table></div>
   <h3>Cost or revenue, tangible or secondary</h3>
@@ -277,6 +292,7 @@ tailwind.config = {
       <tr><td>Avoided wrong irreversible action</td><td>Risk</td><td><span class="pill warn">Secondary</span></td><td>Rare and counterfactual; the compliance sign-off argument</td></tr>
     </tbody>
   </table></div>
+  <p class="text-fg-2" style="font-size:14px">An earlier pass sized only the gate, at $0.02 per write against governance spend, and got $0.58B. That priced a feature. The direction is a category, so it is sized against the whole reliability budget.</p>
   <p><strong>Lead with throughput, keep risk for the security buyer.</strong> The payer (AI platform budget) and the beneficiary (operations P&amp;L) differ, so the case is written in the operations owner's numbers.</p>
 </div></section>
 
@@ -305,6 +321,8 @@ tailwind.config = {
   <div class="tbl"><table>
     <thead><tr><th>Call</th><th>Chose</th><th>Rejected</th><th>I am wrong if</th></tr></thead>
     <tbody>
+      <tr><td><strong>Direction before solution</strong></td><td>Commit to the three-loop reliability direction; leave the solution open</td><td>Committing to a gate product now</td><td>Design shows one loop carries all the value</td></tr>
+      <tr><td><strong>The harness question</strong></td><td>Build the harness-era loop on purpose, then map what a belief state replaces</td><td>Pretending a gate is not a harness</td><td>The loop works so well that no belief layer is needed, which is itself a finding worth presenting</td></tr>
       <tr><td><strong>The anchor</strong></td><td>Acting on a contested or stale belief, disagreement as lead trigger</td><td>"Agents disagree" alone</td><td>Interviews show conflicts are rare and staleness is the whole problem</td></tr>
       <tr><td><strong>The customer</strong></td><td>Established enterprises in banking, freight, CRM service</td><td>Agent-native companies like Spawn</td><td>Only agent-native companies reach conflict volume that matters</td></tr>
       <tr><td><strong>The moment</strong></td><td>Before the write</td><td>After-the-fact observability</td><td>Reversal is cheap enough that tracing is sufficient</td></tr>

@@ -1,6 +1,6 @@
 # When enterprise agents disagree: discovery memo
 
-*31 Oct 2026, revision 3, after a devil's advocate review. One page in six-page-memo style, with the sizing model, the review and sources in the appendix. Every figure has a source or is marked (assumed). "Warrant" is a working name; the product angle is set in the design stage.*
+*31 Oct 2026, revision 4: direction committed, solution not. One page in six-page-memo style, with the sizing model, the review and sources in the appendix. Every figure has a source or is marked (assumed). "Warrant" is a working name; the product angle is set in the design stage.*
 
 ## The customer problem
 
@@ -22,15 +22,25 @@ Enterprise structure makes this harder. RBAC means the agent that can act is oft
 
 The share of organisations orchestrating multiple agents across workflows rose from 9% to 18% in one quarter (KPMG AI Pulse, to verify against the primary). Gartner expects over 40% of agentic AI projects to be cancelled by end 2027, partly over inadequate risk controls (Jun 2025). Agents are getting identities and a place in the org chart: Microsoft issues them directory identities (Entra Agent ID, May 2025) and Workday registers them beside human workers (Agent System of Record, Sep 2025). Agent-first companies such as Spawn and Block are colour, not evidence of the enterprise problem: they show where action volume is heading, not that enterprises have this pain today.
 
-## The direction
+## The direction (committed), not yet the solution
 
-A layer between agents and the systems of record that, before a high-impact write, reads the belief state behind it (evidence, provenance, age, and the authority of each agent holding a view) and returns a bounded decision: **act** when the governing belief is current and uncontested, **gather** when one named fact would settle it, **hold** when only a person with the right authority can. Each decision leaves a record, PII-redacted to the reader's scope, and each human ruling becomes an eval case. **It is not a harness**: it adds no prompts, workflow graph or routing rules; it reads state the agents already produce and decides only whether that state warrants the action. For Dyssonance this is the half of the thesis stated but not shown, whether a system "knows enough to act."
+**A closed reliability loop for multi-agent workflows, working at three time scales**, built from today's agents and LLM architectures:
 
-Five constraints: converge by **updating a belief state, not by debating longer** (Spawn found agent chatter grows with the square of agent count, p. 5); output a **bounded decision from a small classifier**, costed per resolved conflict, not per token; **escalate only real disagreements**, because users approve about 93% of Claude Code permission prompts (Anthropic, as cited by C. Lozano, 24 Sep 2026); make **hold a first-class output and test it for bias**, because KillBench found structured-output integrations collapse refusal rates and amplify bias (White Circle, 2026); and put escalations **in the surface the person already uses**, as a reviewable artifact a person rules on by commenting, the pattern Google's Antigravity uses for supervising parallel agents.
+1. **At inference: intervene on known failure modes.** Before a high-impact write, check the evidence behind it. The first known failure is the anchor above: acting on a belief that is contested, by another agent or a newer source, or stale. The intervention returns a bounded decision: act, gather one named fact, or hold for the person with authority.
+2. **During and after the run: shadow and offline evals with observability.** Trace every run, let judges score it in shadow without acting, replay stored traces and planted defects offline, and turn each human ruling into an eval case. What is learned loops back into the interventions.
+3. **Over time: online evals benchmarked against the past.** Score live runs continuously and compare each week with the baseline, so improvement is proven rather than asserted, and regressions trip a kill switch.
+
+**Why this answers the harness objection rather than avoiding it.** Loops 1 to 3 are, deliberately, the best harness-era version: interventions, judges and evals around today's agents. The deliverable is not the harness but the evidence from it: what the loop costs to build and run, where it still fails, and a replacement map of which parts a persistent belief state would subsume, improve, or leave untouched. If the loop converges on something belief-like, the parallels are explicit: the intervention is "whether the system knows enough to act"; contested and stale evidence is dissonance and decay; learning from rulings is belief revision; and benchmarking change over time mirrors "transitions between belief states become learning signals." It need not be their architecture to test their hypothesis.
+
+Five constraints: converge by **updating state, not by debating longer** (Spawn found agent chatter grows with the square of agent count, p. 5); output a **bounded decision from a small classifier**, costed per resolved conflict, not per token; **escalate only real disagreements**, because users approve about 93% of Claude Code permission prompts (Anthropic, as cited by C. Lozano, 24 Sep 2026); make **hold a first-class output and test it for bias**, because KillBench found structured-output integrations collapse refusal rates and amplify bias (White Circle, 2026); and put escalations **in the surface the person already uses**, as a reviewable artifact ruled on by comment, the pattern Google's Antigravity uses to supervise parallel agents.
 
 ## Market
 
-AI agents spending reaches $48B to $53B by 2030 across three estimates (MarketsandMarkets, Grand View, BCC). The budget this draws from is governance and observability: AI governance platforms about $1B by 2030 per Gartner and $15.8B per Forrester, and LLM observability from about $2B to over $9B (Citi Ventures). **Bottom-up TAM in 2030: base about $0.6B, range $0.14B to $2.9B (assumed)**, from 12,000 enterprises running multi-agent workflows, 50k to 1M high-impact agent writes a month each (base 200k), at $0.02 per gated write. That is 2% to 6% of 2030 governance plus observability spend. **SAM about $0.23B (assumed)**: the 40% in regulated or high-consequence operations. **SOM about $7M ARR in year three (assumed)**: 100 accounts at about $73k, roughly 3% of SAM. The weakest input is write volume; the first design partner's logs replace it.
+Revision 3 sized a feature: a gate priced at $0.02 per write, measured against governance spend alone, which gave a base TAM of $0.58B. The committed direction is a category, agent reliability (intervene, evaluate, observe, prove), which draws on observability, evals and governance budgets together.
+
+**Landscape, 2030.** AI agents $48B to $53B (MarketsandMarkets, Grand View, BCC). LLM observability over $9B (Citi Ventures). AI governance $1B (Gartner) to $15.8B (Forrester). The reliability spend pool is therefore **$10B to $25B**, with the definitional spread mostly in governance.
+
+**Bottom-up TAM: base $3.0B, range $1.2B to $6.0B (assumed)**, from 12,000 large enterprises running multi-agent workflows at an annual contract of $100k to $500k (base $250k), priced as a platform with a usage component rather than per write. That is 12% to 30% of the 2030 pool, plausible as an addressable share for the category, not as capture. **SAM about $1.2B (assumed)**: the 40% in regulated or high-consequence operations, where an unproven agent cannot ship. **SOM about $25M ARR in year three (assumed)**: 100 accounts at $250k, about 2% of SAM. The weakest input is contract size; three design-partner conversations replace it.
 
 ## Cost, revenue, and what customers will pay for
 
@@ -42,7 +52,7 @@ Customers pay for this today in reviewers and approval queues, hand-coded hard g
 
 Conflicts must be frequent outside agent-native companies, and accountable owners must trust a hold enough to stop overriding it. Before committing the design: **five interviews** with operations owners across the three verticals, and **one log pull** counting reversals and overrides on agent actions, to replace the assumed write volume with a measured rate. Until then, the problem is a well-argued projection, and the deck will say so.
 
-**Decision requested:** proceed to design with the problem anchored on actions taken on contested or stale beliefs, agent disagreement as the lead trigger, and the cross-system wedge.
+**Decision requested:** commit to the direction, a closed reliability loop at three time scales, with acting on contested or stale beliefs (agent disagreement as the lead trigger) as the first known failure it intervenes on. Leave the solution open for the design iteration.
 
 ---
 
@@ -51,12 +61,12 @@ Conflicts must be frequent outside agent-native companies, and accountable owner
 | Input | Low | Base | High | Basis |
 |---|---|---|---|---|
 | Enterprises running multi-agent workflows by 2030 | 12,000 | 12,000 | 12,000 | assumed: 60% of 20,000 large US and EU enterprises; 18% today (KPMG) |
-| High-impact agent writes per enterprise per month | 50k | 200k | 1M | assumed; every high-impact write is evaluated, only conflicts escalate |
-| Price per gated write | $0.02 | $0.02 | $0.02 | assumed: 20% of Agentforce's $0.10 per action |
-| TAM | $0.14B | $0.58B | $2.9B | 12,000 × writes × 12 × $0.02 |
-| Share of 2030 governance plus observability ($10.0B to $24.8B) | | 2.3% to 5.8% | | base TAM ÷ spend range |
-| SAM (40%) | | $0.23B | | assumed |
-| SOM, year 3 | | about $7M | | 100 accounts × ($48k usage + $25k platform minimum, assumed) |
+| Annual contract, platform plus usage | $100k | $250k | $500k | assumed: priced as reliability platform, not per write |
+| TAM | $1.2B | $3.0B | $6.0B | 12,000 × contract |
+| Share of 2030 reliability pool ($10B to $25B) | | 12% to 30% | | base TAM ÷ pool |
+| SAM (40%) | | $1.2B | | assumed |
+| SOM, year 3 | | $25M | | 100 accounts × $250k, about 2% of SAM |
+| Revision 3, for comparison | | $0.58B | | gate only, 200k writes a month × $0.02 |
 
 ## Appendix B: devil's advocate review, and what changed
 

@@ -442,6 +442,27 @@ tailwind.config = {
       <tr><td class="mono">O8</td><td>Minimise the effort to trace a reversed action to its evidence</td><td>6</td><td>5</td><td class="num">7</td><td><span class="pill warn">Served</span> Observability tools already do this; do not build a tracer</td></tr>
     </tbody>
   </table></div>
+  <h3>Step 3d, evidence check: 181 public opinions instead of interviews</h3>
+  <p class="lede">Best available stand-in until interviews: 163 Hacker News comments and 18 Substack posts about AI agents acting in business workflows, each classified by a small model into an outcome with inferred importance and satisfaction (<code>ai-stack/voc.py</code>, data in <code>ai-stack/evals/</code>, collected 31 Oct). Medium refused automated reads and Reddit needs its official API keys, so neither is in yet.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>ID</th><th>n</th><th>Assumed imp. / sat. / opp.</th><th>Evidence imp. / sat. / opp.</th><th>What it says</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">O2</td><td class="num">14</td><td class="num">8 / 3 / 13</td><td class="num"><strong>6.3 / 2.9 / 9.7</strong></td><td><span class="pill ok">Confirmed</span> Joint top: nobody can say which conclusion governs</td></tr>
+      <tr><td class="mono">O8</td><td class="num">21</td><td class="num">6 / 5 / 7</td><td class="num"><strong>6.7 / 3.7 / 9.7</strong></td><td><span class="pill stop">Overturned</span> I called tracing served. Authors say audit attribution is not: logs cannot tell agent actions from human ones</td></tr>
+      <tr><td class="mono">O1</td><td class="num">32</td><td class="num">9 / 2 / 16</td><td class="num">6.3 / 3.2 / 9.4</td><td><span class="pill ok">Confirmed</span> Top three, but my importance was about 3 points high</td></tr>
+      <tr><td class="mono">O4</td><td class="num">13</td><td class="num">7 / 4 / 10</td><td class="num">6.2 / 3.2 / 9.1</td><td><span class="pill new">Higher than assumed</span> Customers notice contradictions</td></tr>
+      <tr><td class="mono">O3</td><td class="num">46</td><td class="num">8 / 4 / 12</td><td class="num">6.4 / 4.1 / 8.7</td><td><span class="pill ok">Most discussed</span> Approval fatigue is the dominant theme (7 of 18 Substack posts)</td></tr>
+      <tr><td class="mono">O5</td><td class="num">33</td><td class="num">8 / 2 / 14</td><td class="num">6.1 / 3.6 / 8.6</td><td><span class="pill new">Lower than assumed</span> Frequent, but partly served by narrow, supervised rollouts</td></tr>
+      <tr><td class="mono">O7</td><td class="num">12</td><td class="num">7 / 6 / 8</td><td class="num">6.1 / 4.1 / 8.1</td><td>Over-broad agent permissions worry authors more than autonomy</td></tr>
+      <tr><td class="mono">O6</td><td class="num">10</td><td class="num">9 / 3 / 15</td><td class="num">5.3 / 3.8 / 6.8</td><td><span class="pill warn">Unvalidated</span> Lowest, but the buyers it belongs to barely post (10 of 181 read as executives)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note ok"><span class="tag">What the evidence changed</span>
+    <p><strong>1.</strong> My importance scores were about 2 to 3 points too high across the board: the assumption was inflated, as a hypothesis-holder's always is. <strong>2.</strong> The confirm step holds: O2 and O1 stay in the top three. <strong>3.</strong> O8 is overturned: not a generic tracer, but an <strong>attributable decision record</strong> (which agent, on which evidence, under whose authority) is underserved, so it moves into wave 1 as part of what the intervention writes. <strong>4.</strong> Approval fatigue is the loudest theme, which validates escalating only real disagreements. <strong>5.</strong> O6, the buyer's outcome, is neither confirmed nor refuted: the people who hold it do not post.</p>
+  </div>
+  <div class="note stop"><span class="tag">This evidence is itself a failure mode, so it is labelled as one</span>
+    <p><strong>Selection:</strong> authors are developers and commentators; 1 of 181 read as finance, 10 as executives, 90 could not be placed. <strong>Query bias:</strong> I wrote the search terms from my hypothesis. <strong>Judge bias:</strong> a model inferred every score, and its scores compress toward the middle (all opportunities fall between 6.8 and 9.7); belief is bias, and so is the judge. <strong>Caught in the build:</strong> the first report averaged the top 100 by importance, which inflated importance by 0.6 to 1.0 per outcome; it now uses every relevant item. <strong>Not our customers:</strong> nothing shows these authors run multi-agent support. Use it to rank and to falsify, not to size. Interviews still decide.</p>
+  </div>
   <div class="note ok"><span class="tag">What the opportunity scores changed</span>
     <p>Problem value ranked money conflicts first, and opportunity agrees (O1). But it also lifts <strong>proving improvement over time (O6, O5)</strong> to second and third: the buyer's job is not catching one conflict, it is knowing automation is safe to grow. So the v1 must show loop 3, not only loop 1. And it demotes tracing (O8): observability is served, so it is an input, never the product.</p>
   </div>
@@ -491,7 +512,7 @@ tailwind.config = {
     </tbody>
   </table></div>
   <div class="note"><span class="tag">Step 3g, deferred on purpose</span>
-    <p>Value is re-estimated against engineering effort after requirements and the solution are charted (step 5). Until then: <strong>wave 1 is money actions at the confirm step (O1, P1, P5, P6) plus proving improvement over time (O6, O5)</strong>; wave 2 is classification and severity disputes (O2, P2, P3); staleness (P8) and RBAC (P9, O7) are built in; tracing (O8) is an input from existing tools.</p>
+    <p>Value is re-estimated against engineering effort after requirements and the solution are charted (step 5). Until then: <strong>wave 1 is money actions at the confirm step (O1, O2, P1, P5, P6), with an attributable decision record (O8, promoted by the evidence check), plus proving improvement over time (O5; O6 unvalidated)</strong>; wave 2 is classification and severity disputes (O2, P2, P3); staleness (P8) and RBAC (P9, O7) are built in; generic tracing stays with existing tools.</p>
   </div>
   <p><strong>The decision this changes:</strong> DECISION SENTENCE.</p>
 </div></section>

@@ -29,6 +29,9 @@ KEY_ENV = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY",
 # Claude models that accept server-side refusal fallbacks (beta).
 _FALLBACK_OK = {"claude-opus-5-5", "claude-opus-5", "claude-sonnet-5-5"}
 
+# Token usage of the last ask() call, (input, output), for traces and cost per decision. Anthropic only for now.
+LAST_USAGE = (0, 0)
+
 
 def has_key(model_key: str) -> bool:
     return bool(os.getenv(KEY_ENV[MODELS[model_key]["provider"]]))
@@ -53,6 +56,8 @@ def ask(model_key: str, prompt: str, system: str = "", max_tokens: int = 16000, 
             resp = client.beta.messages.create(**kwargs, betas=["server-side-fallback-2026-07-01"], fallbacks="default")
         else:
             resp = client.messages.create(**kwargs)
+        global LAST_USAGE
+        LAST_USAGE = (resp.usage.input_tokens, resp.usage.output_tokens)
         if resp.stop_reason == "refusal":
             return f"[refused: {resp.stop_details.category if resp.stop_details else 'unknown'}]"
         return "".join(b.text for b in resp.content if b.type == "text")

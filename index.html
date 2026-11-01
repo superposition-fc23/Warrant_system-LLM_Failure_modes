@@ -251,7 +251,7 @@ tailwind.config = {
   <div class="tbl"><table>
     <thead><tr><th>Vertical</th><th>The conflict</th><th>The rule that exists</th><th>Where the rule fails</th></tr></thead>
     <tbody>
-      <tr><td><strong>Retail banking</strong></td><td>Service agent sends a cheque book to a just-changed address while the transaction agent holds an open dispute and KYC is stale</td><td>Account-takeover rule blocks address change plus cheque book</td><td>Fires on every genuine move; cannot see the KYC refresh completed an hour ago elsewhere</td></tr>
+      <tr><td><strong>Retail banking</strong></td><td>Service agent changes the phone number and enrols a new device; minutes later the payments agent sends an instant payment to a new payee (Zelle or RTP in the US, SEPA Instant or Faster Payments in Europe) on a device-risk score that predates the change</td><td>Account-takeover rule holds new payees after a contact or device change</td><td>Blocks every genuine customer with a new phone; cannot see they passed step-up in the app an hour ago, held in another system</td></tr>
       <tr><td><strong>Freight</strong></td><td>Exception agent tells the customer a container is released while the broker shows an exam hold</td><td>Customs status outranks carrier</td><td>Cannot express that the hold is six hours old, or the exam finished but was not posted</td></tr>
       <tr><td><strong>CRM service</strong></td><td>Refund agent approves a credit while risk has flagged the account and the contract overrides terms</td><td>Risk outranks service</td><td>Cannot tell the flag was cleared yesterday or the contract was amended</td></tr>
     </tbody>
@@ -310,7 +310,7 @@ tailwind.config = {
     </tbody>
   </table></div>
   <div class="note warn"><span class="tag">The real threat, and the wedge</span>
-    <p>Platforms will build the in-estate version. The wedge is what they structurally cannot see: <strong>high-impact writes whose evidence spans two or more systems of record</strong>, such as KYC in core banking, disputes in the card platform and service in the CRM.</p>
+    <p>Platforms will build the in-estate version. The wedge is what they structurally cannot see: <strong>high-impact writes whose evidence spans two or more systems of record</strong>, such as device risk in the fraud platform, payees in core banking and contact changes in the CRM.</p>
   </div>
 </div></section>
 

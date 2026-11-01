@@ -333,7 +333,7 @@ tailwind.config = {
   </table></div>
   <div class="note warn"><span class="tag">Key fork, recorded 31 Oct: assumption and decision</span>
     <p><strong>Decision.</strong> Narrow to one vertical with three users, and design for one primary user and one buyer. Every design element is labelled vertical-specific or general; the general column is the product that abstracts to the other verticals. TAM stays horizontal; SAM and SOM are resized to the beachhead vertical in design.</p>
-    <p><strong>Assumption, correct me.</strong> The three-vertical framing made the user and buyer vague, and one vertical with a concrete person will produce a better solution that still abstracts, because the failure (acting on contested or stale evidence across systems) is the same in each. <strong>Vertical: recommended CRM customer service, pending decision.</strong> Rule: not tax, security or trading, which are Dyssonance's own verticals.</p>
+    <p><strong>Assumption, correct me.</strong> The three-vertical framing made the user and buyer vague, and one vertical with a concrete person will produce a better solution that still abstracts, because the failure (acting on contested or stale evidence across systems) is the same in each. <strong>Vertical decided: CRM customer service</strong> (B2B support run on a CRM with an agent workforce). Freight stays as a second use case, banking as an abstraction example. Rule: not tax, security or trading, which are Dyssonance's own verticals.</p>
   </div>
   <div class="note stop"><span class="tag">Is the Spawn and Block direction a judgement call or a trend chase?</span>
     <p>Partly a trend chase, and I am treating it that way. Spawn is ten people writing code, and Block's restructuring is about one agent, not agents disagreeing. They are used as colour for where action volume goes, never as evidence. The evidence has to come from five operations-owner interviews and one log pull counting reversals and overrides, before design is committed.</p>
@@ -353,15 +353,18 @@ tailwind.config = {
 <!-- 7 -->
 <section id="user"><div class="wrap">
   <div class="sh"><span class="sn">07</span><h2>Target user and jobs to be done</h2></div>
-  <p class="lede">One primary user. Jobs written as <em>When [situation], I want to [motivation], so I can [outcome].</em> Then what they do instead today.</p>
+  <p class="lede">Vertical: CRM customer service at a B2B software company whose support runs on a CRM (for example Salesforce, Zendesk or DevRev) with AI agents handling refunds, credits and entitlements. One primary user, one buyer; the others supply evidence or receive escalations.</p>
+  <h3>Step 1: users</h3>
   <div class="tbl"><table>
-    <thead><tr><th>User</th><th>Job to be done</th><th>What they do today</th></tr></thead>
+    <thead><tr><th>Who</th><th>Role in the agent-run workflow</th><th>What they see today</th><th>General role (abstracts to)</th></tr></thead>
     <tbody>
-      <tr><td><strong>PRIMARY USER</strong></td><td>When ..., I want to ..., so I can ...</td><td>...</td></tr>
-      <tr><td>PRIMARY USER</td><td>When ..., I want to ..., so I can ...</td><td>...</td></tr>
-      <tr><td>SECONDARY USER</td><td>When ..., I want to ..., so I can ...</td><td>...</td></tr>
+      <tr><td><strong>Support operations lead</strong> <span class="pill ok">Primary user</span></td><td>Accountable for what the agent workforce does: which actions agents may take alone, the policies they follow, and the queue when they cannot</td><td>Reversed credits, reopened tickets, finance clawbacks, an escalation backlog; never the conflict itself</td><td>Workflow owner</td></tr>
+      <tr><td><strong>Tier-2 support specialist</strong></td><td>Rules on the cases agents hold; the person with authority on one ticket</td><td>Four tabs (CRM, billing, contract, risk) to reconstruct what each agent saw</td><td>Resolver with authority</td></tr>
+      <tr><td><strong>Billing and revenue operations analyst</strong></td><td>Owns credit policy and contract terms; their systems hold the evidence agents contradict</td><td>Credits that breach contract terms, found at month-end close</td><td>Policy and evidence owner</td></tr>
+      <tr><td><strong>VP of Customer Support</strong> <span class="pill new">Buyer</span></td><td>Owns the agent budget and the outcomes: handle time, backlog, CSAT, credit leakage. Head of AI platform is the technical approver</td><td>Agent automation rate rising while reopen and clawback rates are not tracked against it</td><td>Business owner of the workflow</td></tr>
     </tbody>
   </table></div>
+  <p class="text-fg-2" style="font-size:14px">The agents in this workflow (assumed for design): triage, refund and credit, risk, and account and contract agents, each reading a different system of record: the CRM, billing, the contract repository and the risk service. Why this buyer: the VP of Support pays for the agents and owns the metrics they move, so payer and beneficiary are the same person.</p>
   <p><strong>The decision this changes:</strong> DECISION SENTENCE.</p>
 </div></section>
 

@@ -185,99 +185,208 @@ body.show-notes .slide.on .notes{display:block}
 
   <section class="slide on">
     <p class="kick">Dyssonance enterprise AI challenge</p>
-    <h1>TITLE</h1>
-    <p class="sub big">ONE LINE: the failure mode, and who it hurts.</p>
-    <div class="foot"><span>NAME &middot; 5 Nov</span><span></span></div>
-    <aside class="notes">Open with the hook in one breath. Say what you will show and that you will end on where it is weak.</aside>
+    <h1>Warrant</h1>
+    <p class="sub big">Support agents commit money on evidence that conflicts or is out of date, and nobody finds out until finance closes the month.</p>
+    <p class="text-fg-2" style="margin-top:1.2em">A gate between agents and the systems that move money: act, gather or hold.</p>
+    <div class="foot"><span>5 Nov</span><span></span></div>
+    <aside class="notes">0:00 to 1:00. "An agent can pass every check and still give away money it should not. I will show that happening to my own system." Say the plan: the problem, a live demo, the decisions, and where this is weak.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">01 &middot; The failure mode</p>
-    <h2>FAILURE MODE HEADLINE</h2>
-    <p class="big">FAILURE MODE SENTENCE.</p>
-    <p class="text-fg-2">EVIDENCE, WITH SOURCE.</p>
-    <div class="foot"><span>Source: SOURCE</span><span></span></div>
-    <aside class="notes">One concrete story of it happening beats three statistics.</aside>
+    <p class="kick">02 &middot; The failure mode</p>
+    <h2>Agents act on beliefs nobody checked</h2>
+    <p class="big">An agent commits an action on a belief that is contested or stale, and nothing records what it relied on.</p>
+    <ul class="text-fg-2" style="margin-top:.6em;max-width:none">
+      <li>Illustration: a retention agent credits an account that risk flagged an hour ago; a second agent then credits the same incident</li>
+      <li>Conflicts settle by mechanics: last write wins, or the most confident agent acts</li>
+      <li>Spawn lets whoever lands second reconcile, and keeps no record of the competing positions</li>
+      <li>The enterprise rate is unmeasured. That is the first thing to find out</li>
+    </ul>
+    <div class="foot"><span>Sources: Spawn CEO blog, 28 Oct 2026; MAST, arXiv 2503.13657 (research tasks, not enterprise)</span><span></span></div>
+    <aside class="notes">1:00 to 2:00. Why this failure over the others: frequent, expensive, invisible until late, and a product can contain it. A better model does not fix it, because the evidence itself disagrees.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">02 &middot; The business problem</p>
-    <h2>WHO PAYS FOR IT, AND HOW MUCH</h2>
-    <ul><li>AFFECTED PARTY 1: IMPACT</li><li>AFFECTED PARTY 2: IMPACT</li><li>WHY NOW</li></ul>
-    <div class="foot"><span>Figures sourced or marked assumed</span><span></span></div>
-    <aside class="notes">Translate the technical failure into money, time or trust.</aside>
+    <p class="kick">03 &middot; The business problem</p>
+    <h2>Who pays, and why they cannot see it</h2>
+    <ul style="max-width:none">
+      <li><strong>Support engineer:</strong> reversed credits and reopened tickets, never the conflict behind them</li>
+      <li><strong>VP of Support:</strong> automation rises with no view of the clawbacks against it</li>
+      <li><strong>Finance:</strong> knows the rough size at reconciliation, not which agent decision caused it</li>
+      <li><strong>Why now:</strong> firms orchestrating multiple agents doubled in a quarter, 9% to 18% (KPMG)</li>
+      <li><strong>Size:</strong> TAM $3.0B, SOM $25M ARR by year 3 <span class="pill warn">assumed</span>. Cost per incident is unmeasured</li>
+    </ul>
+    <div class="foot"><span>KPMG Q2 2026 AI Pulse, 204 US leaders at firms above $1B revenue. Finance point: one practitioner's view</span><span></span></div>
+    <aside class="notes">2:00 to 3:30. Lead with throughput, not fear: more decisions act safely without a person. Sizing is bottom-up and assumed: 12,000 multi-agent enterprises at $100k to $500k a year; SOM is 100 accounts at $250k. Say assumed out loud.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">03 &middot; Target user and jobs to be done</p>
-    <h2>PRIMARY USER</h2>
-    <ul><li>When ..., I want to ..., so I can ...</li><li>When ..., I want to ..., so I can ...</li><li>Today they: WORKAROUND</li></ul>
+    <p class="kick">07 &middot; Target user and jobs to be done</p>
+    <h2>The engineer who sets what agents may do alone</h2>
+    <ul style="max-width:none">
+      <li><strong>Engineer's job:</strong> when two of my agents reach different conclusions about a customer, I want their actions to match what is true across our systems, so I can let them do more without cleaning up after them</li>
+      <li><strong>VP's job (buyer):</strong> when asked to automate more, I want to know it is not quietly creating rework and leakage, so I can keep growing the agent budget</li>
+      <li><strong>Today:</strong> one decision, once, in a prompt or a permission toggle, never revisited with evidence</li>
+      <li><strong>With this:</strong> per action type, from shadow evidence, widened or narrowed week by week</li>
+    </ul>
+    <div class="foot"><span>Evidence: public opinions classified by a model, including 70 Reddit snippets. No interviews yet</span><span></span></div>
+    <aside class="notes">3:30 to 5:00. Too tight and the human queue grows, so why have agents. Too loose and reversals repeat. The analyst answers the question on the card; the engineer owns the boundary; the VP pays. Ask: "My assumption is the user already works in Slack. Correct me."</aside>
+  </section>
+
+  <section class="slide">
+    <p class="kick">08 &middot; Scope</p>
+    <h2>Agents take money actions alone only when evidence agrees and is current</h2>
+    <ul style="max-width:none">
+      <li><strong>Not</strong> replacing the CRM vendor's agents, because this is separation of duties. A single-vendor shop is where we lose</li>
+      <li><strong>Not</strong> a tracing product, because generic tracing is served. It writes only the decision record</li>
+      <li><strong>Not</strong> changing models or prompts, because what it learns is stored as rules with an owner and an expiry</li>
+      <li><strong>Assuming:</strong> agents' money actions are tool calls we can see, and sources expose read access with timestamps</li>
+    </ul>
     <div class="foot"><span></span><span></span></div>
-    <aside class="notes">Name the decision this user makes that changes.</aside>
+    <aside class="notes">5:00 to 7:00. The first non-goal has a losing case and I say it. Vertical is CRM service for now, because narrowing sharpened the design more than added research did. Ask: "I deliberately left severity disputes out of v1. Is that the right cut for your customers?"</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">04 &middot; Scope</p>
-    <h2>GOAL IN ONE LINE</h2>
-    <ul><li><strong>Not</strong> NON-GOAL 1, because REASON</li><li><strong>Not</strong> NON-GOAL 2, because REASON</li><li><strong>Not</strong> NON-GOAL 3, because REASON</li></ul>
+    <p class="kick">09 &middot; How it works</p>
+    <h2>Model proposes, code decides</h2>
+    <figure style="margin:0;flex:1;min-height:0">
+      <svg viewBox="0 0 1000 400" role="img" aria-label="A support agent's credit passes through the gate: live and local sources, code checks, one model call, then a code decision. Act writes to billing; hold sends a question to a person in Slack, whose ruling can become a standing rule." style="width:100%;height:100%;color:var(--fg);font-family:var(--body)">
+        <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+        <g fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="5" y="150" width="105" height="70" rx="6"/>
+          <rect x="135" y="70" width="665" height="230" rx="8" stroke-dasharray="6 5" opacity=".55"/>
+          <rect x="150" y="150" width="140" height="70" rx="6"/><rect x="310" y="150" width="140" height="70" rx="6"/>
+          <rect x="470" y="150" width="150" height="70" rx="6" style="stroke:var(--accent)" stroke-width="2.5"/><rect x="640" y="150" width="145" height="70" rx="6"/>
+          <rect x="150" y="325" width="635" height="60" rx="6"/>
+          <rect x="840" y="60" width="155" height="70" rx="6"/><rect x="840" y="240" width="155" height="70" rx="6"/>
+        </g>
+        <g stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#a)">
+          <path d="M110 185H148"/><path d="M290 185H308"/><path d="M450 185H468"/><path d="M620 185H638"/>
+          <path d="M220 325V222"/><path d="M785 170L838 110"/><path d="M785 200L838 260"/>
+        </g>
+        <g fill="currentColor" font-size="15" text-anchor="middle">
+          <text x="57" y="180" font-weight="600">Live agent</text><text x="57" y="201" font-size="12">one tool</text>
+          <text x="220" y="180" font-weight="600">Read sources</text><text x="220" y="201" font-size="12">4 s budget each</text>
+          <text x="380" y="180" font-weight="600">Code checks</text><text x="380" y="201" font-size="12">limits, ledger</text>
+          <text x="545" y="180" font-weight="600">One model call</text><text x="545" y="201" font-size="12">reads contracts</text>
+          <text x="712" y="180" font-weight="600">Code decides</text><text x="712" y="201" font-size="12">act, gather, hold</text>
+          <text x="467" y="350" font-weight="600">Read-only MCP server</text><text x="467" y="372" font-size="13">HubSpot and Chargebee test accounts live; contracts and risk local</text>
+          <text x="917" y="90" font-weight="600">Act</text><text x="917" y="112" font-size="12">writes to Chargebee</text>
+          <text x="917" y="268" font-weight="600">Hold</text><text x="917" y="290" font-size="12">question in Slack</text>
+          <text x="467" y="105" font-size="14" opacity=".75">The gate: a fixed pipeline, not an agent</text>
+          <text x="917" y="335" font-size="12">ruling can become a rule:</text><text x="917" y="354" font-size="12">owner, scope, expiry</text>
+        </g>
+      </svg>
+    </figure>
+    <div class="foot"><span>The trap: all 13 acts in the eval rest on the model finding nothing, and a miss looks exactly like a clean case</span><span></span></div>
+    <aside class="notes">7:00 to 9:00. One model step, in blue. The agent's prompt does not protect the money: the credit tool only writes on an act for that exact proposal. Anything that fails, a timeout, a malformed reply, an unreadable answer, never acts. The trap is on the slide; say it.</aside>
+  </section>
+
+  <section class="slide">
+    <p class="kick">10 &middot; Live demo</p>
+    <h2>A real agent, real test systems, a real click</h2>
+    <p class="text-fg-2"><span class="pill ok">Real</span> agent, gate, HubSpot and Chargebee test reads, credit write, Slack clicks &nbsp; <span class="pill warn">Scripted or local</span> tickets, seeded accounts, contracts, risk</p>
+    <ol style="max-width:none">
+      <li><strong>Clean credit:</strong> commits to Chargebee, and nobody is told</li>
+      <li><strong>Second agent, same incident:</strong> held, naming the first credit. <strong>Go slowly here</strong></li>
+      <li><strong>Keep held, make it a rule:</strong> the person rules once in Slack</li>
+      <li><strong>Same pattern again:</strong> settled by the rule, with no card</li>
+      <li><strong>Prototype:</strong> autonomy boundary, shadow report, review</li>
+    </ol>
+    <div class="foot"><span>Seeded, fictional accounts only</span><span></span></div>
+    <aside class="notes">9:00 to 19:00. Say real and mocked before starting. Before the call: rm -f state/rules.json state/ledger.jsonl, close notifications, no keys on screen. Run: .venv/bin/python agent.py v3 slack 900 from ai-stack. If anything breaks, switch to the backup recording once, without apologising twice. Record that backup before the call.</aside>
+  </section>
+
+  <section class="slide">
+    <p class="kick">11 &middot; Where the AI was wrong</p>
+    <h2>Every eval passed. Then the live agent double-credited a customer</h2>
+    <p class="big">Chargebee's credit list lagged its own write by over a minute. An empty list looks exactly like "no prior credit".</p>
+    <ul style="max-width:none">
+      <li><strong>Why evals missed it:</strong> a fixture is always current, so this failure could not appear in any test</li>
+      <li><strong>The fix was not a better model:</strong> the gate keeps a ledger of its commits, and stops when the balance exceeds listed credits</li>
+      <li><strong>The thesis applies to the gate too:</strong> a belief can be well formed, freshly read and wrong</li>
+    </ul>
+    <div class="foot"><span>Logged in product/llm-failure-modes-log.md, with 27 other failures from this build</span><span></span></div>
+    <aside class="notes">Tell it as a story, at the start of the decisions block. Also: one injection "catch" was really a parse failure, because failing closed hid a format bug behind a passing score. Reading the stored raw answers caught it.</aside>
+  </section>
+
+  <section class="slide">
+    <p class="kick">11 &middot; Key decisions and trade-offs</p>
+    <h2>What I chose, what I gave up, what would change my mind</h2>
+    <div class="tbl"><table style="font-size:clamp(11px,1.25vw,18px)">
+      <thead><tr><th>Decision</th><th>Chose</th><th>Gave up</th><th>Switch if</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Verification</strong></td><td>Fixed pipeline with one model step</td><td>A gate that can reason its way to new checks</td><td>A bounded model step beats it on the same cases</td></tr>
+        <tr><td><strong>Model</strong></td><td>One Sonnet 5.5 call, Opus 5.5 judge. Median 14.5 s to 4.2 s</td><td>The cheaper Haiku call, and a second opinion</td><td>Haiku holds the catch rate over repeat runs</td></tr>
+        <tr><td><strong>Source layer</strong></td><td>Own read-only MCP server over vendor APIs</td><td>Vendor MCP servers, so we own every adapter</td><td>Vendors offer enforceable read-only scopes</td></tr>
+        <tr><td><strong>Autonomy</strong></td><td>Fail closed; engineer owns the boundary; shadow first</td><td>Automation rate: some clean actions wait</td><td>Over-holds cost more than the leakage they stop</td></tr>
+      </tbody>
+    </table></div>
+    <div class="foot"><span>If the demo ran long, keep two rows</span><span></span></div>
+    <aside class="notes">19:00 to 22:00. Model cost went from 0.0173 to 0.0101 USD per decision. Smaller was not faster: Haiku wrote 2.2 times the output, and a trace review showed non-model time was about 36 ms. For each row, say what would make you switch.</aside>
+  </section>
+
+  <section class="slide">
+    <p class="kick">12 &middot; Guardrails</p>
+    <h2>What it must not do</h2>
+    <ul style="max-width:none">
+      <li><strong>Never act on a failed read.</strong> Timeout, error or malformed reply gathers. <span class="pill ok">Tested</span></li>
+      <li><strong>Never move money without an act</strong> on that exact proposal, re-read before commit. <span class="pill ok">Tested</span></li>
+      <li><strong>Never settle a disagreement silently.</strong> The losing belief stays on the record. <span class="pill ok">Built</span></li>
+      <li><strong>Never apply a rule outside its scope</strong> or past its expiry. <span class="pill ok">Tested</span></li>
+      <li><strong>N3, kill switch:</strong> reversal rate 1 point above baseline over 7 days, or one reversal the gate should have caught, reverts that action type to approval and tells the VP and engineer within 15 minutes <span class="pill warn">assumed</span> <span class="pill stop">Not built</span></li>
+    </ul>
+    <div class="foot"><span>19 tests, no model calls: ai-stack/test_warrant.py</span><span></span></div>
+    <aside class="notes">22:00 to 24:00. Say the kill switch trigger as a number, and say plainly that it is designed, not built. Also not built: field-level access.</aside>
+  </section>
+
+  <section class="slide">
+    <p class="kick">13 &middot; How we would know</p>
+    <h2>Metrics, and what v3 measured</h2>
+    <div class="grid grid-cols-2 gap-6 items-start">
+      <ul style="margin:0;max-width:none">
+        <li><strong>Leading:</strong> hold precision; share of money actions through the gate</li>
+        <li><strong>Lagging:</strong> credit leakage per 1,000 money-action tickets</li>
+        <li><strong>Counter:</strong> rubber-stamp rate, split by what happened next; clean actions held</li>
+      </ul>
+      <div class="tbl" style="margin:0"><table style="font-size:clamp(11px,1.2vw,17px)">
+        <thead><tr><th>Fixtures, worst of 5 runs</th><th>v2</th><th>v3</th></tr></thead>
+        <tbody>
+          <tr><td>Planted held</td><td>10/10</td><td>13/13</td></tr>
+          <tr><td>Clean over-held</td><td>1/10</td><td>1/11</td></tr>
+          <tr><td>Injection held</td><td>none</td><td>5/5</td></tr>
+          <tr><td><strong>Pairs</strong></td><td>6/6</td><td><strong class="text-stop">5/6, misses bar</strong></td></tr>
+          <tr><td>Median, p95</td><td>14.5, 19.5 s</td><td>4.2, 6.3 s</td></tr>
+          <tr><td>Cost per decision</td><td>$0.0173</td><td>$0.0101</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="foot"><span>36 synthetic cases, written by the same model as the system. v2 was one run</span><span></span></div>
+    <aside class="notes">24:00 to 25:30. Bar set before building. The miss is CT-08, a goodwill credit under the cap but above the SLA rate, which flips on 2 of 5 runs. I left the answer key alone. Live path median was 5.9 s across six cases. 13 of 13 has a 95% lower bound of 75%.</aside>
+  </section>
+
+  <section class="slide">
+    <p class="kick">14 &middot; Where this is weak</p>
+    <h2>Three ways I could be wrong</h2>
+    <ol style="max-width:none">
+      <li><strong>No customer has confirmed the problem.</strong> The evidence is public opinion classified by a model. No interviews, no log pull</li>
+      <li><strong>The results partly grade themselves.</strong> One model family wrote the system, the cases and the judge. My own review of 15 records is the first outside check</li>
+      <li><strong>The live path is real but small.</strong> Scripted tickets, seeded accounts, one kind of write. And every act still rests on a model finding nothing</li>
+    </ol>
     <div class="foot"><span></span><span></span></div>
-    <aside class="notes">The non-goals are the judgement. Say why each one is out.</aside>
+    <aside class="notes">25:30 to 27:00. Never cut this slide. Volunteer it before Q&amp;A. Before presenting, update point 2 with what the human review found. Ask: "What would change your view of the size of this problem by an order of magnitude?"</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">05 &middot; How it works</p>
-    <h2>WHERE THE FAILURE ENTERS, AND WHERE WE CATCH IT</h2>
-    <p class="text-fg-2">COPY THE SVG FROM index.html SECTION 05 HERE.</p>
-    <div class="foot"><span></span><span></span></div>
-    <aside class="notes">Point at the gap between what the agent reports and what is true.</aside>
-  </section>
-
-  <section class="slide">
-    <p class="kick">06 &middot; Live demo</p>
-    <h2>DEMO</h2>
-    <ol><li>SCREEN 1: the normal path</li><li>SCREEN 2: the failure, caught and held</li><li>SCREEN 3: the correction, and the audit trail</li></ol>
-    <div class="foot"><span>Backup recording: FILE</span><span></span></div>
-    <aside class="notes">Say what is real and what is mocked before you start. If anything breaks, switch to the recording without apologising twice.</aside>
-  </section>
-
-  <section class="slide">
-    <p class="kick">07 &middot; Key decisions and trade-offs</p>
-    <h2>WHAT I CHOSE, AND WHAT I GAVE UP</h2>
-    <ul><li>DECISION 1: CHOSE over ALTERNATIVE, because REASON</li><li>DECISION 2: ...</li><li>DECISION 3: ...</li></ul>
-    <div class="foot"><span></span><span></span></div>
-    <aside class="notes">For each, say what would make you switch.</aside>
-  </section>
-
-  <section class="slide">
-    <p class="kick">08 &middot; Guardrails</p>
-    <h2>WHAT IT MUST NOT DO</h2>
-    <ul><li>N1: ...</li><li>N2: ...</li><li>N3, the kill switch: above ERROR RATE over WINDOW, it reverts to approval</li></ul>
-    <div class="foot"><span></span><span></span></div>
-    <aside class="notes">N3 is the most credible control. Say the trigger as a number.</aside>
-  </section>
-
-  <section class="slide">
-    <p class="kick">09 &middot; How we would know</p>
-    <h2>LEADING, LAGGING, COUNTER</h2>
-    <ul><li>Leading: ...</li><li>Lagging: ...</li><li>Counter: ...</li></ul>
-    <div class="foot"><span></span><span></span></div>
-    <aside class="notes">The counter metric is what proves you understand automation.</aside>
-  </section>
-
-  <section class="slide">
-    <p class="kick">10 &middot; Where this is weak</p>
-    <h2>THREE WAYS I COULD BE WRONG</h2>
-    <ol><li>...</li><li>...</li><li>...</li></ol>
-    <div class="foot"><span></span><span></span></div>
-    <aside class="notes">Volunteer these before Q&amp;A. It is the most senior-reading move available.</aside>
-  </section>
-
-  <section class="slide">
-    <p class="kick">11 &middot; Conclusions</p>
-    <h2>WHAT I WOULD DO NEXT</h2>
-    <ol><li>With half the time I would cut ..., at the cost of ...</li><li>Before anyone builds this I would want to know ...</li><li>In 90 days it worked if ..., and the counter-metric stayed below ...</li></ol>
+    <p class="kick">15 &middot; Conclusions</p>
+    <h2>What I would do next</h2>
+    <ol style="max-width:none">
+      <li><strong>With half the time</strong> I would cut the boundary screen, shadow report and forum evidence, and keep the live path. It would cost the buyer story: a gate, not a product</li>
+      <li><strong>Before anyone builds this</strong> I would run five interviews and one log pull: how often do agents act on conflicting sources, and can finance tie it to leakage it already sees?</li>
+      <li><strong>In 90 days it worked if</strong> finance confirmed a meaningful share of held money as real leakage and the engineer widened autonomy on that evidence, with clean actions held at or below 5% <span class="pill warn">assumed</span></li>
+    </ol>
     <div class="foot"><span>Thank you &middot; questions</span><span></span></div>
-    <aside class="notes">End on the 90-day test, then stop talking.</aside>
+    <aside class="notes">27:00 to 30:00. End on the 90-day test, then stop talking. Q&amp;A: "Where would this break first in production: volume, a bad input, or a system we do not control?" My answer after this build: a system we do not control.</aside>
   </section>
 
 </div>

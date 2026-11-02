@@ -6,7 +6,7 @@
 Pass: planted cases match the expected decision; controls act; each pair gets its base case's decision; the replay is
 settled by the rule with no person. The ruling is scripted (no human in the loop yet); the replay is real.
 
-    .venv/bin/python crm_eval.py v1
+    .venv/bin/python crm_eval.py v2
 """
 import asyncio
 import json
@@ -38,6 +38,15 @@ def judge(case, rec):
         return {"fact_named": False, "note": f"judge output unparsable: {out[:120]}"}
 
 
+def audit_summary():
+    if not os.path.exists("evals/crm_audit.json"):
+        return None
+    rows = json.load(open("evals/crm_audit.json"))
+    ctl = [r for r in rows if r["id"].startswith("CT")]
+    return {"controls_clean": sum(r["verdict"] == "clean" for r in ctl), "controls": len(ctl),
+            "planted_with_incidental_defects": sum(r["verdict"] != "clean" for r in rows if r["id"].startswith("PL"))}
+
+
 def describe(source, r):
     if source == "crm":
         return f"{r['name']}, {r['tier']}, {r['entitlements']['seats']} seats entitled"
@@ -58,7 +67,8 @@ def to_ui(case, rec):
                        "currency": p.get("currency"), "pct": p.get("pct"), "seats": p.get("seats"), "agent": p["agent"], "summary": warrant.summary(p)},
             "beliefs": beliefs, "conflict": rec["conflict"], "checks": rec["checks"], "question": rec["question"],
             "rule_applied": rec["rule_applied"], "record_id": rec["record_id"], "trace_id": rec["trace_id"],
-            "latency_ms": rec["latency_ms"], "cost_usd": round(rec["usage"].get("cost_usd", 0), 5),
+            "latency_ms": rec["latency_ms"], "cost_usd": round(rec["usage"].get("cost_usd", 0), 5), "fact_from": rec.get("fact_from"),
+            "escalated": rec["usage"].get("escalated"), "triggers": rec["usage"].get("triggers"), "compare_skipped": rec.get("compare_skipped"),
             "discriminating_fact": rec["discriminating_fact"], "judge": None}
 
 
@@ -69,7 +79,7 @@ async def main(version):
     out = f"runs/{run_id}"
     os.makedirs(out, exist_ok=True)
     telemetry.setup(f"{out}/traces.jsonl")
-    warrant.RULES.clear()
+    warrant.RULES_PATH = f"{out}/rules.json"      # each run starts with no standing rules; the file is the run's rule state
     cases = {c["id"]: c for c in d["cases"]}
     order = [c for c in d["cases"] if c["kind"] in ("control", "planted")] + [c for c in d["cases"] if c["kind"] == "pair"]
     recs, ui = {}, {}
@@ -83,11 +93,13 @@ async def main(version):
               "ruling": "reject", "reason_code": "duplicate_compensation",
               "standing_rule": {"id": "SR-01", "pattern": {"action_type": "service_credit", "check": "prior_compensation"},
                                 "effect": "hold", "owner": "Priya Shah", "expires": "2026-12-01"}, "scripted": True}
-    warrant.RULES.append(ruling["standing_rule"])
+    warrant.save_rule(ruling["standing_rule"])
     rp = cases["RP-01"]
     rec = await warrant.run(rp, d["now"], d["people"], d["authority"])
     recs["RP-01"], ui["RP-01"] = rec, to_ui(rp, rec)
     print(f"RP-01  expected hold by SR-01, got {rec['decision']} rule {rec['rule_applied']}", flush=True)
+    # R6: the rule must stop applying after it expires.
+    expiry_ok = bool(warrant.active_rules(d["now"])) and not warrant.active_rules("2026-12-02T09:00:00Z")
 
     failures = []
     for cid, u in ui.items():
@@ -119,12 +131,17 @@ async def main(version):
             "fact_named": sum(bool(u["judge"] and u["judge"].get("fact_named")) for u in planted),
             "over_held": sum(u["decision"] != "act" for u in controls),
             "pairs_invariant": sum(p["same"] for p in pairs), "pairs_flipped": sum(not p["same"] for p in pairs),
-            "replay_settled_by_rule": ui["RP-01"]["pass"],
+            "replay_settled_by_rule": ui["RP-01"]["pass"], "rule_expiry_enforced": expiry_ok,
+            "model_skipped": sum(1 for r in recs.values() if r.get("compare_skipped")),
+            "escalated": sum(1 for r in recs.values() if r["usage"].get("escalated")),
+            "first_pass_only": sum(1 for r in recs.values() if r["usage"].get("stages") and not r["usage"].get("escalated")),
+            "fact_from_code": sum(1 for r in recs.values() if r.get("fact_from") == "code"),
+            "eval_audit": audit_summary(),
             "p50_ms": statistics.median(lat), "p95_ms": lat[int(0.95 * (len(lat) - 1))],
             "cost_usd_total": round(cost, 4), "cost_usd_per_decision": round(cost / len(recs), 5),
             "tokens_in": sum(r["usage"].get("tokens_in", 0) for r in recs.values()),
             "tokens_out": sum(r["usage"].get("tokens_out", 0) for r in recs.values()),
-            "models": {"compare": next((r["usage"]["model"] for r in recs.values() if r["usage"].get("model")), None), "judge": "haiku-5.5"}}
+            "models": {"first_pass": warrant.FIRST_PASS, "escalation": warrant.ESCALATE, "judge": "haiku-5.5"}}
 
     with open(f"{out}/decisions.jsonl", "w") as f:
         for r in recs.values():

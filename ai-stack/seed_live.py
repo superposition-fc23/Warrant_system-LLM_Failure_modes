@@ -10,6 +10,7 @@ import sys
 import live_sources as L
 
 DEMO = ["CT-01", "CT-03", "CT-09", "PL-02", "PL-03", "PL-04"]
+POOL = 10
 PRICE_ID, SEAT_PRICE = "warrant-business-usd-monthly", 30
 PROPS = {"warrant_account_id": "Warrant account id", "warrant_tier": "Warrant tier", "warrant_seats": "Warrant seats entitled",
          "warrant_plan": "Warrant plan", "warrant_csm": "Warrant CSM", "warrant_region": "Warrant region"}
@@ -40,6 +41,12 @@ def seed_props():
     for name, label in PROPS.items():
         if name not in have:
             L.hubspot("POST", "/crm/v3/properties/companies", json={"name": name, "label": label, "groupName": "companyinformation", "type": "string", "fieldType": "text"})
+
+
+def pool_case(c, n):
+    """Copies of the clean control under a fresh account, so each live agent demo starts with no credits on file."""
+    acc = f"ACC-30{n:02d}"
+    return json.loads(json.dumps(c).replace("ACC-2001", acc).replace("OF-2001", f"OF-30{n:02d}"))
 
 
 def seed_case(c):
@@ -74,3 +81,5 @@ if __name__ == "__main__":
     cases = {c["id"]: c for c in json.load(open("evals/crm_cases.json"))["cases"]}
     for cid in DEMO:
         print(cid, seed_case(cases[cid]), flush=True)
+    for n in range(1, POOL + 1):
+        print("pool", seed_case(pool_case(cases["CT-01"], n)), flush=True)

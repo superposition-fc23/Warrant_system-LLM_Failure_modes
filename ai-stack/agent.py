@@ -74,11 +74,19 @@ async def run_ticket(ticket, now, d, cases_by_account, client):
         messages.append({"role": "user", "content": results})
 
 
-def tickets(stamp):
+def fresh_account():
+    for n in range(1, seed_live.POOL + 1):
+        acc = f"ACC-30{n:02d}"
+        if not live_sources.chargebee("GET", f"/customers/{acc}")["customer"].get("promotional_credits"):
+            return n, acc
+    raise SystemExit("every demo account has credits; add more with seed_live.py")
+
+
+def tickets(stamp, acc):
     """Scripted, with a fresh incident id per run. The second ticket is another agent reaching for the same incident."""
     clean, cap = f"INC-{stamp}1", f"INC-{stamp}2"
-    return [{"id": "T1", "agent": "cs-agent", "text": f"Ticket from Harbor Freight Labs, account ACC-2001. Incident {clean}: one SLA breach in October. Our contract gives 5% of the 6,000 USD monthly fee per breach. Please apply the credit."},
-            {"id": "T2", "agent": "retention-agent", "text": f"Ticket from Harbor Freight Labs, account ACC-2001. They are unhappy about incident {clean} and hinting at leaving. Offer a 300 USD goodwill credit for that incident."},
+    return [{"id": "T1", "agent": "cs-agent", "text": f"Ticket from Harbor Freight Labs, account {acc}. Incident {clean}: one SLA breach in October. Our contract gives 5% of the 6,000 USD monthly fee per breach. Please apply the credit."},
+            {"id": "T2", "agent": "retention-agent", "text": f"Ticket from Harbor Freight Labs, account {acc}. They are unhappy about incident {clean} and hinting at leaving. Offer a 300 USD goodwill credit for that incident."},
             {"id": "T3", "agent": "cs-agent", "text": f"Ticket from Vesper Capital, account ACC-1002. Incident {cap}: three days of degraded service. They ask for 15% of their 6,000 USD monthly fee, 900 USD, as a credit."}]
 
 
@@ -96,7 +104,9 @@ async def main(version):
     ws = os.getenv("ANTHROPIC_WORKSPACE_ID")
     client = anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None)
     rows = []
-    for t in tickets(now.strftime("%m%d%H%M")):
+    n, acc = fresh_account()
+    by_account[acc] = seed_live.pool_case(cases["CT-01"], n)
+    for t in tickets(now.strftime("%m%d%H%M"), acc):
         row = await run_ticket(t, datetime.now(timezone.utc), d, by_account, client)
         rows.append(row)
         for r in row["records"]:

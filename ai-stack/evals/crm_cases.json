@@ -122,7 +122,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -190,10 +196,20 @@
      "invoices": [
       {
        "id": "INV-20021",
-       "amount": 1800,
+       "amount": 2150,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 1800
+        },
+        {
+         "item": "Analytics add-on",
+         "amount": 350
+        }
+       ]
       }
      ],
      "credits": [],
@@ -227,7 +243,7 @@
     "pct": null,
     "seats": null,
     "incident_id": null,
-    "rationale": "Unused add-on billed on INV-20021, cancelled within 30 days",
+    "rationale": "Unused Analytics add-on billed on INV-20021, cancelled within 30 days",
     "asserted": []
    }
   },
@@ -264,7 +280,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -318,7 +340,7 @@
      "status": "active",
      "csm": "Alex Moreno",
      "entitlements": {
-      "seats": 220,
+      "seats": 200,
       "plan": "Business"
      },
      "updated_at": "2026-11-01T08:00:00Z"
@@ -335,7 +357,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -369,7 +397,7 @@
     "pct": null,
     "seats": 20,
     "incident_id": null,
-    "rationale": "Provision 20 seats already contracted and billed",
+    "rationale": "CRM shows 200 seats; contract and billing say 220. Provision the missing 20",
     "asserted": []
    }
   },
@@ -407,7 +435,13 @@
        "amount": 5000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 5000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -484,7 +518,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -563,7 +603,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -641,7 +687,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -726,7 +778,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -800,10 +858,20 @@
      "invoices": [
       {
        "id": "INV-20101",
-       "amount": 2400,
+       "amount": 2700,
        "currency": "EUR",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 2400
+        },
+        {
+         "item": "Storage add-on",
+         "amount": 300
+        }
+       ]
       }
      ],
      "credits": [],
@@ -874,7 +942,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -953,7 +1027,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1024,7 +1104,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [
@@ -1104,7 +1190,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1182,7 +1274,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1257,10 +1355,20 @@
      "invoices": [
       {
        "id": "INV-10061",
-       "amount": 3000,
+       "amount": 3450,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 3000
+        },
+        {
+         "item": "Reporting add-on",
+         "amount": 450
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1331,7 +1439,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1402,7 +1516,13 @@
        "amount": 400,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 400
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1487,7 +1607,13 @@
        "amount": 1500,
        "currency": "EUR",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 1500
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1558,7 +1684,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "overdue",
-       "date": "2026-08-29"
+       "date": "2026-08-29",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1635,7 +1767,13 @@
        "amount": 400,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 400
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1722,7 +1860,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1816,7 +1960,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1890,7 +2040,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -1971,7 +2127,13 @@
        "amount": 5000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 5000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -2050,7 +2212,13 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 6000
+        }
+       ]
       }
      ],
      "credits": [],
@@ -2123,7 +2291,13 @@
        "amount": 2500,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-01"
+       "date": "2026-10-20",
+       "lines": [
+        {
+         "item": "Business subscription",
+         "amount": 2500
+        }
+       ]
       }
      ],
      "credits": [

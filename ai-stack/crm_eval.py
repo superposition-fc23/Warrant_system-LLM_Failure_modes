@@ -21,6 +21,8 @@ import llm
 import telemetry
 import warrant
 
+JUDGE_MODEL = "opus-5.5"    # stronger than the compare model it grades; eval time only, so not in the cost per decision
+judge_cost = [0.0]
 JUDGE_SYSTEM = "You grade whether a gate named the right fact when it held a money action. Return only JSON."
 JUDGE = """Expected discriminating fact: {expected}
 What the gate said: discriminating fact: {named}. Failed checks: {checks}. Material conflict: {conflict}.
@@ -28,10 +30,14 @@ Does the gate name the expected fact (same record and same substance; wording ma
 Return JSON: fact_named (true|false), note (one sentence)."""
 
 
-def judge(case, rec):
+def judge(case, rec, people):
     failed = [f"{c['name']}: {c['detail']}" for c in rec["checks"] if c["result"] != "pass"]
-    out = llm.ask("haiku-5.5", JUDGE.format(expected=case["discriminating_fact"], named=rec["discriminating_fact"],
-                                            checks=failed, conflict=rec["conflict"]), system=JUDGE_SYSTEM, max_tokens=800, effort="low")
+    m = warrant.redaction_map({"authority": {"people": people}, "sources": {"crm": case["world"]["crm"]}})
+    prompt = warrant.swap(JUDGE.format(expected=case["discriminating_fact"], named=rec["discriminating_fact"], checks=failed,
+                                       conflict=rec["conflict"]), m)
+    out = llm.ask(JUDGE_MODEL, prompt, system=JUDGE_SYSTEM, max_tokens=800, effort="low")
+    cin, cout = llm.MODELS[JUDGE_MODEL]["cost"]
+    judge_cost[0] += (llm.LAST_USAGE[0] * cin + llm.LAST_USAGE[1] * cout) / 1e6
     try:
         return json.loads(re.search(r"\{.*\}", out, re.S).group())
     except Exception:
@@ -68,7 +74,7 @@ def to_ui(case, rec):
             "beliefs": beliefs, "conflict": rec["conflict"], "checks": rec["checks"], "question": rec["question"],
             "rule_applied": rec["rule_applied"], "record_id": rec["record_id"], "trace_id": rec["trace_id"],
             "latency_ms": rec["latency_ms"], "cost_usd": round(rec["usage"].get("cost_usd", 0), 5), "fact_from": rec.get("fact_from"),
-            "escalated": rec["usage"].get("escalated"), "triggers": rec["usage"].get("triggers"), "compare_skipped": rec.get("compare_skipped"),
+            "served_model": rec["usage"].get("served_model"), "compare_skipped": rec.get("compare_skipped"),
             "discriminating_fact": rec["discriminating_fact"], "judge": None}
 
 
@@ -111,7 +117,7 @@ async def main(version):
         else:
             u["pass"] = u["decision"] == c["expected"]
         if c["kind"] in ("planted", "replay") and u["decision"] != "act":
-            u["judge"] = judge(c, recs[cid])
+            u["judge"] = judge(c, recs[cid], d["people"])
         if not u["pass"]:
             why = (f"flipped from {ui[c['base']]['decision']} to {u['decision']} when {c['change']}" if c["kind"] == "pair"
                    else f"expected {c['expected']}, got {u['decision']}")
@@ -133,15 +139,14 @@ async def main(version):
             "pairs_invariant": sum(p["same"] for p in pairs), "pairs_flipped": sum(not p["same"] for p in pairs),
             "replay_settled_by_rule": ui["RP-01"]["pass"], "rule_expiry_enforced": expiry_ok,
             "model_skipped": sum(1 for r in recs.values() if r.get("compare_skipped")),
-            "escalated": sum(1 for r in recs.values() if r["usage"].get("escalated")),
-            "first_pass_only": sum(1 for r in recs.values() if r["usage"].get("stages") and not r["usage"].get("escalated")),
+            "served_models": sorted({r["usage"]["served_model"] for r in recs.values() if r["usage"].get("served_model")}),
             "fact_from_code": sum(1 for r in recs.values() if r.get("fact_from") == "code"),
             "eval_audit": audit_summary(),
             "p50_ms": statistics.median(lat), "p95_ms": lat[int(0.95 * (len(lat) - 1))],
             "cost_usd_total": round(cost, 4), "cost_usd_per_decision": round(cost / len(recs), 5),
             "tokens_in": sum(r["usage"].get("tokens_in", 0) for r in recs.values()),
             "tokens_out": sum(r["usage"].get("tokens_out", 0) for r in recs.values()),
-            "models": {"first_pass": warrant.FIRST_PASS, "escalation": warrant.ESCALATE, "judge": "haiku-5.5"}}
+            "judge_cost_usd": round(judge_cost[0], 4), "models": {"compare": warrant.COMPARE_MODEL, "judge": JUDGE_MODEL}}
 
     with open(f"{out}/decisions.jsonl", "w") as f:
         for r in recs.values():

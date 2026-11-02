@@ -24,6 +24,8 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | v1 held 3 clean controls. The gate was right: my test data had invoices past the window, missing add-on lines and seats already granted | Added a model audit of the eval set that runs before evals | Audit the eval set. A failing case may be a wrong answer key |
 | One clean control could not measure over-holding | Controls now match planted cases, 10 and 10 | Give the counter-metric enough clean cases to move |
 
+| The first Reddit search returned 0 rows from 16 failed calls, and the report drew a clean table of zeros | Read the error before reading the table | A zero from a failed call is not a finding. Same rule as the severity outcome: check recall first |
+
 ## AI architecture and cost
 
 | What happened | What changed | Rule |
@@ -50,6 +52,7 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | Scraped forum text put 28 third-party email addresses in git history, found only when preparing to go public | Added scrubbing on collection, a pre-commit scan, a CI scan and a governance doc | Build as if public from the first commit. Scrub at ingestion, not at release |
 | Scrubbing history is not enough on GitHub: pull request refs keep old commits reachable | History is scrubbed before publishing, and the limit is documented | Treat a commit as permanent. Prevention is far cheaper than cleanup |
 | Reddit and Medium refused automated reads, and browser spoofing was blocked | Used official APIs only; the gap is named in the evidence | Use official channels, and record the gap instead of working around it |
+| A search API gave Reddit coverage without touching Reddit, but pulling thread text would have repeated the block we had accepted | Rows hold URL, classification and a short quote, labelled as snippets | Take the coverage the channel allows, and label how thin it is |
 
 | Removing emails was not enough: 100 of 407 items still held personal details such as names and employers | Full forum text left the repo. Committed rows keep the link, classification and a short quote | Minimise before masking. Do not publish what the analysis does not need |
 | A rewrite was tested on a copy, then pushed to a private repo and scanned from a fresh clone of every ref before the visibility changed | Went public with 0 addresses, secrets or forum text in 139 blobs | Verify the published artifact, not the local one, and flip visibility last |

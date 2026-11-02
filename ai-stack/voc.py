@@ -9,6 +9,7 @@ by an agent into evals/voc_web.json, which collect() merges in.
 
     .venv/bin/python voc.py collect      # -> evals/voc_raw.json
     .venv/bin/python voc.py classify     # -> evals/voc_classified.json (Haiku, about 300 calls)
+    .venv/bin/python voc.py reddit       # search-API results for Reddit, snippets only, capped at 100 URLs, merged into voc_classified.json
     .venv/bin/python voc.py report       # -> evals/voc_report.md
 
 This is opinion mining, not interviews. The biases are listed in the report it writes.
@@ -107,6 +108,54 @@ def medium(tag):
              "text": clean((i.findtext("title") or "") + ". " + (i.findtext(ns) or ""))[:2500]} for i in items]
 
 
+# Reddit through a search API, added in v3. Reddit's agreement reportedly bars scraping without consent and its pages refused automated
+# reads, so nothing here fetches reddit.com: rows hold what the search result returned. Snippets are thin, so label them as such.
+REDDIT_CAP = 100
+REDDIT_QUERIES = [
+    "multi-agent conflict production", "AI support agent refund mistake", "Zendesk AI agent wrong refund", "Agentforce production problems",
+    "Intercom Fin wrong answer customers", "AI agent credit customer wrong", "AI agents overwriting each other", "AI agent stale data wrong decision",
+    "human in the loop approval fatigue agents", "AI agent audit trail who approved", "CRM and billing data don't match AI agent",
+    "AI customer service escalation to human bad", "when to let AI agents act autonomously",
+    # Written to disconfirm: these look for people satisfied with what they have.
+    "AI support agent works well for us", "AI chatbot reduced support tickets success", "agent guardrails solved our problem",
+]
+
+
+def serper(q):
+    out = []
+    for page in (1, 2):
+        r = httpx.post("https://google.serper.dev/search", headers={"X-API-KEY": os.environ["SERPER_API_KEY"]},
+                       json={"q": f"site:reddit.com {q}", "num": 10, "page": page}, timeout=20)
+        r.raise_for_status()
+        out += r.json().get("organic", [])
+    return out
+
+
+def reddit_search():
+    rows, seen = [], set()
+    with ThreadPoolExecutor(4) as ex:
+        results = list(ex.map(lambda q: _safe(serper, q), REDDIT_QUERIES))
+    for res in results:
+        for it in res:
+            url = it.get("link", "").split("?")[0]
+            m = re.search(r"reddit\.com/r/([^/]+)/comments/", url)
+            text = clean(f"{it.get('title', '')}. {it.get('snippet', '')}")
+            if not m or url in seen or len(text) < 60 or len(rows) >= REDDIT_CAP:
+                continue
+            seen.add(url)
+            rows.append({"source": f"reddit-search r/{m.group(1)}", "url": url, "date": it.get("date"), "evidence": "search snippet", "text": scrub(text)})
+    with ThreadPoolExecutor(8) as ex:
+        classified = list(ex.map(classify_one, rows))
+    os.makedirs(CACHE, exist_ok=True)
+    json.dump(rows, open(f"{CACHE}/voc_reddit.json", "w"), indent=1)
+    for r in classified:
+        r["quote"] = " ".join((r.get("quote") or "").split()[:20])    # the model is asked for 20 words and sometimes writes more
+    keep = [r for r in json.load(open("evals/voc_classified.json")) if not r["source"].startswith("reddit-search")]
+    json.dump(keep + _public(classified), open("evals/voc_classified.json", "w"), indent=1)
+    rel = [r for r in classified if r.get("relevant") and r.get("outcome") in OUTCOMES]
+    print(f"reddit: {len(rows)} URLs, {len(rel)} relevant with an outcome, {sum(1 for r in classified if r.get('error'))} errors")
+
+
 def _public(rows):
     return [{k: v for k, v in r.items() if k != "text"} for r in rows]
 
@@ -173,7 +222,7 @@ def report():
     rows = [r for r in json.load(open("evals/voc_classified.json")) if r.get("relevant") and r.get("outcome") in OUTCOMES]
     # All relevant rows. Never select on importance: ranking by the scored field and then averaging it inflates the mean.
     lines = [f"# Voice of customer: {len(rows)} public opinions classified\n",
-             "Opinion mining from Hacker News and Substack (Reddit and Medium pending), classified by Haiku. Not interviews. See biases at the end.\n",
+             "Opinion mining from Hacker News, Substack and Reddit search snippets (Medium pending), classified by Haiku. Not interviews. See biases at the end.\n",
              "| Outcome | n | Mean importance | Mean satisfaction | Opportunity | Top performer |", "|---|---|---|---|---|---|"]
     agg = {}
     for k in OUTCOMES:
@@ -190,7 +239,19 @@ def report():
     perf = {}
     for r in rows:
         perf[r["performer"]] = perf.get(r["performer"], 0) + 1
-    lines += ["", f"Sources: {src}", f"Performers: {perf}", "", "## Example quotes per outcome", ""]
+    lines += ["", f"Sources: {src}", f"Performers: {perf}", "", "## Per source: an outcome that only ranks high in one source is suspect", "",
+              "| Outcome | Hacker News n, opp. | Substack n, opp. | Reddit snippets n, opp. |", "|---|---|---|---|"]
+    def cell(k, prefix):
+        g = [r for r in rows if r["outcome"] == k and r["source"].startswith(prefix)]
+        if not g:
+            return "0"
+        i = sum(r["importance"] for r in g) / len(g); t = sum(r["satisfaction"] for r in g) / len(g)
+        return f"{len(g)}, {i + max(i - t, 0):.1f}"
+    srcs = sorted({r["source"].split()[0] for r in rows})
+    hn = next((x for x in srcs if x.lower().startswith(("hacker", "hn"))), "hacker")
+    for k in OUTCOMES:
+        lines.append(f"| {k} | {cell(k, hn)} | {cell(k, 'substack')} | {cell(k, 'reddit-search')} |")
+    lines += ["", "## Example quotes per outcome", ""]
     for k in OUTCOMES:
         for r in [r for r in rows if r["outcome"] == k][:2]:
             lines.append(f"- **{k}** ({r['source']}, {r['performer']}, I{r['importance']}/S{r['satisfaction']}): \"{r.get('quote', '')}\" {r['url']}")
@@ -199,11 +260,12 @@ def report():
               "- Query bias: the search terms were written from my hypothesis, so they find what I expected.",
               "- Judge bias: a model infers importance and satisfaction from text; belief is bias, and so is the judge.",
               "- Not our customers: no evidence these authors run multi-agent support workflows.",
-              "- Recency and platform: Medium skews to vendor content marketing; Reddit search may be rate-limited."]
+              "- Recency and platform: Medium skews to vendor content marketing.",
+              "- Reddit rows are search snippets, not threads: ranked by a search engine, thin on context, so satisfaction often sits at the default of 5."]
     open("evals/voc_report.md", "w").write("\n".join(lines))
     json.dump(agg, open("evals/voc_agg.json", "w"), indent=1)
     print("\n".join(lines[:14]))
 
 
 if __name__ == "__main__":
-    {"collect": collect, "classify": classify, "report": report}.get(sys.argv[1] if len(sys.argv) > 1 else "", lambda: print(__doc__))()
+    {"collect": collect, "classify": classify, "reddit": reddit_search, "report": report}.get(sys.argv[1] if len(sys.argv) > 1 else "", lambda: print(__doc__))()

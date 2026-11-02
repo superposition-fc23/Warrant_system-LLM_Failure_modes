@@ -1,21 +1,35 @@
-# Voice of customer: 214 public opinions classified
+# Voice of customer: 284 public opinions classified
 
-Opinion mining from Hacker News and Substack (Reddit and Medium pending), classified by Haiku. Not interviews. See biases at the end.
+Opinion mining from Hacker News, Substack and Reddit search snippets (Medium pending), classified by Haiku. Not interviews. See biases at the end.
 
 | Outcome | n | Mean importance | Mean satisfaction | Opportunity | Top performer |
 |---|---|---|---|---|---|
-| O1 | 27 | 6.5 | 3.3 | 9.7 | other |
-| O2 | 17 | 6.5 | 3.2 | 9.8 | support or applied AI engineer |
-| O3 | 67 | 6.0 | 3.8 | 8.3 | other |
-| O4 | 13 | 6.4 | 3.0 | 9.8 | other |
-| O5 | 34 | 6.4 | 3.5 | 9.3 | other |
-| O6 | 10 | 6.3 | 3.9 | 8.7 | other |
-| O7 | 17 | 6.3 | 4.2 | 8.4 | other |
-| O8 | 25 | 6.9 | 4.1 | 9.6 | other |
-| O9 | 4 | 6.5 | 4.0 | 9.0 | other |
+| O1 | 50 | 6.5 | 3.5 | 9.5 | other |
+| O2 | 25 | 6.4 | 3.3 | 9.6 | support or applied AI engineer |
+| O3 | 85 | 6.1 | 3.7 | 8.5 | other |
+| O4 | 22 | 6.7 | 3.0 | 10.3 | support or applied AI engineer |
+| O5 | 38 | 6.4 | 3.6 | 9.2 | other |
+| O6 | 12 | 6.2 | 4.1 | 8.4 | other |
+| O7 | 18 | 6.2 | 4.3 | 8.1 | other |
+| O8 | 28 | 7.0 | 4.1 | 9.9 | support or applied AI engineer |
+| O9 | 6 | 6.8 | 3.2 | 10.5 | other |
 
-Sources: {'substack': 18, 'hackernews': 196}
-Performers: {'other': 123, 'support or applied AI engineer': 62, 'VP or exec buyer': 8, 'end customer': 19, 'CSM': 1, 'finance or RevOps': 1}
+Sources: {'substack': 18, 'hackernews': 196, 'reddit-search': 70}
+Performers: {'other': 140, 'support or applied AI engineer': 94, 'VP or exec buyer': 14, 'end customer': 28, 'CSM': 6, 'finance or RevOps': 2}
+
+## Per source: an outcome that only ranks high in one source is suspect
+
+| Outcome | Hacker News n, opp. | Substack n, opp. | Reddit snippets n, opp. |
+|---|---|---|---|
+| O1 | 25, 9.7 | 2, 10.0 | 23, 9.3 |
+| O2 | 17, 9.8 | 0 | 8, 9.1 |
+| O3 | 60, 8.0 | 7, 11.1 | 18, 9.1 |
+| O4 | 13, 9.8 | 0 | 9, 11.1 |
+| O5 | 30, 9.1 | 4, 10.8 | 4, 9.0 |
+| O6 | 8, 7.8 | 2, 12.5 | 2, 7.0 |
+| O7 | 17, 8.4 | 0 | 1, 4.0 |
+| O8 | 22, 9.0 | 3, 14.7 | 3, 11.7 |
+| O9 | 4, 9.0 | 0 | 2, 13.5 |
 
 ## Example quotes per outcome
 
@@ -43,4 +57,5 @@ Performers: {'other': 123, 'support or applied AI engineer': 62, 'VP or exec buy
 - Query bias: the search terms were written from my hypothesis, so they find what I expected.
 - Judge bias: a model infers importance and satisfaction from text; belief is bias, and so is the judge.
 - Not our customers: no evidence these authors run multi-agent support workflows.
-- Recency and platform: Medium skews to vendor content marketing; Reddit search may be rate-limited.
+- Recency and platform: Medium skews to vendor content marketing.
+- Reddit rows are search snippets, not threads: ranked by a search engine, thin on context, so satisfaction often sits at the default of 5.

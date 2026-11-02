@@ -75,7 +75,8 @@ def to_ui(case, rec):
             "rule_applied": rec["rule_applied"], "record_id": rec["record_id"], "trace_id": rec["trace_id"],
             "latency_ms": rec["latency_ms"], "cost_usd": round(rec["usage"].get("cost_usd", 0), 5), "fact_from": rec.get("fact_from"),
             "served_model": rec["usage"].get("served_model"), "compare_skipped": rec.get("compare_skipped"),
-            "discriminating_fact": rec["discriminating_fact"], "judge": None}
+            "discriminating_fact": rec["discriminating_fact"], "judge": None, "mode": rec["mode"], "rationale": p.get("rationale"),
+            "evidence": {"crm": crm, "billing": case["world"]["billing"], "contracts": case["world"]["contracts"]["documents"], "risk": case["world"]["risk"]["flags"]}}
 
 
 async def main(version, runs=1):
@@ -185,7 +186,7 @@ async def main(version, runs=1):
             f.write(json.dumps(r) + "\n")
     traces = telemetry.load(f"{out}/traces.jsonl")
     run = {"run_id": run_id, "version": version, "started_at": started.isoformat(timespec="seconds"), "now": d["now"],
-           "summary": summ, "decisions": list(ui.values()), "pairs": pairs, "rulings": [ruling], "traces": traces, "failures": failures}
+           "summary": summ, "decisions": list(ui.values()), "pairs": pairs, "rulings": [ruling], "boundary": warrant.BOUNDARY, "traces": traces, "failures": failures}
     json.dump({k: run[k] for k in ("run_id", "version", "started_at", "summary", "pairs", "failures")}, open(f"{out}/summary.json", "w"), indent=1)
     open(f"{out}/prototype-data.js", "w").write("window.RUN = " + json.dumps(run, indent=1) + ";\n")
     shutil.rmtree("runs/latest", ignore_errors=True)

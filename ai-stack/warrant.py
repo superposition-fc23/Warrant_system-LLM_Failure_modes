@@ -45,6 +45,7 @@ MAX_OUTPUT = 2000    # the longest v3 probe answer was 1,233 tokens; a reply cut
 # recorded but never hold on their own.
 MATERIAL_KINDS = {"payment_risk", "contract_terms", "amount", "entitlement", "duplicate", "authority", "currency", "injection"}
 RULES_PATH = "state/rules.json"
+BOUNDARY = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "boundary.json")))
 LEDGER_PATH = "state/ledger.jsonl"    # what the gate itself committed; a source can take minutes to show it
 SOURCE_LABEL = {"crm": "CRM", "billing": "Billing", "contracts": "Contracts", "risk": "Risk"}
 SOURCE_BUDGET = 4.0    # seconds per source; slower than this is unavailable, which gathers and never acts
@@ -155,6 +156,9 @@ def checks(s: State) -> State:
         ok = val is None or lim[key] is None or val <= lim[key]
         out.append({"name": "authority", "result": "pass" if ok else "fail",
                     "detail": f"{val} against agent limit {lim[key]}" + ("" if ok else f"; needs {approver(s['authority'], key, val)}")})
+    edge = BOUNDARY.get(p["type"], {}).get("act_up_to")
+    if edge is not None and val is not None:
+        out.append({"name": "boundary", "result": "pass" if val <= edge else "fail", "detail": f"{val} against the autonomy boundary of {edge}"})
     if p.get("amount") is not None:
         ok = p["currency"] == b["currency"]
         out.append({"name": "currency", "result": "pass" if ok else "fail", "detail": f"proposal {p['currency']}, billing {b['currency']}"})
@@ -351,6 +355,7 @@ def code_fact(checks):
             "currency": f"Currency mismatch: {f['detail']}",
             "prior_compensation": f"Earlier compensation for the same incident: {f['detail']}",
             "contract_cap": f"Above the contract's credit cap: {f['detail']}",
+            "boundary": f"Above the autonomy boundary: {f['detail']}",
             "credits_behind": f"Billing's credit list is behind: {f['detail']}",
             "reread": f"Sources moved during the check: {f['detail']}"}[f["name"].split(".")[0]]
 
@@ -419,7 +424,7 @@ def record(s: State) -> State:
            "checks": s["checks"], "conflict": conflict, "conflicts_all": s["compare"].get("conflicts", []),
            "limits": s["compare"].get("limits", []), "discriminating_fact": fact or model_fact,
            "fact_from": "code" if fact else "model", "question": s.get("question"), "rule_applied": s.get("rule_applied"),
-           "compare_skipped": s["compare"].get("skipped"), "usage": s.get("usage", {}), "at": s["now"]}
+           "compare_skipped": s["compare"].get("skipped"), "mode": BOUNDARY.get(p["type"], {}).get("mode", "enforce"), "usage": s.get("usage", {}), "at": s["now"]}
     return {"record": rec}
 
 

@@ -130,6 +130,18 @@ def test_more_balance_than_listed_credits_gathers():
     assert r["decision"] == "gather" and "behind" in r["discriminating_fact"]
 
 
+def test_tightening_the_boundary_changes_the_decision():
+    stub()
+    assert run("CT-01")["decision"] == "act"
+    edge = warrant.BOUNDARY["service_credit"]["act_up_to"]
+    warrant.BOUNDARY["service_credit"]["act_up_to"] = 100
+    try:
+        r = run("CT-01")
+    finally:
+        warrant.BOUNDARY["service_credit"]["act_up_to"] = edge
+    assert r["decision"] == "hold" and "boundary" in r["discriminating_fact"]
+
+
 def test_conflict_the_proposal_agrees_with_is_not_material():
     conflict = {"kind": "entitlement", "amount_at_stake": None}
     assert warrant.material(conflict, None) and not warrant.material({**conflict, "proposal_matches_governing": True}, None)

@@ -1,0 +1,7 @@
+{
+  "_note": "The autonomy boundary, owned by the support or applied AI engineer. mode: shadow records what the gate would do and writes nothing; enforce lets an act commit. act_up_to: the largest value an agent may commit alone, in the action's unit, and it can only tighten the authority map.",
+  "service_credit": {"mode": "enforce", "act_up_to": 1000, "unit": "currency"},
+  "refund": {"mode": "enforce", "act_up_to": 2000, "unit": "currency"},
+  "discount": {"mode": "enforce", "act_up_to": 10, "unit": "percent"},
+  "entitlement_grant": {"mode": "enforce", "act_up_to": 50, "unit": "seats"}
+}

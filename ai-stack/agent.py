@@ -47,6 +47,8 @@ async def issue_credit(args, agent, now, d, cases_by_account):
     live = {"id": f"LIVE-{args['incident_id']}", "kind": "live", "title": "Live agent proposal", "expected": None, "pain": None,
             "world": live_demo.shift(case["world"], d["now"], now), "proposal": proposal}
     rec = await warrant.run(live, now.strftime("%Y-%m-%dT%H:%M:%SZ"), d["people"], d["authority"])
+    if rec["decision"] == "act" and rec["mode"] == "shadow":
+        return rec, {"status": "recorded in shadow mode, nothing applied", "would_commit": True}
     if rec["decision"] == "act":
         return rec, {"status": "applied", "credit_id": commit_credit(rec, proposal), "amount": args["amount"]}
     return rec, {"status": "held", "decision": rec["decision"], "reason": rec["discriminating_fact"], "waiting_on": (rec["question"] or {}).get("to_role")}

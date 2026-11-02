@@ -68,6 +68,26 @@ Full evidence: [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
 | The demo shell and backend were built in parallel without collisions | The data contract was written first | Fix the interface before splitting work between agents |
 | My first reason for sitting beside the CRM was "habit". Challenged, the real reason was separation of duties, and it exposed where we lose | The non-goal was rewritten with its losing case | Ask why a buyer would pay for two tools. A non-goal needs a reason that survives that |
 
+## Product judgement
+
+| What happened | What changed | Rule |
+|---|---|---|
+| Three verticals kept the user vague; narrowing to CRM service sharpened the design | Designed for one user and one buyer, with each element labelled general or vertical | Narrow first. Abstraction is easier from something concrete |
+| Interviews were set as the gate before design, then design went ahead on public opinions | The gap is now stated as the first weakness | A gate nobody enforces is a wish. Name who stops the work if it is not met |
+| The UX plan ranked the analyst first while the report names the engineer as primary | Flagged as an open decision | Check each plan against the stated user, since local optimising drifts from the goal |
+| Mapping the whole system showed a strong gate that stands in front of no live agent or person | The canvas now separates built from scripted | Draw built and staged links differently. Component progress can hide that the job is not done |
+| A 35-minute design sprint took about five hours by commit times | Noted, with the depth kept | Time-box the plan, and record the actual |
+
+## For the final presentation
+
+These come from the log above and [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
+
+1. **Reported misses are the proof of method.** v2 improved three measures and failed the bar on latency, and we said so.
+2. **The best catch was in our own test data.** v1's over-holds were wrong answer keys; the gate was right.
+3. **Traces beat intuition.** "Smaller is faster" was false, and non-model time was about 36 ms of 14.5 s.
+4. **The system repeats the failure it targets.** v2's escalation discarded dissent, in a gate built to keep it.
+5. **Say the weak points first:** no customer validation, results that partly grade themselves, and a gate not yet in a live path.
+
 ## Knowledge bank
 
 This log is one file for now. When it outgrows a quick read, or several projects need searching together, turn these logs into a corpus with a small RAG over it and an eval on retrieval. Build that when retrieval is the actual pain, not before.

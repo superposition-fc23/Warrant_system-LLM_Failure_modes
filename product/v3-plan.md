@@ -124,7 +124,18 @@ The data grid in Web Awesome is Pro, but the eval table has 27 rows, so a plain 
 | F | Real Slack card | Hold posts to a test workspace; ruling returns | Should, needs your workspace |
 | G | Field RBAC and scopes; MCP over stdio; gate as a tool | Agent can see only permitted fields, tested | Move to v4 |
 | H | Shadow report screen | One page from a shadow run | Move to v4; on a slide for now |
-| I | Reddit, Medium | Rows in the corpus, or a named gap | v4; Reddit and Medium sooner if your keys arrive |
+| I | SageOx as the decision-record store; Reddit, Medium evidence | Rows in the corpus or records in SageOx, or a named gap | v4; Reddit and Medium sooner if your keys arrive |
+
+### Added after the system map (report sections 09 and 14), proposed
+
+| # | Work | Why | Done when | Priority |
+|---|---|---|---|---|
+| J | Five runs per case; report flips and bands | One run cannot separate a result from noise; 10 of 10 has a 95% lower bound of 69% | Flip rate in the run summary | Must |
+| K | 5 prompt-injection cases in rationale and contract text | 0 adversarial cases today | Decisions unchanged, or the miss is reported | Must |
+| L | Redact the judge prompt; add scope to standing rules; log the model that served | Known holes in privacy, R6 and the record | Tests pass | Must |
+| M | 10 blind cases written and labelled by you, not by the model | The same model wrote the system and its tests | Results reported separately from the 27 | Must, needs about an hour of your time |
+| N | Gate as an MCP tool that one live agent must call (moves up from G) | Today the gate stands in front of nothing | A real agent proposal gets held in the demo | Should; first to cut |
+| O | A boundary and reversal view for the engineer | Section 07's primary user has no screen | Depends on the primary-user decision | Should |
 
 Report sections 09, 10, 11, 14, 15 and the slides come after A to D, with the report first as usual.
 

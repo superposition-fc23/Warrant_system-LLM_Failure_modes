@@ -142,6 +142,49 @@ def test_tightening_the_boundary_changes_the_decision():
     assert r["decision"] == "hold" and "boundary" in r["discriminating_fact"]
 
 
+def slack_setup():
+    import slack_card
+    sent = []
+    slack_card.client = lambda: type("C", (), {"chat_update": lambda self, **k: sent.append(k)})()
+    p = {**CASES["PL-03"]["proposal"], "amount": 600}
+    rec = {"record_id": "R1", "trace_id": "abc123", "case_id": "X", "action": p, "checks": [{"name": "prior_compensation", "result": "fail"}],
+           "beliefs": [{"source": "billing", "value": {"a": 1}}], "discriminating_fact": "f", "question": {"to_role": "Billing analyst", "text": "q"}}
+    slack_card.PENDING["abc123"] = {"rec": rec, "ts": "1", "channel": "C", "out": tempfile.mkdtemp()}
+    slack_card.RULED.clear()
+    warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
+    warrant.RULES_PATH = os.path.join(tempfile.mkdtemp(), "rules.json")
+    return slack_card, sent
+
+
+def test_keeping_a_hold_writes_nothing_and_offers_a_rule():
+    slack_card, sent = slack_setup()
+    written = []
+    live_sources.add_credit = lambda *x: written.append(x) or "pc_1"
+    assert slack_card.handle("ruling_hold", "abc123")["ruling"] == "reject"
+    assert not written and any("make_rule" in json.dumps(b) for b in sent[-1]["blocks"])
+
+
+def test_a_ruling_to_commit_refuses_if_billing_moved():
+    slack_card, sent = slack_setup()
+    written = []
+    live_sources.add_credit = lambda *x: written.append(x) or "pc_1"
+    live_sources.read_billing = lambda a: {"a": 2}
+    assert slack_card.handle("ruling_commit", "abc123")["ruling"] == "commit refused" and not written
+    live_sources.read_billing = lambda a: {"a": 1}
+    assert slack_card.handle("ruling_commit", "abc123")["credit_id"] == "pc_1" and written
+
+
+def test_a_ruling_becomes_a_scoped_rule_that_settles_the_replay():
+    slack_card, sent = slack_setup()
+    row = slack_card.handle("make_rule", "abc123")
+    rule = row["rule"]
+    assert rule["scope"] and rule["owner"] and rule["expires"]
+    rule["expires"] = "2026-12-01"
+    warrant.save_rule(rule)
+    stub()
+    assert run("RP-01")["rule_applied"] == rule["id"]
+
+
 def test_conflict_the_proposal_agrees_with_is_not_material():
     conflict = {"kind": "entitlement", "amount_at_stake": None}
     assert warrant.material(conflict, None) and not warrant.material({**conflict, "proposal_matches_governing": True}, None)

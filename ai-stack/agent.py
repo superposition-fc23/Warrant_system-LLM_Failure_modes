@@ -4,12 +4,14 @@ The agent's prompt does not protect the money. Code does: issue_credit runs the 
 the Chargebee test site only for a matching act decision. A hold returns the question to the agent, which tells the customer the
 truth. The tickets are scripted; the agent, the gate and the systems are real.
 
-    .venv/bin/python agent.py v3
+    .venv/bin/python agent.py v3            # no Slack
+    .venv/bin/python agent.py v3 slack 600  # post holds to Slack and apply clicks for 600 seconds
 """
 import asyncio
 import json
 import os
 import sys
+import time
 from datetime import datetime, timezone
 
 import anthropic
@@ -19,6 +21,7 @@ import live_demo
 import live_sources
 import llm
 import seed_live
+import slack_card
 import telemetry
 import warrant
 
@@ -92,7 +95,7 @@ def tickets(stamp, acc):
             {"id": "T3", "agent": "cs-agent", "text": f"Ticket from Vesper Capital, account ACC-1002. Incident {cap}: three days of degraded service. They ask for 15% of their 6,000 USD monthly fee, 900 USD, as a credit."}]
 
 
-async def main(version):
+async def main(version, slack=False, wait=600):
     d = json.load(open("evals/crm_cases.json"))
     cases = {c["id"]: c for c in d["cases"]}
     by_account = {cases[c]["proposal"]["account_id"]: cases[c] for c in seed_live.DEMO}
@@ -102,6 +105,9 @@ async def main(version):
     telemetry.setup(f"{out}/traces.jsonl")
     warrant.RULES_PATH = f"{out}/rules.json"
     warrant.LEDGER_PATH = f"{out}/ledger.jsonl"
+    if slack:    # rules and commits must outlive the run, so the next demo run sees what the person ruled
+        warrant.RULES_PATH, warrant.LEDGER_PATH = "state/rules.json", "state/ledger.jsonl"
+    sock = slack_card.listen() if slack else None
     crm_mcp.LIVE = True
     ws = os.getenv("ANTHROPIC_WORKSPACE_ID")
     client = anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None)
@@ -114,10 +120,23 @@ async def main(version):
         for r in row["records"]:
             print(row["ticket"], row["agent"], r["tool_input"]["amount"], "->", r["tool_result"]["status"], "|", str(r["tool_result"].get("reason") or r["tool_result"].get("credit_id"))[:120], "|", r["record"]["latency_ms"], "ms", flush=True)
         print("  reply:", row["reply"][:300].replace("\n", " "), flush=True)
+        if slack:
+            for r in row["records"]:
+                if r["record"]["decision"] != "act" and r["record"]["question"]:
+                    slack_card.post_hold(r["record"], out)
+                    print("  posted to Slack", flush=True)
     with open(f"{out}/tickets.jsonl", "w") as f:
         for r in rows:
             f.write(json.dumps(r) + "\n")
+    if sock:
+        print(f"waiting up to {wait} s for rulings in Slack", flush=True)
+        end = time.time() + wait
+        while time.time() < end and len({x["trace_id"] for x in slack_card.RULED}) < len(slack_card.PENDING):
+            await asyncio.sleep(1)
+        await asyncio.sleep(120 if slack_card.RULED else 0)    # time to click the standing rule offer
+        sock.close()
+        print(json.dumps(slack_card.RULED, indent=1))
 
 
 if __name__ == "__main__":
-    asyncio.run(main(sys.argv[1] if len(sys.argv) > 1 else "v3"))
+    asyncio.run(main(sys.argv[1] if len(sys.argv) > 1 else "v3", "slack" in sys.argv, int(sys.argv[3]) if len(sys.argv) > 3 else 600))

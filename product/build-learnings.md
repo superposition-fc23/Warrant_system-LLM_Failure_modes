@@ -14,6 +14,9 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | Rerunning the same data moved a model-scored outcome by 1.9 points at the same n | Outcomes are ranked in bands, not decimals | Measure a model judge's noise before trusting its differences |
 | I deferred severity (P3) on assumed scores, with no outcome able to capture it | Added O9 and set the pass rule before running | Write the decision rule before seeing the result; every deferral needs evidence |
 
+| 95% of the 396 evidence items came from one source (378 from Hacker News). On the 18 Substack rows, scores differ from Hacker News by up to 5.7 points on a small n | Corpus growth now targets more sources, with outcomes reported per source | More data reduces noise, not bias. Add sources before adding volume |
+| A comment that looked AI-generated was from 2015, had typos, and was already rejected by the relevance check at importance 1 | No AI-detector tool. Adding date, dedupe and source controls, plus one field in the existing classifier | Check what a bad sample actually is, and whether a filter already caught it, before building a tool for it |
+
 ## Evals
 
 | What happened | What changed | Rule |
@@ -29,6 +32,9 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | A cheap first pass plus escalation cut cost 18% but more than doubled median latency, 6.7 s to 14.5 s | v3 targets output length and removes sequential calls | Measure before assuming a smaller model is faster. Output length drives latency, and tiers in series add up |
 | v2 improved three measures and failed on the fourth | Reported as a failure against the bar set beforehand | Set the bar before building, across all the measures together, so one win cannot hide a regression |
 
+| A trace review ruled out context, tools, reads and guardrails in minutes: non-model time was 36 ms of 14.5 s, and output tokens explained 93% to 100% of call time | The v3 fix targets the series calls and output length, not the harness | Check the usual suspects in traces before redesigning anything |
+| Escalation overwrote the first pass, so nobody can say how often Opus changed Haiku's answer | v3 stores every model answer | Log what a tier produced, or you cannot judge whether the tier earns its cost |
+
 ## Privacy and governance
 
 | What happened | What changed | Rule |
@@ -37,6 +43,10 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | Scrubbing history is not enough on GitHub: pull request refs keep old commits reachable | History is scrubbed before publishing, and the limit is documented | Treat a commit as permanent. Prevention is far cheaper than cleanup |
 | Reddit and Medium refused automated reads, and browser spoofing was blocked | Used official APIs only; the gap is named in the evidence | Use official channels, and record the gap instead of working around it |
 
+| Removing emails was not enough: 100 of 407 items still held personal details such as names and employers | Full forum text left the repo. Committed rows keep the link, classification and a short quote | Minimise before masking. Do not publish what the analysis does not need |
+| A rewrite was tested on a copy, then pushed to a private repo and scanned from a fresh clone of every ref before the visibility changed | Went public with 0 addresses, secrets or forum text in 139 blobs | Verify the published artifact, not the local one, and flip visibility last |
+| A commit address swap could have looked like losing the activity graph | Checked commit attribution before, and the logged-out graph after | Test what the audience will see, from their position |
+
 ## Process
 
 | What happened | What changed | Rule |
@@ -44,3 +54,7 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | I pushed straight to main, so the pull requests tab stayed empty and the iterations were hard to see | One branch and one pull request per iteration, with results and failures in the description | Make the iteration visible as it happens: small commits, one pull request per version |
 | The demo shell and backend were built in parallel without collisions | The data contract was written first | Fix the interface before splitting work between agents |
 | My first reason for sitting beside the CRM was "habit". Challenged, the real reason was separation of duties, and it exposed where we lose | The non-goal was rewritten with its losing case | Ask why a buyer would pay for two tools. A non-goal needs a reason that survives that |
+
+## Knowledge bank
+
+This log is one file for now. When it outgrows a quick read, or several projects need searching together, turn these logs into a corpus with a small RAG over it and an eval on retrieval. Build that when retrieval is the actual pain, not before.

@@ -8,6 +8,7 @@ import os
 import tempfile
 
 import crm_mcp
+import live_sources
 import llm
 import warrant
 
@@ -90,6 +91,43 @@ def test_a_source_that_fails_never_produces_an_act():
 def test_a_stale_source_gathers():
     for system in ("crm", "billing", "risk"):
         assert fault(system, "stale")["decision"] == "gather", system
+
+
+def test_money_moves_only_on_an_act_for_that_exact_proposal():
+    import agent
+    written = []
+    live_sources.add_credit = lambda *x: written.append(x) or "pc_1"
+    warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
+    p = {"account_id": "A", "amount": 10, "currency": "USD", "incident_id": "I", "agent": "x"}
+    for rec in ({"decision": "hold", "action": p, "record_id": "R"}, {"decision": "gather", "action": p, "record_id": "R"},
+                {"decision": "act", "action": {**p, "amount": 11}, "record_id": "R"}):
+        try:
+            agent.commit_credit(rec, p)
+            raise AssertionError("wrote without an act")
+        except PermissionError:
+            pass
+    assert not written and agent.commit_credit({"decision": "act", "action": p, "record_id": "R"}, p) == "pc_1"
+
+
+def test_a_credit_the_source_does_not_show_yet_still_stops_a_second_one():
+    warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
+    stub()
+    p = CASES["CT-01"]["proposal"]
+    warrant.record_commit(p, "pc_1", D["now"])
+    r = run("CT-01")
+    assert r["decision"] == "hold" and "pc_1" in r["discriminating_fact"]
+    warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
+
+
+def test_more_balance_than_listed_credits_gathers():
+    stub()
+    world = CASES["CT-01"]["world"]["billing"]
+    world["credit_balance"] = 300
+    try:
+        r = run("CT-01")
+    finally:
+        del world["credit_balance"]
+    assert r["decision"] == "gather" and "behind" in r["discriminating_fact"]
 
 
 def test_conflict_the_proposal_agrees_with_is_not_material():

@@ -40,6 +40,7 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 
 | The first v3 eval held all 5 injection cases, but 1 held only because the reply could not be parsed. Failing closed hid a format bug behind a passing score | Output schema enforced; unreadable replies counted separately | Check why a case passed, not only that it passed. A safe default can hide a broken step |
 | Five runs found 2 flipping cases that one run would have reported as simply passing or failing | Every measure in the bar now reads from the worst of five runs | Do not trust one run of a model step. Repeat before reading a result |
+| All evals passed, then the first live agent run double-credited a customer. Chargebee's credit list lagged the write by over a minute, and an empty list looks exactly like a true "no prior credit" | The gate keeps its own commit ledger and cross-checks the balance against listed credits | A clean read is not a current read. Fixtures cannot show the failures only a real system has, so go live before trusting a score |
 | Sonnet 5.5 in one call beat Haiku then Opus on latency and cost: median 14.5 s to 4.2 s, $0.0173 to $0.0098 per decision | One model for the gate, a stronger one for the judge | Try one good model before building a tier. Keep the stronger model for grading |
 
 ## Privacy and governance
@@ -86,6 +87,7 @@ Full evidence: [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
 
 These come from the log above and [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
 
+0. **The best moment of the build.** Evals were perfect, then the first live agent double-credited a customer because the billing list lagged. Show this one.
 1. **Reported misses are the proof of method.** v2 improved three measures and failed the bar on latency, and we said so.
 2. **The best catch was in our own test data.** v1's over-holds were wrong answer keys; the gate was right.
 3. **Traces beat intuition.** "Smaller is faster" was false, and non-model time was about 36 ms of 14.5 s.

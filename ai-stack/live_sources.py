@@ -91,7 +91,7 @@ def read_billing(account_id):
     sub = subs[0]["subscription"]
     item = sub["subscription_items"][0]
     invoices = chargebee("GET", "/invoices", {"customer_id[is]": account_id, "limit": 5, "sort_by[desc]": "date"})["list"]
-    credits = chargebee("GET", "/promotional_credits", {"customer_id[is]": account_id, "type[is]": "increment", "limit": 10})["list"]
+    credits = [c for c in chargebee("GET", "/promotional_credits", {"customer_id[is]": account_id, "limit": 20})["list"] if c["promotional_credit"]["type"] == "increment"]
     def credit(c):
         incident, by = parse_credit(c["promotional_credit"].get("description"))
         return {"id": c["promotional_credit"]["id"], "amount": c["promotional_credit"]["amount"] / 100, "currency": c["promotional_credit"]["currency_code"],
@@ -101,7 +101,7 @@ def read_billing(account_id):
             "invoices": [{"id": i["invoice"]["id"], "amount": i["invoice"]["total"] / 100, "currency": i["invoice"]["currency_code"],
                           "status": i["invoice"]["status"], "date": epoch(i["invoice"]["date"])[:10],
                           "lines": [{"item": l["description"], "amount": l["amount"] / 100} for l in i["invoice"].get("line_items", [])]} for i in invoices],
-            "credits": [credit(c) for c in credits], "synced_at": now_iso(), "last_changed": epoch(cust["updated_at"])}
+            "credits": [credit(c) for c in credits], "credit_balance": cust.get("promotional_credits", 0) / 100, "synced_at": now_iso(), "last_changed": epoch(cust["updated_at"])}
 
 
 def add_credit(account_id, amount, incident_id, issued_by):

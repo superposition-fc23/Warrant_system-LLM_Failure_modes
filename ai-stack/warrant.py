@@ -15,7 +15,8 @@ state/rules.json and stop applying after expiry; people and account names are re
 
 v3 changes, from the v2 run: one model per case, so no answer overwrites another, and every answer is stored with the model
 that served it; output is capped and a truncated or unreadable reply holds and the output schema is enforced; a conflict the proposal already agrees with is not material;
-agent assertions past their window never reach the model; standing rules need a scope; sources are read again before commit.
+agent assertions past their window never reach the model; standing rules need a scope; sources are read again before commit;
+the gate keeps a ledger of its own commits, because a live source can take minutes to show them.
 
     .venv/bin/python warrant.py PL-01      # one case from evals/crm_cases.json
 """
@@ -44,10 +45,25 @@ MAX_OUTPUT = 2000    # the longest v3 probe answer was 1,233 tokens; a reply cut
 # recorded but never hold on their own.
 MATERIAL_KINDS = {"payment_risk", "contract_terms", "amount", "entitlement", "duplicate", "authority", "currency", "injection"}
 RULES_PATH = "state/rules.json"
+LEDGER_PATH = "state/ledger.jsonl"    # what the gate itself committed; a source can take minutes to show it
 SOURCE_LABEL = {"crm": "CRM", "billing": "Billing", "contracts": "Contracts", "risk": "Risk"}
 SOURCE_BUDGET = 4.0    # seconds per source; slower than this is unavailable, which gathers and never acts
 REQUIRED = {"crm": {"entitlements", "tier"}, "billing": {"monthly_fee", "currency", "credits", "invoices", "seats_billed"},
             "contracts": {"documents"}, "risk": {"flags"}}
+
+
+def ledger_entries(account_id, incident_id):
+    if not (incident_id and os.path.exists(LEDGER_PATH)):
+        return []
+    rows = [json.loads(l) for l in open(LEDGER_PATH)]
+    return [r for r in rows if r["account_id"] == account_id and r["incident_id"] == incident_id]
+
+
+def record_commit(proposal, ref, at):
+    os.makedirs(os.path.dirname(LEDGER_PATH) or ".", exist_ok=True)
+    with open(LEDGER_PATH, "a") as f:
+        f.write(json.dumps({"id": ref, "account_id": proposal["account_id"], "incident_id": proposal["incident_id"], "amount": proposal["amount"],
+                            "currency": proposal["currency"], "issued_by": proposal["agent"], "issued_at": at}) + "\n")
 
 
 def ts(s):
@@ -143,9 +159,16 @@ def checks(s: State) -> State:
         ok = p["currency"] == b["currency"]
         out.append({"name": "currency", "result": "pass" if ok else "fail", "detail": f"proposal {p['currency']}, billing {b['currency']}"})
     prior = [c for c in b["credits"] if p.get("incident_id") and c["incident_id"] == p["incident_id"]]
+    seen = {c["id"] for c in prior}
+    prior += [c for c in ledger_entries(p["account_id"], p.get("incident_id")) if c["id"] not in seen]
     out.append({"name": "prior_compensation", "result": "fail" if prior else "pass",
                 "detail": "; ".join(f"{c['id']} {c['amount']} {c['currency']} for {c['incident_id']} by {c['issued_by']} at {c['issued_at']}"
                                     for c in prior) or "no earlier credit for this incident"})
+    # Chargebee's balance moves at once but its credit list can lag by minutes. More balance than listed credits means the list is behind.
+    listed = sum(c["amount"] for c in b["credits"])
+    if b.get("credit_balance", 0) > listed:
+        out.append({"name": "credits_behind", "result": "stale",
+                    "detail": f"credit balance {b['credit_balance']:g} but only {listed:g} in listed credits, so a recent credit may not be visible"})
     return {"checks": s["checks"] + out}
 
 
@@ -328,6 +351,7 @@ def code_fact(checks):
             "currency": f"Currency mismatch: {f['detail']}",
             "prior_compensation": f"Earlier compensation for the same incident: {f['detail']}",
             "contract_cap": f"Above the contract's credit cap: {f['detail']}",
+            "credits_behind": f"Billing's credit list is behind: {f['detail']}",
             "reread": f"Sources moved during the check: {f['detail']}"}[f["name"].split(".")[0]]
 
 

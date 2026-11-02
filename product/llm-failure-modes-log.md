@@ -40,6 +40,8 @@ A running log from one real build: failures of LLMs and agentic workflows, in th
 | 24 | Product | Right for the wrong reason | Sonnet sometimes wrote malformed JSON, then a self-correction. The gate could not parse it and held, so IN-01 counted as a catch and two cases flipped | `ai-stack/runs/v3-20261102T0521` | Reading stored raw answers while chasing flips | 2 Nov | Fixed: schema enforced, unreadable replies counted |
 | 25 | Eval | Wrong answer key | CT-09 proposed a grant of 0 seats. The model questioned it on 3 of 5 runs, reasonably | `ai-stack/crm_cases.py` | Five runs per case | 2 Nov | Fixed: case rewritten, disclosed |
 | 26 | Build | Own rule broken | The repeat loop kept decisions but dropped records, right after a change meant to store every answer | `ai-stack/crm_eval.py` | Needing the data to explain a flip | 2 Nov | Fixed: repeats written to file |
+| 27 | Product | Passed tests, failed live | The first live agent run committed a second credit for the same incident. Every eval passed; Chargebee's credit list showed nothing for over a minute after the write, and the gate trusted the empty list | `ai-stack/runs/v3-agent-*` | Running a real agent against a real system | 2 Nov | Fixed: gate keeps a commit ledger, and holds when balance exceeds listed credits |
+| 28 | Build | Test not independent | The fixture had one record per source that was always current, so the lag could not appear in any test | `ai-stack/evals/crm_cases.json` | Same live run | 2 Nov | Fault tests added; fixtures still cannot model unknown lags |
 
 ## Patterns so far
 

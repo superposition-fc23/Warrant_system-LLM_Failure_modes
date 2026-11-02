@@ -26,17 +26,20 @@ A running log from one real build: failures of LLMs and agentic workflows, in th
 | 10 | Build | Gate not enforced | Five interviews and one log pull were set as the gate before design; design went ahead on a labelled stand-in | `product/01-discovery-memo.md` | System map | 1 Nov | Open |
 | 11 | Build | Claim narrower than reality | Records said 9 facts came "from code", but 2 planted ones rest on a limit the model read | `ai-stack/warrant.py` `decide`; `runs/v2-20261101T0837/decisions.jsonl` | System map | 1 Nov | Stated in section 09 |
 | 12 | Product | Override by model | The model's named fact overrode a failed code check on 2 cases | PR 1, PL-02, PL-06 | v1 run | 1 Nov | Fixed in v2 |
-| 13 | Product | Wrong emphasis | Named an unverifiable incident over the superseding amendment | PR 2, PL-05 | LLM judge | 1 Nov | v3: incident system |
-| 14 | Product | Dissent discarded | Escalation overwrites the first answer, so tier disagreement is lost. This is the failure section 02 describes | `ai-stack/warrant.py` `compare` | Trace review | 1 Nov | v3: store every answer |
-| 15 | Product | Output nobody reads | 16 of 22 cases wrote prose about unverifiable claims | RCA | Trace review | 1 Nov | v3: compact schema |
-| 16 | Product | Silent guard edge | Token restore breaks at ten or more names | PR 2 review comment | Code review | 1 Nov | v3 |
-| 17 | Product | Guard gap | Judge prompt carries restored names; redaction covers the compare path only | `ai-stack/crm_eval.py` `judge` | System map | 1 Nov | Proposed for v3 |
+| 13 | Product | Wrong emphasis | Named an unverifiable incident over the superseding amendment | PR 2, PL-05 | LLM judge | 1 Nov | Fixed in v3: code names the money conflict |
+| 14 | Product | Dissent discarded | Escalation overwrites the first answer, so tier disagreement is lost. This is the failure section 02 describes | `ai-stack/warrant.py` `compare` | Trace review | 1 Nov | Fixed in v3: one model per case, every answer stored |
+| 15 | Product | Output nobody reads | 16 of 22 cases wrote prose about unverifiable claims | RCA | Trace review | 1 Nov | Reduced in v3: at most one such conflict, output capped |
+| 16 | Product | Silent guard edge | Token restore breaks at ten or more names | PR 2 review comment | Code review | 1 Nov | Fixed in v3, tested |
+| 17 | Product | Guard gap | Judge prompt carries restored names; redaction covers the compare path only | `ai-stack/crm_eval.py` `judge` | System map | 1 Nov | Fixed in v3 |
 | 18 | Product | Fail-open on silence | Every act rests on the model finding nothing material; a missed conflict trips no check | `ai-stack/warrant.py` `decide`; 11 of 11 acts in v2 | System map | 1 Nov | Proposed: measure miss rate |
-| 19 | Product | Untested surface | 0 adversarial cases, though agent rationale and contract text enter the prompt | `ai-stack/evals/crm_cases.json` | System map | 1 Nov | Proposed for v3 |
-| 20 | Product | Unverified identity | Traces log the requested model while server-side fallback is on | `ai-stack/llm.py`, `warrant.py` `ask_compare` | System map | 1 Nov | To check |
+| 19 | Product | Untested surface | 0 adversarial cases, though agent rationale and contract text enter the prompt | `ai-stack/evals/crm_cases.json` | System map | 1 Nov | Started in v3: 5 injection cases, all model-written |
+| 20 | Product | Unverified identity | Traces log the requested model while server-side fallback is on | `ai-stack/llm.py`, `warrant.py` `ask_compare` | System map | 1 Nov | Fixed in v3: served model logged |
 | 21 | Eval | Wrong answer key | 3 clean controls actually had defects; the gate was right | PR 1, CT-02, CT-04, CT-10 | The gate's own holds | 1 Nov | Fixed; audit added |
 | 22 | Eval | Correlated checker | One model wrote the cases, prompt rules, audit and judge | Git history of `crm_cases.py`, `warrant.py`, `crm_eval.py` | System map | 1 Nov | Proposed: blind cases, human labels |
-| 23 | Eval | Unmeasured noise | A rerun of the same data moved a model-scored outcome by 1.9 points; the gate itself has run once per version | Learnings; `runs/` | Rerun | 31 Oct | Proposed: five runs per case |
+| 23 | Eval | Unmeasured noise | A rerun of the same data moved a model-scored outcome by 1.9 points; the gate itself has run once per version | Learnings; `runs/` | Rerun | 31 Oct | Fixed in v3: five runs per case |
+| 24 | Product | Right for the wrong reason | Sonnet sometimes wrote malformed JSON, then a self-correction. The gate could not parse it and held, so IN-01 counted as a catch and two cases flipped | `ai-stack/runs/v3-20261102T0521` | Reading stored raw answers while chasing flips | 2 Nov | Fixed: schema enforced, unreadable replies counted |
+| 25 | Eval | Wrong answer key | CT-09 proposed a grant of 0 seats. The model questioned it on 3 of 5 runs, reasonably | `ai-stack/crm_cases.py` | Five runs per case | 2 Nov | Fixed: case rewritten, disclosed |
+| 26 | Build | Own rule broken | The repeat loop kept decisions but dropped records, right after a change meant to store every answer | `ai-stack/crm_eval.py` | Needing the data to explain a flip | 2 Nov | Fixed: repeats written to file |
 
 ## Patterns so far
 

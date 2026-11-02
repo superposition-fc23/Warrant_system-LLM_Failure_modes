@@ -38,6 +38,10 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | A system map showed all 11 acts rest on a model finding nothing, and that 2 "code" catches rest on a limit the model read | The dependence is now stated, and miss rate is proposed for v3 | "Model proposes, code decides" is only as strong as what code can see. Trace which decisions depend on model silence |
 | v2 escalation overwrote the first answer: last write wins, in a gate built to stop that | Logged as a recursive failure | Check your own system against the failure you are selling |
 
+| The first v3 eval held all 5 injection cases, but 1 held only because the reply could not be parsed. Failing closed hid a format bug behind a passing score | Output schema enforced; unreadable replies counted separately | Check why a case passed, not only that it passed. A safe default can hide a broken step |
+| Five runs found 2 flipping cases that one run would have reported as simply passing or failing | Every measure in the bar now reads from the worst of five runs | Do not trust one run of a model step. Repeat before reading a result |
+| Sonnet 5.5 in one call beat Haiku then Opus on latency and cost: median 14.5 s to 4.2 s, $0.0173 to $0.0098 per decision | One model for the gate, a stronger one for the judge | Try one good model before building a tier. Keep the stronger model for grading |
+
 ## Privacy and governance
 
 | What happened | What changed | Rule |

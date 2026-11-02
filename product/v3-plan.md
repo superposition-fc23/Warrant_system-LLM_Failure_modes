@@ -124,7 +124,7 @@ The data grid in Web Awesome is Pro, but the eval table has 27 rows, so a plain 
 | F | Real Slack card | Hold posts to a test workspace; ruling returns | Should, needs your workspace |
 | G | Field RBAC and scopes; MCP over stdio; gate as a tool | Agent can see only permitted fields, tested | Move to v4 |
 | H | Shadow report screen | One page from a shadow run | Move to v4; on a slide for now |
-| I | SageOx evidence, Reddit, Medium | Rows in the corpus, or a named gap | v4; Reddit and Medium sooner if your keys arrive |
+| I | Reddit, Medium | Rows in the corpus, or a named gap | v4; Reddit and Medium sooner if your keys arrive |
 
 Report sections 09, 10, 11, 14, 15 and the slides come after A to D, with the report first as usual.
 

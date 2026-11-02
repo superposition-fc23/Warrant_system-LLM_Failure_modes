@@ -35,6 +35,9 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | A trace review ruled out context, tools, reads and guardrails in minutes: non-model time was 36 ms of 14.5 s, and output tokens explained 93% to 100% of call time | The v3 fix targets the series calls and output length, not the harness | Check the usual suspects in traces before redesigning anything |
 | Escalation overwrote the first pass, so nobody can say how often Opus changed Haiku's answer | v3 stores every model answer | Log what a tier produced, or you cannot judge whether the tier earns its cost |
 
+| A system map showed all 11 acts rest on a model finding nothing, and that 2 "code" catches rest on a limit the model read | The dependence is now stated, and miss rate is proposed for v3 | "Model proposes, code decides" is only as strong as what code can see. Trace which decisions depend on model silence |
+| v2 escalation overwrote the first answer: last write wins, in a gate built to stop that | Logged as a recursive failure | Check your own system against the failure you are selling |
+
 ## Privacy and governance
 
 | What happened | What changed | Rule |
@@ -46,6 +49,16 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | Removing emails was not enough: 100 of 407 items still held personal details such as names and employers | Full forum text left the repo. Committed rows keep the link, classification and a short quote | Minimise before masking. Do not publish what the analysis does not need |
 | A rewrite was tested on a copy, then pushed to a private repo and scanned from a fresh clone of every ref before the visibility changed | Went public with 0 addresses, secrets or forum text in 139 blobs | Verify the published artifact, not the local one, and flip visibility last |
 | A commit address swap could have looked like losing the activity graph | Checked commit attribution before, and the logged-out graph after | Test what the audience will see, from their position |
+
+## Working with AI agents
+
+Full evidence: [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
+
+| What happened | What changed | Rule |
+|---|---|---|
+| An instruction about public text became a ban on naming a tool, then hardened through agent memory and a context summary | Corrected the rule and its memory entry | State scope when instructing an agent. Treat its saved beliefs as claims to re-check, especially after a summary |
+| The same model wrote the cases, prompts, audit and judge | Blind cases and human labels proposed | An agent's tests share its blind spots. Keep one evaluator outside the writer |
+| Most catches came from traces, recounts, scans and people, rarely from rereading | The log records who caught each failure | Build checks that do not depend on the author's reasoning |
 
 ## Process
 

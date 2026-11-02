@@ -79,20 +79,19 @@ async def run_ticket(ticket, now, d, cases_by_account, client):
         messages.append({"role": "user", "content": results})
 
 
-def fresh_account():
-    for n in range(1, seed_live.POOL + 1):
-        acc = f"ACC-30{n:02d}"
-        if not live_sources.chargebee("GET", f"/customers/{acc}")["customer"].get("promotional_credits"):
-            return n, acc
-    raise SystemExit("every demo account has credits; add more with seed_live.py")
+def fresh_accounts():
+    free = [n for n in range(1, seed_live.POOL + 1) if not live_sources.chargebee("GET", f"/customers/ACC-30{n:02d}")["customer"].get("promotional_credits")]
+    if len(free) < 2:
+        raise SystemExit("too few clean demo accounts; raise POOL and run seed_live.py")
+    return free[0], free[1]
 
 
-def tickets(stamp, acc):
+def tickets(stamp, acc, acc2):
     """Scripted, with a fresh incident id per run. The second ticket is another agent reaching for the same incident."""
     clean, cap = f"INC-{stamp}1", f"INC-{stamp}2"
     return [{"id": "T1", "agent": "cs-agent", "text": f"Ticket from Harbor Freight Labs, account {acc}. Incident {clean}: one SLA breach in October. Our contract gives 5% of the 6,000 USD monthly fee per breach. Please apply the credit."},
             {"id": "T2", "agent": "retention-agent", "text": f"Ticket from Harbor Freight Labs, account {acc}. They are unhappy about incident {clean} and hinting at leaving. Offer a 300 USD goodwill credit for that incident."},
-            {"id": "T3", "agent": "cs-agent", "text": f"Ticket from Vesper Capital, account ACC-1002. Incident {cap}: three days of degraded service. They ask for 15% of their 6,000 USD monthly fee, 900 USD, as a credit."}]
+            {"id": "T3", "agent": "cs-agent", "text": f"Ticket from Harbor Freight Labs, account {acc2}. Incident {cap}: three days of degraded service. They ask for 15% of their 6,000 USD monthly fee, 900 USD, as a credit."}]
 
 
 async def main(version, slack=False, wait=600):
@@ -112,9 +111,10 @@ async def main(version, slack=False, wait=600):
     ws = os.getenv("ANTHROPIC_WORKSPACE_ID")
     client = anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None)
     rows = []
-    n, acc = fresh_account()
-    by_account[acc] = seed_live.pool_case(cases["CT-01"], n)
-    for t in tickets(now.strftime("%m%d%H%M"), acc):
+    n, n2 = fresh_accounts()
+    acc, acc2 = f"ACC-30{n:02d}", f"ACC-30{n2:02d}"
+    by_account[acc], by_account[acc2] = seed_live.pool_case(cases["CT-01"], n), seed_live.pool_case(cases["CT-01"], n2)
+    for t in tickets(now.strftime("%m%d%H%M"), acc, acc2):
         row = await run_ticket(t, datetime.now(timezone.utc), d, by_account, client)
         rows.append(row)
         for r in row["records"]:

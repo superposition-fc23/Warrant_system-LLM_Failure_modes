@@ -106,7 +106,7 @@ cases.append(case("CT-08", "control", "Agents disagree, the record settles it", 
                            asserted=[{"fact": "fraud review", "value": "open (risk-agent)", "observed_at": H(3)}])))
 w = world("ACC-2009", "Brightpath Health", "Enterprise")
 cases.append(case("CT-09", "control", "Stale agent memory, fresh source agrees", "act", w,
-                  proposal("cs-agent", "entitlement_grant", "ACC-2009", seats=0, rationale="Confirm 200 seats provisioned",
+                  proposal("cs-agent", "service_credit", "ACC-2009", 300, incident="INC-3009", rationale="One SLA breach in October, 5% of the monthly fee",
                            asserted=[{"fact": "seats entitled", "value": "200 (cs-agent memory)", "observed_at": H(3)}])))
 w = world("ACC-2010", "Lindqvist Design", "Mid-market", fee=2400, cur="EUR", region="EU")
 w["billing"]["invoices"][0].update(amount=2700, lines=[{"item": "Business subscription", "amount": 2400}, {"item": "Storage add-on", "amount": 300}])

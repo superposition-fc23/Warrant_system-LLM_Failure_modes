@@ -14,7 +14,7 @@ or a complexity trigger; materiality is decided in code from the conflict's kind
 state/rules.json and stop applying after expiry; people and account names are redacted before any model call.
 
 v3 changes, from the v2 run: one model per case, so no answer overwrites another, and every answer is stored with the model
-that served it; output is capped and a truncated reply holds; a conflict the proposal already agrees with is not material;
+that served it; output is capped and a truncated or unreadable reply holds and the output schema is enforced; a conflict the proposal already agrees with is not material;
 agent assertions past their window never reach the model; standing rules need a scope; sources are read again before commit.
 
     .venv/bin/python warrant.py PL-01      # one case from evals/crm_cases.json
@@ -211,10 +211,24 @@ def swap(text, m, reverse=False):
     return re.sub(pattern, lambda x: pairs[x.group()], text)
 
 
+def obj(**props):
+    return {"type": "object", "properties": props, "required": list(props), "additionalProperties": False}
+
+
+TEXT, NULL_TEXT, NULL_NUM = {"type": "string"}, {"type": ["string", "null"]}, {"type": ["number", "null"]}
+COMPARE_SCHEMA = obj(
+    limits={"type": "array", "items": obj(name={"enum": ["credit_cap", "sla_credit_rate", "refund_window_days", "seats", "other"]}, value={"type": "number"},
+                                          unit={"enum": ["pct_of_monthly_fee", "currency", "days", "seats"]}, doc_id=TEXT)},
+    conflicts={"type": "array", "items": obj(fact=TEXT, kind={"enum": sorted(MATERIAL_KINDS | {"unverifiable", "data_quality"})}, amount_at_stake=NULL_NUM,
+                                             values={"type": "array", "items": obj(value=TEXT, source=TEXT, record_id=NULL_TEXT)}, governing_source=NULL_TEXT,
+                                             proposal_matches_governing={"type": "boolean"}, why=TEXT)},
+    discriminating_fact=NULL_TEXT, owner_role=NULL_TEXT, question=NULL_TEXT)
+
+
 def ask_compare(model, prompt):
     with tracer.start_as_current_span("llm.compare") as sp:
         t = time.time()
-        out = llm.ask(model, prompt, system=COMPARE_SYSTEM, max_tokens=MAX_OUTPUT, effort="low")
+        out = llm.ask(model, prompt, system=COMPARE_SYSTEM, max_tokens=MAX_OUTPUT, effort="low", schema=COMPARE_SCHEMA)
         tin, tout = llm.LAST_USAGE
         meta = llm.LAST_META
         cin, cout = llm.MODELS[model]["cost"]
@@ -224,7 +238,7 @@ def ask_compare(model, prompt):
                      "gen_ai.usage.output_tokens": tout, "cost_usd": round(cost, 5), "latency_ms": round((time.time() - t) * 1000)}.items():
             sp.set_attribute(k, v)
     try:
-        data = json.loads(re.search(r"\{.*\}", out, re.S).group())
+        data = json.loads(out)
     except Exception:
         data = {"parse_error": out[:300], "conflicts": [], "limits": []}
     if meta["stop_reason"] == "max_tokens":
@@ -345,16 +359,18 @@ def record(s: State) -> State:
     for a in s["assertions"]:
         beliefs.append({"fact": a["fact"], "value": a["value"], "source": "agent memory", "record_id": None,
                         "observed_at": a["observed_at"], "fresh": a["used"], "asserted_by": p["agent"]})
-    mat = [x for x in s["compare"].get("conflicts", []) if x.get("material")]
+    # The named conflict is about the money; a steering attempt is reported but ranks last.
+    mat = sorted((x for x in s["compare"].get("conflicts", []) if x.get("material")), key=lambda x: x.get("kind") == "injection")
     conflict = None
     if mat:
         m = mat[0]
         conflict = {"fact": m.get("fact"), "values": [f"{v.get('value')} ({v.get('source')}{', ' + v['record_id'] if v.get('record_id') else ''})" for v in m.get("values", [])],
                     "material": True, "kind": m.get("kind"), "governing_source": m.get("governing_source"), "why": m.get("why")}
     fact = code_fact(s["checks"]) if s["decision"] != "act" else None
+    model_fact = mat[0].get("fact") if mat and s["decision"] != "act" else s["compare"].get("discriminating_fact")
     rec = {"record_id": f"DR-{_seq[0]:04d}", "case_id": c["id"], "decision": s["decision"], "action": p, "beliefs": beliefs,
            "checks": s["checks"], "conflict": conflict, "conflicts_all": s["compare"].get("conflicts", []),
-           "limits": s["compare"].get("limits", []), "discriminating_fact": fact or s["compare"].get("discriminating_fact"),
+           "limits": s["compare"].get("limits", []), "discriminating_fact": fact or model_fact,
            "fact_from": "code" if fact else "model", "question": s.get("question"), "rule_applied": s.get("rule_applied"),
            "compare_skipped": s["compare"].get("skipped"), "usage": s.get("usage", {}), "at": s["now"]}
     return {"record": rec}

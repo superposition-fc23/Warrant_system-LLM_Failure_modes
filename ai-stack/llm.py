@@ -38,7 +38,7 @@ def has_key(model_key: str) -> bool:
     return bool(os.getenv(KEY_ENV[MODELS[model_key]["provider"]]))
 
 
-def ask(model_key: str, prompt: str, system: str = "", max_tokens: int = 16000, effort: str = "medium") -> str:
+def ask(model_key: str, prompt: str, system: str = "", max_tokens: int = 16000, effort: str = "medium", schema: dict | None = None) -> str:
     """Send one text prompt, return the text answer."""
     m = MODELS[model_key]
     if not has_key(model_key):
@@ -50,7 +50,7 @@ def ask(model_key: str, prompt: str, system: str = "", max_tokens: int = 16000, 
         ws = os.getenv("ANTHROPIC_WORKSPACE_ID")
         client = anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None)
         kwargs = dict(model=m["id"], max_tokens=max_tokens, messages=[{"role": "user", "content": prompt}],
-                      output_config={"effort": effort})
+                      output_config={"effort": effort, **({"format": {"type": "json_schema", "schema": schema}} if schema else {})})
         if system:
             kwargs["system"] = system
         if m["id"] in _FALLBACK_OK:

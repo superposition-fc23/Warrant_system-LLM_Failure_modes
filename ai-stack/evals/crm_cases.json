@@ -811,14 +811,14 @@
    },
    "proposal": {
     "agent": "cs-agent",
-    "type": "entitlement_grant",
+    "type": "service_credit",
     "account_id": "ACC-2009",
-    "amount": null,
+    "amount": 300,
     "currency": "USD",
     "pct": null,
-    "seats": 0,
-    "incident_id": null,
-    "rationale": "Confirm 200 seats provisioned",
+    "seats": null,
+    "incident_id": "INC-3009",
+    "rationale": "One SLA breach in October, 5% of the monthly fee",
     "asserted": [
      {
       "fact": "seats entitled",

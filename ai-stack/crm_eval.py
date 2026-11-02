@@ -100,7 +100,7 @@ async def main(version, runs=1):
         for c in order:
             rec = await warrant.run(c, d["now"], d["people"], d["authority"])
             repeats[c["id"]].append(rec["decision"])
-            extra.append(rec)
+            extra.append({**rec, "run": i})
         print(f"run {i} of {runs} done", flush=True)
 
     # Loop 2: a scripted ruling on PL-03 becomes a standing rule; then the replay case is run for real.
@@ -162,6 +162,7 @@ async def main(version, runs=1):
             "model_skipped": sum(1 for r in recs.values() if r.get("compare_skipped")),
             "injection": len(injection), "held_injection": sum(u["decision"] != "act" for u in injection),
             "runs_per_case": runs, "worst_run": worst, "flip_cases": flips, "flip_rate": round(len(flips) / len(order), 3),
+            "unreadable_replies": sum("could not be read" in str(r["question"] or "") for r in every),
             "served_models": sorted({r["usage"]["served_model"] for r in every if r["usage"].get("served_model")}),
             "fact_from_code": sum(1 for r in recs.values() if r.get("fact_from") == "code"),
             "eval_audit": audit_summary(),
@@ -178,6 +179,9 @@ async def main(version, runs=1):
 
     with open(f"{out}/decisions.jsonl", "w") as f:
         for r in recs.values():
+            f.write(json.dumps(r) + "\n")
+    with open(f"{out}/decisions_repeats.jsonl", "w") as f:
+        for r in extra:
             f.write(json.dumps(r) + "\n")
     traces = telemetry.load(f"{out}/traces.jsonl")
     run = {"run_id": run_id, "version": version, "started_at": started.isoformat(timespec="seconds"), "now": d["now"],

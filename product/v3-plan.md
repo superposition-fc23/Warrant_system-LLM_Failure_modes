@@ -1,6 +1,32 @@
 # v3 plan
 
-Latency cause and fixes: [`v2-latency-rca.md`](v2-latency-rca.md). Status: proposed, not started.
+Latency cause and fixes: [`v2-latency-rca.md`](v2-latency-rca.md). Status: in build. The list below is final and replaces section 4; sections 1 to 3 are kept as background.
+
+## Final list
+
+| # | Work | Done when |
+|---|---|---|
+| 1 | One model: Sonnet 5.5 per case, Opus 5.5 judge, every answer stored, served model logged, output capped. Fix the `swap` bug and the CT-08 over-hold | Bar below passes, or the miss is reported |
+| 2 | Close known holes: redact the judge prompt, scope standing rules, re-read sources at commit. Add 5 injection cases, 3 cases from a practitioner conversation, five runs per case | Injection cases leave decisions unchanged, flip rate reported |
+| 3 | Live sources: HubSpot and Chargebee behind the read-only MCP server, seeded accounts, injected timeouts and stale reads | A real cross-system conflict is held; a failed source never produces an act |
+| 4 | Live agent: a Sonnet support agent proposes a credit; the credit tool only runs with a gate approval | A live proposal is held, and a clean one writes to the Chargebee test site |
+| 5 | Slack card: a hold posts with buttons; the ruling returns and resumes the action | A click in Slack changes the decision record |
+| 6 | Engineer view: a boundary file (per action type: shadow or enforce, amount limit) and one screen | Changing the boundary changes decisions, and the screen shows the effect |
+| 7 | Shadow report: one page for the VP, from decision records | Shows held exposure, hold rate and over-hold rate, labelled as seeded data |
+| 8 | Human review: about 15 records marked before the gate's answer is shown, exported as labels | Labels feed the improvement loop |
+| 9 | Reddit: search API, capped at 100 URLs, storing URL, title and snippet only | Rows are in the corpus and reported per source |
+
+**Primary user:** the support or applied AI engineer, who owns the autonomy boundary. The analyst answers the question on the card. The VP of Support is the buyer.
+
+**Cut order if late:** 9, the Chargebee write in 4, then the screen in 6 (keep the file). Fixtures stay as the fallback if a live system fails on the call.
+
+**Moved out of v3:** Web Awesome (`CLAUDE.md` rule 1 stays), Medium and other new evidence sources, field RBAC, real tickets, kill-switch enforcement, SageOx (v4). Contracts and risk stay local fixtures, labelled as mocked; authority stays a config file.
+
+## Bar, set before building
+
+Planted held 100%, fact named at least 90%, over-held at most 10% of controls, pairs 100%, injection cases 5 of 5 held, median at most 5 s and p95 at most 8 s on fixtures, cost at most \$0.017 per decision, a failed source never acts. Live-path latency is reported, not barred, since this is its first measurement. Each measure is read from five runs per case, taking the worst run.
+
+**Measured before committing to Sonnet 5.5** (one run of the 27 v2 cases, Opus 5.5 judge): median 5.0 s, p95 7.3 s, \$0.0084 per decision, planted held 10 of 10, fact named 10 of 10, over-held 2 of 10.
 
 ## 1. Evidence: more data, and a better mix
 
@@ -112,7 +138,7 @@ The data grid in Web Awesome is Pro, but the eval table has 27 rows, so a plain 
 
 **The surface matters more than the library.** UX rule 4 says to go where people already work, and the brief encourages third-party surfaces, so the card should be a real Slack message if you will create a test workspace and paste a webhook or bot token into `.env`. The Slack mock stays as the fallback on the call.
 
-## 4. Scope
+## 4. Earlier scope, superseded by the final list
 
 | # | Work | Done when | Priority |
 |---|---|---|---|

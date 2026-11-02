@@ -17,7 +17,7 @@ Built for an enterprise AI case challenge. The commits and pull requests are kep
 
 ## Results so far
 
-All cases are synthetic: 10 planted failures, 10 clean controls and 6 counterfactual pairs. The target for median latency was to hold v1's level.
+All cases are synthetic: 10 planted failures, 10 clean controls and 6 counterfactual pairs. The bar for v2, set before building, was to beat v1 on catch rate, over-holds, cost and latency together.
 
 | Version | Planted failures held | Conflict named | Clean controls over-held | Median latency | Cost per decision |
 |---|---|---|---|---|---|

@@ -1,6 +1,6 @@
 """Warrant: a gate in front of support agents' money actions. LangGraph orchestrates the gate's own steps, never the agents.
 
-    read_sources -> freshness -> checks -> rules -> compare -> decide -> (commit | route) -> record
+    read_sources -> freshness -> checks -> rules -> compare -> decide -> (reread -> commit | route) -> record
 
 Split by design (index.html section 11): deterministic code reads sources, judges freshness, checks authority, prior
 compensation and currency, applies standing rules, decides what is material, and makes the final decision. The model
@@ -79,14 +79,19 @@ class State(TypedDict, total=False):
     usage: dict
 
 
+async def read_systems(client, account_id):
+    sources = {}
+    for system, tool in crm_mcp.TOOLS.items():
+        with tracer.start_as_current_span(f"mcp.tool {tool}") as sp:
+            sources[system] = crm_mcp.parse(await client.call_tool(tool, {"account_id": account_id}))
+            sp.set_attribute("account_id", account_id)
+    return sources
+
+
 async def read_sources(s: State) -> State:
     p = s["case"]["proposal"]
-    sources = {}
     async with Client(crm_mcp.server) as client:
-        for system, tool in crm_mcp.TOOLS.items():
-            with tracer.start_as_current_span(f"mcp.tool {tool}") as sp:
-                sources[system] = crm_mcp.parse(await client.call_tool(tool, {"account_id": p["account_id"]}))
-                sp.set_attribute("account_id", p["account_id"])
+        sources = await read_systems(client, p["account_id"])
         with tracer.start_as_current_span("mcp.tool authority_get_limits"):
             authority = crm_mcp.parse(await client.call_tool("authority_get_limits", {"action_type": p["type"]}))
     return {"sources": sources, "authority": authority}
@@ -132,10 +137,23 @@ def approver(authority, key, val):
     return "a person with authority"
 
 
+def in_scope(rule, p, crm):
+    """A rule applies only inside the scope it was ruled for. No scope, no application."""
+    scope = rule.get("scope")
+    if not scope:
+        return False
+    if "max_amount" in scope and (p.get("amount") is None or p["amount"] > scope["max_amount"]):
+        return False
+    if "currency" in scope and p.get("currency") != scope["currency"]:
+        return False
+    return "tiers" not in scope or crm.get("tier") in scope["tiers"]
+
+
 def rules(s: State) -> State:
     failed = {c["name"] for c in s["checks"] if c["result"] != "pass"}
+    p, crm = s["case"]["proposal"], s["sources"]["crm"]
     for r in active_rules(s["now"]):
-        if r["pattern"]["action_type"] in (s["case"]["proposal"]["type"], "*") and r["pattern"]["check"] in failed:
+        if r["pattern"]["action_type"] in (p["type"], "*") and r["pattern"]["check"] in failed and in_scope(r, p, crm):
             return {"rule_applied": r["id"]}
     return {"rule_applied": None}
 
@@ -273,7 +291,8 @@ def code_fact(checks):
             "authority": f"Above agent authority: {f['detail']}",
             "currency": f"Currency mismatch: {f['detail']}",
             "prior_compensation": f"Earlier compensation for the same incident: {f['detail']}",
-            "contract_cap": f"Above the contract's credit cap: {f['detail']}"}[f["name"].split(".")[0]]
+            "contract_cap": f"Above the contract's credit cap: {f['detail']}",
+            "reread": f"Sources moved during the check: {f['detail']}"}[f["name"].split(".")[0]]
 
 
 def route_question(s: State) -> State:
@@ -294,6 +313,16 @@ def route_question(s: State) -> State:
     name = next((x["name"] for x in people if x["active"] and x["role"] in role), None)
     return {"question": {"to_role": re.sub(r".*\((.*)\)", r"\1", role), "to_name": name or re.sub(r" \(.*", "", role), "text": text,
                          "options": ["Hold", "Commit as proposed", "Amend"]}}
+
+
+async def reread(s: State) -> State:
+    """Sources can move while the gate works. An act commits only if they still say what the decision was based on."""
+    async with Client(crm_mcp.server) as client:
+        now = await read_systems(client, s["case"]["proposal"]["account_id"])
+    moved = [x for x in now if now[x] != s["sources"][x]]
+    check = {"name": "reread", "result": "changed" if moved else "pass",
+             "detail": f"{', '.join(moved)} changed after the first read" if moved else "sources unchanged since the first read"}
+    return {"checks": s["checks"] + [check], "decision": "gather" if moved else "act"}
 
 
 def commit(s: State) -> State:
@@ -345,12 +374,13 @@ def traced(name, fn):
 
 g = StateGraph(State)
 for name, fn in [("read_sources", read_sources), ("freshness", freshness), ("checks", checks), ("rules", rules),
-                 ("compare", compare), ("decide", decide), ("route", route_question), ("commit", commit), ("record", record)]:
+                 ("compare", compare), ("decide", decide), ("reread", reread), ("route", route_question), ("commit", commit), ("record", record)]:
     g.add_node(name, traced(name, fn))
 g.add_edge(START, "read_sources")
 for a, b in [("read_sources", "freshness"), ("freshness", "checks"), ("checks", "rules"), ("rules", "compare"), ("compare", "decide")]:
     g.add_edge(a, b)
-g.add_conditional_edges("decide", lambda s: "commit" if s["decision"] == "act" else "route", ["commit", "route"])
+g.add_conditional_edges("decide", lambda s: "reread" if s["decision"] == "act" else "route", ["reread", "route"])
+g.add_conditional_edges("reread", lambda s: "commit" if s["decision"] == "act" else "route", ["commit", "route"])
 g.add_edge("commit", "record")
 g.add_edge("route", "record")
 g.add_edge("record", END)

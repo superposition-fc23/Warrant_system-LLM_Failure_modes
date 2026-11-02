@@ -1,0 +1,15 @@
+{
+ "cases": 6,
+ "passed": 6,
+ "p50_ms": 5888.0,
+ "max_ms": 10997,
+ "read_p50_ms": 128.9555,
+ "read_max_ms": 1253.24,
+ "sources": {
+  "crm": "HubSpot test account, live",
+  "billing": "Chargebee test site, live",
+  "contracts": "local fixture",
+  "risk": "local fixture",
+  "authority": "local config"
+ }
+}

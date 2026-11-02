@@ -67,6 +67,31 @@ def test_named_fact_is_the_money_conflict_not_the_steering_attempt():
     assert run("CT-01")["discriminating_fact"] == "open chargeback"
 
 
+def fault(system, kind):
+    crm_mcp.FAULTS = {system: kind}
+    try:
+        stub()
+        prompts.clear()
+        return run("CT-01")
+    finally:
+        crm_mcp.FAULTS = {}
+
+
+def test_a_source_that_fails_never_produces_an_act():
+    warrant.SOURCE_BUDGET = 0.2
+    for system in ("crm", "billing", "contracts", "risk"):
+        for kind in ("timeout", "error", "malformed"):
+            r = fault(system, kind)
+            assert r["decision"] == "gather", (system, kind, r["decision"])
+            assert not prompts, "no model call on a failed source"
+            assert r["question"] and "could not be read" in r["question"]["text"]
+
+
+def test_a_stale_source_gathers():
+    for system in ("crm", "billing", "risk"):
+        assert fault(system, "stale")["decision"] == "gather", system
+
+
 def test_conflict_the_proposal_agrees_with_is_not_material():
     conflict = {"kind": "entitlement", "amount_at_stake": None}
     assert warrant.material(conflict, None) and not warrant.material({**conflict, "proposal_matches_governing": True}, None)

@@ -44,6 +44,10 @@ MAX_OUTPUT = 2000    # the longest v3 probe answer was 1,233 tokens; a reply cut
 # recorded but never hold on their own.
 MATERIAL_KINDS = {"payment_risk", "contract_terms", "amount", "entitlement", "duplicate", "authority", "currency", "injection"}
 RULES_PATH = "state/rules.json"
+SOURCE_LABEL = {"crm": "CRM", "billing": "Billing", "contracts": "Contracts", "risk": "Risk"}
+SOURCE_BUDGET = 4.0    # seconds per source; slower than this is unavailable, which gathers and never acts
+REQUIRED = {"crm": {"entitlements", "tier"}, "billing": {"monthly_fee", "currency", "credits", "invoices", "seats_billed"},
+            "contracts": {"documents"}, "risk": {"flags"}}
 
 
 def ts(s):
@@ -79,13 +83,24 @@ class State(TypedDict, total=False):
     usage: dict
 
 
+async def read_one(client, system, tool, account_id):
+    with tracer.start_as_current_span(f"mcp.tool {tool}") as sp:
+        sp.set_attribute("account_id", account_id)
+        try:
+            rec = crm_mcp.parse(await asyncio.wait_for(client.call_tool(tool, {"account_id": account_id}), SOURCE_BUDGET))
+        except asyncio.TimeoutError:
+            rec = {"source": system, "error": f"no answer within {SOURCE_BUDGET:g} s"}
+        except Exception as e:
+            rec = {"source": system, "error": str(e)[:200]}
+        missing = REQUIRED[system] - rec.keys()
+        if "error" not in rec and missing:
+            rec = {"source": system, "error": f"reply is missing {', '.join(sorted(missing))}"}
+        sp.set_attribute("source.error", rec.get("error", ""))
+        return system, rec
+
+
 async def read_systems(client, account_id):
-    sources = {}
-    for system, tool in crm_mcp.TOOLS.items():
-        with tracer.start_as_current_span(f"mcp.tool {tool}") as sp:
-            sources[system] = crm_mcp.parse(await client.call_tool(tool, {"account_id": account_id}))
-            sp.set_attribute("account_id", account_id)
-    return sources
+    return dict(await asyncio.gather(*(read_one(client, sy, tool, account_id) for sy, tool in crm_mcp.TOOLS.items())))
 
 
 async def read_sources(s: State) -> State:
@@ -100,6 +115,9 @@ async def read_sources(s: State) -> State:
 def freshness(s: State) -> State:
     now, checks, assertions = ts(s["now"]), [], []
     for system, rec in s["sources"].items():
+        if rec.get("error"):
+            checks.append({"name": f"fresh.{system}", "result": "unavailable", "detail": rec["error"]})
+            continue
         seen = rec.get("synced_at") or rec.get("updated_at")
         age = now - ts(seen)
         ok = age <= FRESHNESS[system]
@@ -112,6 +130,8 @@ def freshness(s: State) -> State:
 
 
 def checks(s: State) -> State:
+    if any(c["result"] == "unavailable" for c in s["checks"]):
+        return {"checks": s["checks"]}    # nothing to compare against, and the decision is already gather
     p, b, out = s["case"]["proposal"], s["sources"]["billing"], []
     lim = next((l for l in s["authority"]["limits"] if l["who"] == "agent"), {})
     key, val = next(((k, p[f]) for k, f in [("max", "amount"), ("max_pct", "pct"), ("max_seats", "seats")] if k in lim), (None, None))
@@ -273,7 +293,7 @@ def compare(s: State) -> State:
 
 def decide(s: State) -> State:
     """Deterministic. The model's output is evidence here, not the decision."""
-    p, fee = s["case"]["proposal"], s["sources"]["billing"]["monthly_fee"]
+    p, fee = s["case"]["proposal"], s["sources"]["billing"].get("monthly_fee")
     extra = []
     for l in s["compare"].get("limits", []):
         if l.get("name") == "credit_cap" and l.get("unit") == "pct_of_monthly_fee" and p.get("amount") is not None and p["type"] == "service_credit":
@@ -286,7 +306,7 @@ def decide(s: State) -> State:
     if s.get("rule_applied"):
         r = next(r for r in load_rules() if r["id"] == s["rule_applied"])
         decision = "act" if r["effect"] == "act" else "hold"
-    elif any(c["result"] == "stale" for c in checks):
+    elif any(c["result"] in ("stale", "unavailable") for c in checks):
         decision = "gather"
     elif any(c["result"] == "fail" for c in checks) or any(c["material"] for c in s["compare"].get("conflicts", [])) \
             or "parse_error" in s["compare"]:
@@ -301,6 +321,8 @@ def code_fact(checks):
     f = next((c for c in checks if c["result"] != "pass"), None)
     if not f:
         return None
+    if f["result"] == "unavailable":
+        return f"{SOURCE_LABEL[f['name'].split('.')[-1]]} could not be read: {f['detail']}"
     return {"fresh": f"{f['name'].split('.')[-1].title()} data is past its freshness window: {f['detail']}",
             "authority": f"Above agent authority: {f['detail']}",
             "currency": f"Currency mismatch: {f['detail']}",
@@ -333,7 +355,8 @@ async def reread(s: State) -> State:
     """Sources can move while the gate works. An act commits only if they still say what the decision was based on."""
     async with Client(crm_mcp.server) as client:
         now = await read_systems(client, s["case"]["proposal"]["account_id"])
-    moved = [x for x in now if now[x] != s["sources"][x]]
+    same = lambda a, b: {k: v for k, v in a.items() if k != "synced_at"} == {k: v for k, v in b.items() if k != "synced_at"}
+    moved = [x for x in now if not same(now[x], s["sources"][x])]
     check = {"name": "reread", "result": "changed" if moved else "pass",
              "detail": f"{', '.join(moved)} changed after the first read" if moved else "sources unchanged since the first read"}
     return {"checks": s["checks"] + [check], "decision": "gather" if moved else "act"}

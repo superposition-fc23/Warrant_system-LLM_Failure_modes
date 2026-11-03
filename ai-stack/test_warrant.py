@@ -408,6 +408,44 @@ def test_a_person_cannot_commit_a_credit_the_hold_never_named():
     assert row["ruling"] == "commit refused" and "balance" in row["note"] and not written
 
 
+def test_the_demo_server_serves_little_and_starts_clean():
+    import http.client
+    import sys
+    import threading
+    from http.server import ThreadingHTTPServer
+    import demo_server as ds
+    tmp = tempfile.mkdtemp()
+    ds.STATE_DIR, ds.RUNS_DIR = os.path.join(tmp, "state"), os.path.join(tmp, "runs")
+    os.makedirs(ds.STATE_DIR)
+    ds.COMMAND = [sys.executable, "-c", "import os,json;open(os.environ['WARRANT_RUN_DIR']+'/tickets.jsonl','w').write('')"]
+    server = ThreadingHTTPServer(("127.0.0.1", 0), ds.Handler)
+    port = server.server_address[1]
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+
+    def call(method, path, headers=None):
+        c = http.client.HTTPConnection("127.0.0.1", port)
+        c.request(method, path, headers=headers or {})
+        r = c.getresponse()
+        return r.status, r.read()
+    good = {"Origin": f"http://127.0.0.1:{port}", "X-Warrant-Demo": "1"}
+    try:
+        for path in ("/ai-stack/.env", "/../ai-stack/.env", "/reference/", "/ai-stack/state/ledger.jsonl"):
+            assert call("GET", path)[0] == 404, path
+        assert call("GET", "/api/status", {"Host": "evil.example"})[0] == 403
+        assert call("POST", "/api/start")[0] == 403
+        assert call("POST", "/api/start", {"Origin": "http://evil.example", "X-Warrant-Demo": "1"})[0] == 403
+        assert call("POST", "/api/start", {"Origin": good["Origin"]})[0] == 403
+        state = os.path.join(ds.STATE_DIR, "rules.json")
+        open(state, "w").write("{}")
+        assert call("POST", "/api/again", good)[0] == 200 and os.path.exists(state), "run again keeps rulings"
+        ds.run["proc"].wait()
+        assert call("POST", "/api/start", good)[0] == 200 and not os.path.exists(state), "start clears rulings"
+        ds.run["proc"].wait()
+        assert b"<html" in call("GET", "/")[1].lower() and json.loads(call("GET", "/api/status")[1])["phase"] == "finished"
+    finally:
+        server.shutdown()
+
+
 def test_rule_applies_only_inside_its_scope():
     warrant.RULES_PATH = os.path.join(tempfile.mkdtemp(), "rules.json")
     rule = {"id": "SR-T", "pattern": {"action_type": "service_credit", "check": "prior_compensation"}, "effect": "hold", "expires": "2026-12-01"}

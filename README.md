@@ -24,7 +24,7 @@ All cases are synthetic: 10 planted failures, 10 clean controls and 6 counterfac
 | v1 | 10 of 10 | 8 of 10 | 3 of 10 | 6.7 s | $0.021 |
 | v2 | 10 of 10 | 9 of 10 | 1 of 10 | 14.5 s | $0.017 |
 
-v2 was more precise and cheaper, but it failed on latency. The [v2 pull request](https://github.com/superposition-fc23/dyssonance-enterprise-ai-challenge/pull/2) records that miss.
+v2 was more precise and cheaper, but it failed on latency. The [v2 pull request](https://github.com/superposition-fc23/Warrant_system-LLM_Failure_modes/pull/2) records that miss.
 
 ## Run it
 

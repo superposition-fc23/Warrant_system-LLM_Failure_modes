@@ -4,6 +4,25 @@ What building this product changed about how I build products. Each entry record
 
 Add an entry at the end of each iteration, and whenever a run or a review overturns something I believed.
 
+## Reasoning before an iteration
+
+How I got to the v4 plan: [`v4-plan-approach.md`](v4-plan-approach.md). The method: test the claim, judge the product as a buyer, then as an investor, then judge the build against the brief, the team and the architecture. Only then plan, under a fixed budget, and verify the plan against the latest artifact before handing it to an agent. The order matters, because each lens narrows the next.
+
+| What happened | What changed | Rule |
+|---|---|---|
+| The opening claim was directionally right but unmeasured, and it overclaimed when errors surface: approvals and QA catch some at once, while month-end close sees totals, not causes | Opener limited to what a log pull could measure | Never open with a claim you cannot size. Label it a hypothesis |
+| Judged as a buyer, the headline double credit is stopped by controls buyers already have: dedupe by incident, per-account caps, an approval threshold | The product must show what it catches that those rules miss | Compare against the cheapest existing control, not against nothing |
+| Judged as an investor, every measured number answered an engineering question (works, fast, cheap). None answered a discovery question (how often, at what cost, who pays) | Discovery named as the milestone: fund a milestone, not a company | Ask which of your numbers a customer could have given you. If none, you have not done discovery |
+| The best fix in the story, the billing lag, was a ledger: consistency engineering, about 80/20 against the AI | The moat is positioned as data and workflow: rulings becoming rules, conflict patterns across customers | Name where the value actually comes from before claiming it is AI |
+| Deterministic fixes landed while the LLM-specific failure, failing open when the model is silent, stayed open. The report also promised a belief-state test and only held it as a hypothesis | v4 targets model silence and runs the promised test | Grade the fix against the failure you named, not the failures you happened to fix |
+| A bigger model was the obvious lever | Chose a different decomposition: sample disagreement, code-generated defects, a calibrated decision | Change the shape of the problem before changing the model |
+| A full cognitive architecture was tempting. A Bayesian decision layer fits the shape: noisy, ageing observations of hidden facts, and an expected-value choice | Small decision layer, with the model as an extractor because its outputs are not calibrated probabilities | Choose the architecture from the shape of the problem, not the buzzword |
+| The reviewer suggested changing the user segment | Kept it, and added a configuration-only generalization test, cut first | Weigh every suggestion against effort and what is being judged. Broaden with a cheap proof, not a rewrite |
+| More tools were tempting for the last iteration, and so was a polished explainer video | Rejected any tool that changes no decision on a slide; video cut to a 3-minute demo that doubles as the backup | A tool earns its place only if it changes a decision. Spend the last hours on rehearsal, not polish |
+| Several reviewer claims were stale or wrong by planning time, including one arithmetic error (one run priced when the bar needs five) and one belief of my own | Checked each claim against the latest merged pull requests | Verify a review against the latest artifact before acting on it. Reviews age within hours |
+| Measured review cost showed that saved review time alone does not pay for the product | Business metric reframed as a threshold dial between the share a person sees and expected leakage | When the obvious value does not cover the price, find the trade-off the product lets the buyer control |
+| Discovery was the weakest area, yet interviews had been the gate before design | Two or three practitioner conversations with one question each | Two real quotes beat dozens of forum snippets. Do discovery first, and pair it with any cheap step that also makes the problem measurable |
+
 ## Evidence and research
 
 | What happened | What changed | Rule |

@@ -99,7 +99,7 @@ def read_billing(account_id):
     return {"account_id": account_id, "plan_billed": "Business", "seats_billed": item["quantity"], "monthly_fee": item["amount"] / 100,
             "currency": sub["currency_code"],
             "invoices": [{"id": i["invoice"]["id"], "amount": i["invoice"]["total"] / 100, "currency": i["invoice"]["currency_code"],
-                          "status": i["invoice"]["status"], "date": epoch(i["invoice"]["date"])[:10],
+                          "status": i["invoice"]["status"], "invoice_date": epoch(i["invoice"]["date"])[:10],
                           "lines": [{"item": l["description"], "amount": l["amount"] / 100} for l in i["invoice"].get("line_items", [])]} for i in invoices],
             "credits": [credit(c) for c in credits], "credit_balance": cust.get("promotional_credits", 0) / 100, "synced_at": now_iso(), "last_changed": epoch(cust["updated_at"])}
 

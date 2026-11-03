@@ -7,6 +7,7 @@ import json
 import os
 import tempfile
 
+import belief
 import crm_mcp
 import live_sources
 import llm
@@ -14,7 +15,7 @@ import warrant
 
 D = json.load(open("evals/crm_cases.json"))
 CASES = {c["id"]: c for c in D["cases"]}
-CLEAN = json.dumps({"limits": [], "conflicts": [], "discriminating_fact": None, "owner_role": None, "question": None})
+CLEAN = json.dumps({"limits": [], "conflicts": [], "checked": ["contract_terms"], "discriminating_fact": None, "owner_role": None, "question": None})
 prompts = []
 
 
@@ -263,6 +264,97 @@ def test_a_slack_card_shows_roles_and_ids_not_names():
     for n in (crm["name"], person["name"], crm.get("csm")):
         assert n and n not in shown, n
     assert p["account_id"] in shown and person["role"] in shown
+
+
+def belief_state():
+    belief.STATE_PATH = os.path.join(tempfile.mkdtemp(), "beliefs.json")
+
+
+def test_a_hard_veto_beats_any_belief():
+    stub()
+    belief_state()
+    case = json.loads(json.dumps(CASES["CT-01"]))
+    case["proposal"]["amount"] = 1500    # above agent authority, while every source is fresh and the model finds nothing
+    r = asyncio.run(warrant.run(case, D["now"], D["people"], D["authority"]))
+    assert r["decision"] == "hold" and r["belief"]["vetoed_by"] == "authority" and r["belief"]["p_safe"] <= 0.005
+
+
+def test_the_lag_case_gathers_on_belief_alone():
+    stub()
+    belief_state()
+    warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "none.jsonl")
+    case = json.loads(json.dumps(CASES["CT-01"]))
+    case["world"]["billing"]["updated_at"] = "2026-11-01T08:59:20Z"    # changed 40 s ago; the credit list shows nothing yet
+    prompts.clear()
+    r = asyncio.run(warrant.run(case, D["now"], D["people"], D["authority"]))
+    assert r["decision"] == "gather" and r["belief"]["gather"] == "credit_list_complete" and r["belief"]["wait_seconds"] > 0
+    assert "Re-read in" in r["discriminating_fact"] and not prompts, "a re-read must come before any model call"
+    assert r["question"]
+
+
+def test_a_ruling_moves_the_right_source_the_right_way():
+    belief_state()
+    start = belief.reliability("billing")
+    assert belief.rule_on("billing", kept_held=True) < start
+    assert belief.reliability("risk") == json.load(open(belief.STATE_PATH))["risk"]["alpha"] / 200
+    low = belief.reliability("billing")
+    assert belief.rule_on("billing", kept_held=False) > low
+
+
+def test_a_ruling_on_an_agent_error_blames_no_source():
+    assert warrant.ruling_source({"checks": [{"name": "authority", "result": "fail"}], "belief": {"top_doubt_source": "crm"}}) is None
+    assert warrant.ruling_source({"checks": [{"name": "prior_compensation", "result": "fail"}], "belief": {}}) == "billing"
+
+
+def test_decay_falls_with_age_and_matches_the_old_window():
+    w = [belief.weight(h, 6) for h in (0, 1, 3, 6, 9, 24, 100)]
+    assert w == sorted(w, reverse=True) and w[3] == 0.5 and w[1] > 0.99
+
+
+def test_a_case_settled_by_belief_makes_no_model_call():
+    stub()
+    belief_state()
+    case = json.loads(json.dumps(CASES["CT-01"]))
+    case["proposal"]["amount"] = 40
+    prompts.clear()
+    r = asyncio.run(warrant.run(case, D["now"], D["people"], D["authority"]))
+    assert r["decision"] == "act" and not prompts and r["usage"] == {}
+
+
+def test_three_samples_run_and_one_dissent_stops_the_act():
+    belief_state()
+    replies = [CLEAN, CLEAN, json.dumps({"limits": [], "conflicts": [{"fact": "open dispute", "kind": "payment_risk", "amount_at_stake": None, "values": []}], "checked": ["contract_terms"],
+                                         "discriminating_fact": "open dispute", "owner_role": None, "question": "Is it open?"})]
+
+    def ask(model, prompt, **kw):
+        llm.LAST_USAGE, llm.LAST_META = (10, 10), {"served_model": "stub", "stop_reason": "end_turn"}
+        return replies.pop()
+    llm.ask = ask
+    r = run("CT-01")
+    assert r["decision"] == "hold" and sum(x["raised"] for x in r["samples"]) == 1 and len(r["usage"]["answers"]) == 3
+    assert r["belief"]["p_safe"] < 0.75
+
+
+def test_silence_without_a_check_is_not_evidence():
+    belief_state()
+    stub(reply=json.dumps({"limits": [], "conflicts": [], "checked": [], "discriminating_fact": None, "owner_role": None, "question": None}))
+    r = run("CT-01")
+    assert r["decision"] != "act" and r["belief"]["facts"]["evidence_agrees"] == belief.PRIORS["model_fact_prior"]
+
+
+def test_mutation_labels_hold_where_code_can_tell():
+    import mutate
+    out = mutate.build()
+    by = {c["id"]: c for c in out["cases"]}
+    assert len(by) == len(out["cases"]) and {c["unsafe"] for c in out["cases"]} == {True, False}
+    for c in out["cases"]:
+        if c["mutation"] == "under_cap":
+            assert c["proposal"]["amount"] < c["world"]["billing"]["monthly_fee"] * 0.10
+        if c["mutation"] == "over_cap":
+            assert c["world"]["billing"]["monthly_fee"] * 0.10 < c["proposal"]["amount"] <= 1000
+        if c["mutation"] == "authority":
+            assert c["proposal"]["amount"] > 1000
+    assert mutate.build() == out, "the same seed must give the same file"
 
 
 def test_rule_applies_only_inside_its_scope():

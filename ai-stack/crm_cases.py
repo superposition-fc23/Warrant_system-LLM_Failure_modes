@@ -48,7 +48,7 @@ def world(acc, name, tier, fee=6000, cur="USD", seats=200, region="US"):
         "crm": {"account_id": acc, "name": name, "tier": tier, "region": region, "status": "active", "csm": "Alex Moreno",
                 "entitlements": {"seats": seats, "plan": "Business"}, "updated_at": H(0, 1)},
         "billing": {"account_id": acc, "plan_billed": "Business", "seats_billed": seats, "monthly_fee": fee, "currency": cur,
-                    "invoices": [{"id": f"INV-{acc[-4:]}1", "amount": fee, "currency": cur, "status": "paid", "date": "2026-10-20",
+                    "invoices": [{"id": f"INV-{acc[-4:]}1", "amount": fee, "currency": cur, "status": "paid", "invoice_date": "2026-10-20",
                                   "lines": [{"item": "Business subscription", "amount": fee}]}],
                     "credits": [], "updated_at": H(0, 1)},
         "contracts": {"account_id": acc, "documents": [{"id": f"OF-{acc[-4:]}", "kind": "order_form", "status": "signed",

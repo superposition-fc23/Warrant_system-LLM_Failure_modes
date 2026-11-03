@@ -38,8 +38,8 @@ def has_key(model_key: str) -> bool:
     return bool(os.getenv(KEY_ENV[MODELS[model_key]["provider"]]))
 
 
-def ask(model_key: str, prompt: str, system: str = "", max_tokens: int = 16000, effort: str = "medium", schema: dict | None = None) -> str:
-    """Send one text prompt, return the text answer."""
+def ask(model_key: str, prompt: str, system: str = "", max_tokens: int = 16000, effort: str = "medium", schema: dict | None = None, meta: dict | None = None) -> str:
+    """Send one text prompt, return the text answer. Pass meta to get usage per call, which parallel calls need."""
     m = MODELS[model_key]
     if not has_key(model_key):
         raise RuntimeError(f"{KEY_ENV[m['provider']]} is not set in .env, so {model_key} can't be called")
@@ -60,6 +60,8 @@ def ask(model_key: str, prompt: str, system: str = "", max_tokens: int = 16000, 
         global LAST_USAGE, LAST_META
         LAST_USAGE = (resp.usage.input_tokens, resp.usage.output_tokens)
         LAST_META = {"served_model": resp.model, "stop_reason": resp.stop_reason}
+        if meta is not None:
+            meta.update(LAST_META, usage=LAST_USAGE)
         if resp.stop_reason == "refusal":
             return f"[refused: {resp.stop_details.category if resp.stop_details else 'unknown'}]"
         return "".join(b.text for b in resp.content if b.type == "text")

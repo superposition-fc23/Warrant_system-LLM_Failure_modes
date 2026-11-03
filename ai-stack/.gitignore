@@ -7,3 +7,4 @@ __pycache__/
 .voc_cache/
 state/ledger.jsonl
 state/rules.json
+state/beliefs.json

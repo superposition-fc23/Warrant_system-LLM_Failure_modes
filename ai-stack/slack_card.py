@@ -17,6 +17,7 @@ from slack_sdk.socket_mode import SocketModeClient
 from slack_sdk.socket_mode.request import SocketModeRequest
 from slack_sdk.socket_mode.response import SocketModeResponse
 
+import belief
 import crm_mcp
 import live_sources
 import pii
@@ -56,7 +57,8 @@ def mask(rec, text):
 def card(rec):
     key = rec["trace_id"]
     q = rec["question"] or {}
-    return [{"type": "section", "text": {"type": "mrkdwn", "text": f":raised_hand: *Held before commit*\n{header(rec)}"}},
+    doubt = belief.describe(rec["belief"]) if rec.get("belief", {}).get("top_doubt") else ""
+    return [{"type": "section", "text": {"type": "mrkdwn", "text": f":raised_hand: *Held before commit*\n{header(rec)}" + (f"\n{doubt}" if doubt else "")}},
             {"type": "section", "text": {"type": "mrkdwn", "text": f"*Why:* {mask(rec, rec['discriminating_fact'])}\n*Question for {q.get('to_role', 'the owner')}:* {mask(rec, q.get('text', ''))}"}},
             {"type": "context", "elements": [{"type": "mrkdwn", "text": f"Rationale: {mask(rec, rec['action']['rationale'])}  |  record {rec['record_id']}  |  seeded test data"}]},
             {"type": "actions", "elements": [button("Keep held", "ruling_hold", key, "danger"), button("Commit as proposed", "ruling_commit", key)]}]
@@ -71,7 +73,7 @@ def ruled_card(rec, text, offer_rule=False):
 
 def post_hold(rec, out):
     r = client().chat_postMessage(channel=os.environ["SLACK_CHANNEL"], text=f"Held: {mask(rec, rec['discriminating_fact'])}", blocks=card(rec))
-    PENDING[rec["trace_id"]] = {"rec": rec, "ts": r["ts"], "channel": r["channel"], "out": out}
+    PENDING[rec["trace_id"]] = {"rec": rec, "ts": r["ts"], "channel": r["channel"], "out": out, "posted": datetime.now(timezone.utc)}
     return r["ts"]
 
 
@@ -106,6 +108,8 @@ def handle(action_id, key):
     rec, now = item["rec"], datetime.now(timezone.utc)
     at = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     row = {"record_id": rec["record_id"], "trace_id": key, "case_id": rec["case_id"], "at": at, "ruled_by": "Billing analyst, via Slack"}
+    if item.get("posted"):
+        row["seconds_to_ruling"] = round((now - item["posted"]).total_seconds())
     if action_id == "ruling_hold":
         row.update(ruling="reject")
         rule_ok = bool(failed_check(rec)) and failed_check(rec) in ("prior_compensation", "boundary", "authority", "currency")
@@ -130,6 +134,10 @@ def handle(action_id, key):
         blocks = ruled_card(rec, f":scroll: *Standing rule {rule['id']}:* {rule['pattern']['action_type']} failing {rule['pattern']['check']} holds with no question, up to {rule['scope']['max_amount']} {rule['scope']['currency']}. Owner {rule['owner']}, expires {rule['expires']}.")
     else:
         return None
+    src = warrant.ruling_source(rec)
+    if src and row["ruling"] in ("reject", "commit"):
+        before = belief.reliability(src)
+        row["belief_update"] = {"source": src, "before": round(before, 4), "after": round(belief.rule_on(src, row["ruling"] == "reject"), 4)}
     write_ruling(item["out"], row)
     client().chat_update(channel=item["channel"], ts=item["ts"], text=row["ruling"], blocks=blocks)
     return row

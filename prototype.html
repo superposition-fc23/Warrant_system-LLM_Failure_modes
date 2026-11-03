@@ -612,7 +612,7 @@ var cur = 0, list = IDS.filter(function(i){ return byId[i] && byId[i].evidence; 
 function ev(d){
   var e = d.evidence, b = e.billing, c = e.crm;
   var doc = e.contracts.map(function(x){ return '<li><span class="font-mono text-xs">' + esc(x.id) + '</span> ' + esc(x.kind) + ', <strong>' + esc(x.status) + '</strong><div class="text-fg-2">' + esc(x.text) + '</div></li>'; }).join('');
-  var inv = b.invoices.map(function(i){ return esc(i.id) + ' ' + esc(i.amount) + ' ' + esc(i.currency) + ' ' + esc(i.status) + ', dated ' + esc(i.date) + ' (' + i.lines.map(function(l){ return esc(l.item) + ' ' + esc(l.amount); }).join(', ') + ')'; }).join('; ');
+  var inv = b.invoices.map(function(i){ return esc(i.id) + ' ' + esc(i.amount) + ' ' + esc(i.currency) + ' ' + esc(i.status) + ', dated ' + esc(i.invoice_date || i.date) + ' (' + i.lines.map(function(l){ return esc(l.item) + ' ' + esc(l.amount); }).join(', ') + ')'; }).join('; ');
   var cr = b.credits.map(function(x){ return esc(x.id) + ' ' + esc(x.amount) + ' ' + esc(x.currency) + ' for ' + esc(x.incident_id) + ' by ' + esc(x.issued_by); }).join('; ') || 'none';
   var msg = (c.recent_messages || []).map(function(m){ return '<li>' + esc(m.channel) + ', ' + esc(m.from) + ': ' + esc(m.text) + '</li>'; }).join('');
   var risk = e.risk.map(function(f){ return '<li>' + esc(f.id) + ' ' + esc(f.type) + ', <strong>' + esc(f.status) + '</strong>: ' + esc(f.note) + '</li>'; }).join('') || '<li>no flags</li>';

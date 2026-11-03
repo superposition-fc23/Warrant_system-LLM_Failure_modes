@@ -17,6 +17,7 @@ import statistics
 import sys
 from datetime import datetime, timezone
 
+import belief
 import llm
 import pii
 import telemetry
@@ -76,7 +77,7 @@ def to_ui(case, rec):
             "rule_applied": rec["rule_applied"], "record_id": rec["record_id"], "trace_id": rec["trace_id"],
             "latency_ms": rec["latency_ms"], "cost_usd": round(rec["usage"].get("cost_usd", 0), 5), "fact_from": rec.get("fact_from"),
             "served_model": rec["usage"].get("served_model"), "compare_skipped": rec.get("compare_skipped"),
-            "discriminating_fact": rec["discriminating_fact"], "judge": None, "mode": rec["mode"], "rationale": p.get("rationale"),
+            "discriminating_fact": rec["discriminating_fact"], "belief": rec.get("belief"), "samples": rec.get("samples"), "judge": None, "mode": rec["mode"], "rationale": p.get("rationale"),
             "evidence": {"crm": crm, "billing": case["world"]["billing"], "contracts": case["world"]["contracts"]["documents"], "risk": case["world"]["risk"]["flags"]}}
 
 
@@ -88,6 +89,7 @@ async def main(version, runs=1):
     os.makedirs(out, exist_ok=True)
     telemetry.setup(f"{out}/traces.jsonl")
     warrant.RULES_PATH = f"{out}/rules.json"      # each run starts with no standing rules; the file is the run's rule state
+    belief.STATE_PATH = f"{out}/beliefs.json"     # rulings in a run never touch the priors or the demo's state
     cases = {c["id"]: c for c in d["cases"]}
     order = [c for c in d["cases"] if c["kind"] in ("control", "planted", "injection")] + [c for c in d["cases"] if c["kind"] == "pair"]
     recs, ui = {}, {}

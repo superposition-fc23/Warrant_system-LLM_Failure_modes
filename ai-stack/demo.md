@@ -8,16 +8,17 @@
 
 Line to carry: output evals tell you it was wrong after it was wrong; belief evals tell you it is about to be.
 
-## Warrant v3 live path (test accounts, seeded data)
+## Warrant live path (test accounts, seeded data)
 
-Before the call, clear earlier rulings so the first run posts both cards:
+Double-click `Warrant Demo.command` in the project folder. It opens the prototype; go to tab 8, Live demo.
 
-    rm -f state/rules.json state/ledger.jsonl state/beliefs.json
-    .venv/bin/python agent.py v4 slack belief-only 900
+1. **Start clean demo.** It clears earlier rulings by itself. The clean credit is applied, written to the Chargebee test site, with no card.
+2. **Second agent, same incident:** gathers on belief alone, with P(safe) and a re-read time. Click **Keep held** in Slack, and the tab shows billing's reliability fall.
+3. **Over-cap credit:** held, with the clause and its source on the card. Click **Keep held**.
+4. **Run again, keep my rulings.** The next clean credit shows the lower P(safe).
 
-1. Clean credit: applied, written to the Chargebee test site, no notification.
-2. Second agent, same incident: held, naming the first credit. Click Keep held, then Make this a standing rule.
-3. Over-cap credit: held, naming the contract cap. Click either button.
-4. Run the same command again without clearing: the duplicate is settled by the rule, with no card.
+If the model API or anything live fails, use **Replay a recorded run** on the same tab. It makes no calls and also works when the prototype is opened from the file. Say it is a replay. It includes the recorded Commit click that wrote a second credit.
+
+Rehearsal only, in a separate run: click **Commit** on the lag card. It should refuse and say why.
 
 Say first: real are the agent, gate, HubSpot and Chargebee test reads, the credit write and Slack clicks. Scripted are the tickets. Contracts and risk are local fixtures. Each run uses clean accounts from the pool; `seed_live.py` adds more if `POOL` is raised.

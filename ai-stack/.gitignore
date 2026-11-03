@@ -8,3 +8,5 @@ __pycache__/
 state/ledger.jsonl
 state/rules.json
 state/beliefs.json
+state/demo-server.log
+runs/demo-*

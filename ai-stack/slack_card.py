@@ -69,7 +69,15 @@ def clause(rec):
 def question_text(rec, q):
     """The question without repeating the reason already shown above it."""
     text, fact = q.get("text", ""), rec.get("discriminating_fact") or ""
-    return text[len(fact):].lstrip(". ") if fact and text.startswith(fact) else text
+    rest = text[len(fact):].lstrip(". ") if fact and text.startswith(fact) else text
+    return rest or "Keep this held, or commit it?"
+
+
+def re_text(block):
+    """The plain text of one card block, for the recorded replay."""
+    if block["type"] == "context":
+        return " ".join(e["text"] for e in block["elements"])
+    return block["text"]["text"]
 
 
 def card(rec):

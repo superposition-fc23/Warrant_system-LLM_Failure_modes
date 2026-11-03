@@ -385,6 +385,8 @@ def test_a_card_shows_the_clause_and_does_not_repeat_itself():
     shown = json.dumps(slack_card.card(rec))
     assert "may not exceed 10%" in shown and "OF-2001, order form, signed" in shown and "CLM" in shown
     assert shown.count("900 against cap 600") == 1 and "Commit anyway?" in shown
+    rec["question"]["text"] = fact
+    assert "Keep this held, or commit it?" in json.dumps(slack_card.card(rec)), "a question must never be blank"
 
 
 def test_a_person_cannot_commit_a_credit_the_hold_never_named():
@@ -406,6 +408,55 @@ def test_a_person_cannot_commit_a_credit_the_hold_never_named():
     live_sources.read_billing = lambda a: {"a": 1, "credit_balance": 300, "credits": []}
     row = slack_card.handle("ruling_commit", "abc123")
     assert row["ruling"] == "commit refused" and "balance" in row["note"] and not written
+
+
+def test_the_demo_server_serves_little_and_starts_clean():
+    import http.client
+    import sys
+    import threading
+    from http.server import ThreadingHTTPServer
+    import demo_server as ds
+    tmp = tempfile.mkdtemp()
+    ds.STATE_DIR, ds.RUNS_DIR = os.path.join(tmp, "state"), os.path.join(tmp, "runs")
+    os.makedirs(ds.STATE_DIR)
+    ds.COMMAND = [sys.executable, "-c", "import os,json;open(os.environ['WARRANT_RUN_DIR']+'/tickets.jsonl','w').write('')"]
+    server = ThreadingHTTPServer(("127.0.0.1", 0), ds.Handler)
+    port = server.server_address[1]
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+
+    def call(method, path, headers=None):
+        c = http.client.HTTPConnection("127.0.0.1", port)
+        c.request(method, path, headers=headers or {})
+        r = c.getresponse()
+        return r.status, r.read()
+    good = {"Origin": f"http://127.0.0.1:{port}", "X-Warrant-Demo": "1"}
+    try:
+        for path in ("/ai-stack/.env", "/../ai-stack/.env", "/reference/", "/ai-stack/state/ledger.jsonl"):
+            assert call("GET", path)[0] == 404, path
+        assert call("GET", "/api/status", {"Host": "evil.example"})[0] == 403
+        assert call("POST", "/api/start")[0] == 403
+        assert call("POST", "/api/start", {"Origin": "http://evil.example", "X-Warrant-Demo": "1"})[0] == 403
+        assert call("POST", "/api/start", {"Origin": good["Origin"]})[0] == 403
+        state = os.path.join(ds.STATE_DIR, "rules.json")
+        open(state, "w").write("{}")
+        assert call("POST", "/api/again", good)[0] == 200 and os.path.exists(state), "run again keeps rulings"
+        ds.run["proc"].wait()
+        assert call("POST", "/api/start", good)[0] == 200 and not os.path.exists(state), "start clears rulings"
+        ds.run["proc"].wait()
+        assert b"<html" in call("GET", "/")[1].lower() and json.loads(call("GET", "/api/status")[1])["phase"] == "finished"
+    finally:
+        server.shutdown()
+
+
+def test_the_replay_comes_from_the_recorded_run_and_shows_no_names():
+    text = open("runs/replay/replay-data.js").read()
+    data = json.loads(text[text.index("{"):text.rindex("}") + 1])
+    assert data["run"] == "v4-agent-20261103T0504" and [s["decision"] for s in data["steps"]] == ["act", "gather", "hold"]
+    assert data["steps"][1]["ruling"] == "commit" and data["steps"][2]["ruling"] == "reject"
+    cards = json.dumps([s["card"] for s in data["steps"]])
+    for name in [p["name"] for p in D["people"]] + ["Harbor Freight Labs", "Alex Moreno"]:
+        assert name not in cards, name
+    assert "may not exceed 10%" in cards
 
 
 def test_rule_applies_only_inside_its_scope():

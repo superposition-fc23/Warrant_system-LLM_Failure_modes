@@ -95,7 +95,7 @@ async def main(version, slack=False, wait=600):
     cases = {c["id"]: c for c in d["cases"]}
     by_account = {cases[c]["proposal"]["account_id"]: cases[c] for c in seed_live.DEMO}
     now = datetime.now(timezone.utc)
-    out = f"runs/{version}-agent-{now:%Y%m%dT%H%M}"
+    out = os.environ.get("WARRANT_RUN_DIR") or f"runs/{version}-agent-{now:%Y%m%dT%H%M}"
     os.makedirs(out, exist_ok=True)
     telemetry.setup(f"{out}/traces.jsonl")
     warrant.RULES_PATH = f"{out}/rules.json"
@@ -114,6 +114,9 @@ async def main(version, slack=False, wait=600):
     for t in tickets(now.strftime("%m%d%H%M"), acc, acc2):
         row = await run_ticket(t, datetime.now(timezone.utc), d, by_account, client)
         rows.append(row)
+        with open(f"{out}/tickets.jsonl", "w") as f:    # after each ticket, so the demo tab can show progress
+            for r in rows:
+                f.write(json.dumps(r) + "\n")
         for r in row["records"]:
             print(row["ticket"], row["agent"], r["tool_input"]["amount"], "->", r["tool_result"]["status"], "|", str(r["tool_result"].get("reason") or r["tool_result"].get("credit_id"))[:120], "|", r["record"]["latency_ms"], "ms", flush=True)
         print("  reply:", row["reply"][:300].replace("\n", " "), flush=True)
@@ -122,9 +125,6 @@ async def main(version, slack=False, wait=600):
                 if r["record"]["decision"] != "act" and r["record"]["question"]:
                     slack_card.post_hold(r["record"], out)
                     print("  posted to Slack", flush=True)
-    with open(f"{out}/tickets.jsonl", "w") as f:
-        for r in rows:
-            f.write(json.dumps(r) + "\n")
     if sock:
         print(f"waiting up to {wait} s for rulings in Slack", flush=True)
         end = time.time() + wait

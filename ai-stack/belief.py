@@ -50,7 +50,7 @@ def weight(age_hours, window_hours):
 
 def aged(r, age_hours, window_hours):
     w = weight(age_hours, window_hours)
-    return w * r + (1 - w) * PRIORS["fact_base_rate"]
+    return w * r + (1 - w) * PRIORS["unread_fact_policy"]
 
 
 def list_complete(seconds_since_change):
@@ -75,15 +75,15 @@ def delay_cost():
 
 def model_fact(samples, table=None):
     """P(evidence agrees) from k samples of the compare step. The share raising a material conflict is a likelihood input, not a verdict.
-    A sample only counts as clean if it says it checked the contract terms, so silence is not evidence."""
+    Clean needs every readable sample to cite a contract record that code confirmed exists, so silence is not evidence."""
     if samples is None:
-        return PRIORS["model_fact_prior"]
+        return PRIORS["unread_fact_policy"]
     readable = [x for x in samples if "parse_error" not in x]
     raised = sum(1 for x in readable if x.get("raised"))
     if raised:
         return PRIORS["safe_given_share"][str(min(round(3 * raised / len(readable)), 3))]
-    if not any(x.get("checked") for x in readable):
-        return PRIORS["model_fact_prior"]
+    if not readable or not all(x.get("checked") for x in readable):
+        return PRIORS["unread_fact_policy"]
     return reliability("contracts", table)
 
 
@@ -99,7 +99,7 @@ def facts(sources_read, now, samples=None, table=None):
     changed = billing.get("last_changed") or billing.get("updated_at")
     out = {"entitlement_matches": aged(reliability("crm", table), age.get("crm", 1e6), WINDOW_HOURS["crm"]),
            "no_prior_compensation": aged(reliability("billing", table), age.get("billing", 1e6), WINDOW_HOURS["billing"]),
-           "credit_list_complete": list_complete(t - ts(changed)) if changed else PRIORS["fact_base_rate"],
+           "credit_list_complete": list_complete(t - ts(changed)) if changed else PRIORS["unread_fact_policy"],
            "risk_clear": aged(reliability("risk", table), age.get("risk", 1e6), WINDOW_HOURS["risk"]),
            "evidence_agrees": model_fact(samples, table),
            "contract_current": aged(1.0, age.get("contracts", 1e6), WINDOW_HOURS["contracts"])}
@@ -113,7 +113,7 @@ def p_safe(f):
 def after_reread(name, f, table):
     """What this fact would be worth after a fresh read, or None if reading again cannot help."""
     if name == "evidence_agrees":
-        return None
+        return reliability("contracts", table) if f[name] == PRIORS["unread_fact_policy"] else None    # unverified can be asked again; a raised conflict cannot
     if name == "contract_current":
         return 1.0
     if name == "credit_list_complete":
@@ -165,7 +165,7 @@ def settle_before_model(f, at_stake, table=None, cost=None):
 
 
 DOUBT = {"credit_list_complete": "the credit list may not yet show a recent write", "no_prior_compensation": "billing is too old to rule out an earlier credit",
-         "risk_clear": "the risk feed is too old to rule out an open flag", "entitlement_matches": "the CRM is too old to confirm the entitlement", "evidence_agrees": "the contract comparison raised doubt", "contract_current": "the contract record is too old to rely on"}
+         "risk_clear": "the risk feed is too old to rule out an open flag", "entitlement_matches": "the CRM is too old to confirm the entitlement", "evidence_agrees": "the contract comparison raised doubt or could not show what it checked", "contract_current": "the contract record is too old to rely on"}
 
 
 def describe(d):
@@ -173,6 +173,8 @@ def describe(d):
     line = f"P(safe) {d['p_safe']:.3f}. Main doubt: {DOUBT[d['top_doubt']]}."
     if d.get("gather") == "credit_list_complete":
         return f"{line} Re-read in {d.get('wait_seconds', 0)} s."
+    if d.get("gather") == "evidence_agrees":
+        return f"{line} Run the comparison again."
     if d.get("gather"):
         return f"{line} Re-read {FACT_SOURCE[d['gather']]}."
     return line

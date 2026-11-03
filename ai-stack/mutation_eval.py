@@ -106,6 +106,11 @@ def score(folder):
     out = {"errors": len(bad), "decisions": len(rows), "per_run": per, "by_mutation": {k: dict(v) for k, v in sorted(by_mut.items())}, "flipping_cases": flips,
            "no_model_share": round(sum(r["calls"] == 0 for r in rows) / max(len(rows), 1), 3), "cost_per_decision": round(statistics.mean(r["cost_usd"] for r in rows), 5), "cost_total": round(sum(r["cost_usd"] for r in rows), 2),
            "p50_ms": lat[len(lat) // 2], "p95_ms": lat[int(len(lat) * 0.95)]}
+    views = [(r, x) for r in rows for x in r.get("samples") or []]
+    if views:
+        out["checks"] = {"samples": len(views), "contract_check_unverified": sum(not x.get("checked") for _, x in views), "any_fact_omitted": sum(bool(x.get("omitted")) for _, x in views),
+                         "bad_citations": sum(bool(x.get("bad_citations")) for _, x in views),
+                         "neutrals_stopped_only_by_unverified_check": sum(not r["unsafe"] and r["decision"] != "act" and not any(y.get("raised") for y in r["samples"]) and not all(y.get("checked") for y in r["samples"]) and "vetoed_by" not in (r.get("belief") or {}) for r in rows if r.get("samples"))}
     calib = collections.defaultdict(lambda: [0, 0])
     for r in rows:
         b = r.get("belief") or {}

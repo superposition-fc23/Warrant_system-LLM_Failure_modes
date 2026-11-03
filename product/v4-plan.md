@@ -1,6 +1,6 @@
 # v4 plan: an uncertainty-aware decision layer
 
-Status: steps 1 to 5 built on branch `v4`, with priors frozen in commit `764324f`. The paid runs in step 6 have not started. One pull request, results and misses in its description. The revert point is the tag `v3-final` (PR 8). Follow `CLAUDE.md` throughout (no em dashes, no invented numbers, report before slides, no new frameworks or CDN links).
+Status: steps 1 to 5 built on branch `v4`, with priors frozen before the first full run. The paid runs in step 6 follow. One pull request, results and misses in its description. The revert point is the tag `v3-final` (PR 8). Follow `CLAUDE.md` throughout (no em dashes, no invented numbers, report before slides, no new frameworks or CDN links).
 
 ## Hard deadline
 
@@ -146,7 +146,7 @@ Checked against the code and the approach doc before building. Each was changed 
 | Finding | Change |
 |---|---|
 | An exponential half-life over-holds. At a $20 cost of delay and $300 at stake, the tolerance is 6.7% total doubt, and a 6 h half-life already costs 11% after an hour | Weight is 1 / (1 + (age / window)^4). It is flat while fresh, exactly 0.5 at the old window, and falls after it. The plan's boundary test still holds |
-| Silence still meant safe: three samples that find nothing could also mean three samples that did not look | The compare step reports what it checked. A sample counts as clean only if it checked the contract terms; otherwise the fact stays at its prior and the action does not act. This is the direct fix for log row 18, from section 6 of the approach doc |
+| Silence still meant safe: three samples that find nothing could also mean three samples that did not look. A bare "I checked" is still self-reported | Each check must cite a record ID, and code confirms it exists in the sources sent; a contract check must cite a contract document. Every readable sample must pass, or the fact stays at the unread prior and the case gathers. Omission and bad-citation rates, and the neutrals they stop, are reported. Limit: this proves the record exists and was cited, not that the model read it |
 | Independent samples would let two silent answers outweigh a real conflict, which risks the recall bar | The share raising a conflict maps to a stated table, not a product of likelihoods: 0 of 3 uses the contract reliability, 1 of 3 is 0.70, 2 of 3 is 0.30, 3 of 3 is 0.05. The calibration table tests it |
 | A credit-list wait has no fixed length | The layer solves for the wait, so the card says "Re-read in N s". An age-based re-read comes before any model call |
 | When no answer could clear the action, skipping the model would leave nothing to name | One sample runs in that case, to name the fact |
@@ -158,13 +158,14 @@ Checked against the code and the approach doc before building. Each was changed 
 | Value | Setting | Effect, by arithmetic alone |
 |---|---|---|
 | Source reliability | CRM, billing, risk 0.995 (Beta 199, 1); contracts 0.99 (Beta 99, 1) | A clean, fresh case has P(safe) of about 0.975. One kept hold moves a source to 0.990 |
-| Unread or fully aged fact | 0.8 | A stale source or unread contract adds about 20% doubt |
+| Unread or fully aged fact | 0.8. **A pessimistic prior set by policy, "do not act on unknowns", not a measurement.** Real base rates are probably much higher; a log pull would give them | About 20% doubt, far above the 6.7% tolerance at $300, so an unread fact gathers |
 | Cost of delay | $20: review $2.67 (upper end of section 13), other delay cost $17.33 | The dial. The sweep reports other values |
-| Credit list τ | 90 s | Complete with P = 0.36 at 40 s, 0.74 at 2 min, 0.96 at 5 min |
+| Credit list τ | 90 s, from one lag of over a minute seen on the live Chargebee test site, not from the synthetic data | Complete with P = 0.36 at 40 s, 0.74 at 2 min, 0.96 at 5 min |
 | k | 3, or 1 when no answer could clear the action | |
 
 Consequences to state in the report:
 
+- **What the lag result does and does not show.** The belief layer reaches the same answer without the special-case rules. It does not show those rules are unnecessary, and both stay in production. τ came from the same lag it is tested on, so passing synthetic lags of 5 to 120 s is partly by design and is not presented as a discovery.
 - **Nothing above about $800 acts.** At 2.5% doubt, $20 buys $800 of stake, below the agents' $1,000 authority. This is a real limit of these values, and the dial moves it.
 - **Below about $94, nothing reads the contract.** Expected loss is under the cost of delay even unread. A low-stakes defect would act, by design.
 - **CT-08 may still miss its bar.** If a sample raises the conflict about 40% of the time (2 of 5 v3 runs), k=3 stays clean 22% of the time, so all 5 runs agree only about 30% of the time. Moving to k=5 raises that to about 67% at higher cost. Report the result either way.

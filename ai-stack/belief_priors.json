@@ -1,14 +1,13 @@
 {
-  "_note": "All values are assumed, set before any v4 run, and not tuned after seeing results. Any change is disclosed in the report.",
+  "_note": "All values are assumed, set before any full v4 run, and not tuned after seeing results. Any change is disclosed in the report. unread_fact_policy is not a measured base rate: it is a pessimistic prior set by policy, do not act on unknowns. Real base rates are probably much higher; a log pull would give them.",
   "sources": {
     "crm": {"alpha": 199, "beta": 1},
     "billing": {"alpha": 199, "beta": 1},
     "risk": {"alpha": 199, "beta": 1},
     "contracts": {"alpha": 99, "beta": 1}
   },
-  "fact_base_rate": 0.8,
-  "model_fact_prior": 0.8,
-  "safe_given_share": {"0": null, "1": 0.70, "2": 0.30, "3": 0.05},
+  "unread_fact_policy": 0.8,
+    "safe_given_share": {"0": null, "1": 0.70, "2": 0.30, "3": 0.05},
   "credit_list_tau_seconds": 90,
   "decay_steepness": 4,
   "review_cost": 2.67,

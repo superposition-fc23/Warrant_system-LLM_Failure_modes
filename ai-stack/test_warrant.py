@@ -5,6 +5,7 @@
 import asyncio
 import json
 import os
+import re
 import tempfile
 
 import belief
@@ -15,7 +16,7 @@ import warrant
 
 D = json.load(open("evals/crm_cases.json"))
 CASES = {c["id"]: c for c in D["cases"]}
-CLEAN = json.dumps({"limits": [], "conflicts": [], "checked": ["contract_terms"], "discriminating_fact": None, "owner_role": None, "question": None})
+CLEAN = json.dumps({"limits": [], "conflicts": [], "checked": [{"fact": "contract_terms", "record_id": "__DOC__"}], "discriminating_fact": None, "owner_role": None, "question": None})
 prompts = []
 
 
@@ -25,7 +26,8 @@ def stub(reply=CLEAN, stop="end_turn", during=None):
         llm.LAST_USAGE, llm.LAST_META = (10, 10), {"served_model": "stub", "stop_reason": stop}
         if during:
             during()
-        return reply
+        doc = re.search(r'"id": "((?:OF|AM|EM|TR|RN)-[^"]+)"', prompt)
+        return reply.replace("__DOC__", doc.group(1) if doc else "none")
     llm.ask = ask
 
 
@@ -323,7 +325,8 @@ def test_a_case_settled_by_belief_makes_no_model_call():
 
 def test_three_samples_run_and_one_dissent_stops_the_act():
     belief_state()
-    replies = [CLEAN, CLEAN, json.dumps({"limits": [], "conflicts": [{"fact": "open dispute", "kind": "payment_risk", "amount_at_stake": None, "values": []}], "checked": ["contract_terms"],
+    clean = CLEAN.replace("__DOC__", "OF-2001")
+    replies = [clean, clean, json.dumps({"limits": [], "conflicts": [{"fact": "open dispute", "kind": "payment_risk", "amount_at_stake": None, "values": []}], "checked": [{"fact": "contract_terms", "record_id": "OF-2001"}],
                                          "discriminating_fact": "open dispute", "owner_role": None, "question": "Is it open?"})]
 
     def ask(model, prompt, **kw):
@@ -335,11 +338,24 @@ def test_three_samples_run_and_one_dissent_stops_the_act():
     assert r["belief"]["p_safe"] < 0.75
 
 
-def test_silence_without_a_check_is_not_evidence():
+def silent(checked):
     belief_state()
-    stub(reply=json.dumps({"limits": [], "conflicts": [], "checked": [], "discriminating_fact": None, "owner_role": None, "question": None}))
-    r = run("CT-01")
-    assert r["decision"] != "act" and r["belief"]["facts"]["evidence_agrees"] == belief.PRIORS["model_fact_prior"]
+    stub(reply=json.dumps({"limits": [], "conflicts": [], "checked": checked, "discriminating_fact": None, "owner_role": None, "question": None}))
+    return run("CT-01")
+
+
+def test_silence_without_a_check_is_not_evidence():
+    r = silent([])
+    assert r["decision"] == "gather" and r["belief"]["gather"] == "evidence_agrees"
+    assert r["belief"]["facts"]["evidence_agrees"] == belief.PRIORS["unread_fact_policy"] and "contract_terms" in r["samples"][0]["omitted"]
+
+
+def test_a_claimed_check_needs_a_real_contract_id():
+    for bad in ("OF-9999", "ACC-2001", "INV-20011"):
+        r = silent([{"fact": "contract_terms", "record_id": bad}])
+        assert r["decision"] != "act" and r["samples"][0]["bad_citations"] == [bad], bad
+    r = silent([{"fact": "contract_terms", "record_id": "OF-2001"}])
+    assert r["decision"] == "act" and r["samples"][0]["checked"]
 
 
 def test_mutation_labels_hold_where_code_can_tell():

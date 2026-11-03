@@ -17,7 +17,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 PORT = 8765
 PAGE = {"/": "prototype.html", "/prototype.html": "prototype.html", "/index.html": "index.html", "/slides.html": "slides.html", "/ai-stack/runs/sample/prototype-data.js": "ai-stack/runs/sample/prototype-data.js",
-        "/ai-stack/runs/latest/prototype-data.js": "ai-stack/runs/latest/prototype-data.js"}
+        "/ai-stack/runs/latest/prototype-data.js": "ai-stack/runs/latest/prototype-data.js", "/ai-stack/runs/replay/replay-data.js": "ai-stack/runs/replay/replay-data.js"}
 STATE_FILES = ["rules.json", "ledger.jsonl", "beliefs.json"]
 STATE_DIR = os.path.join(HERE, "state")
 RUNS_DIR = os.path.join(HERE, "runs")

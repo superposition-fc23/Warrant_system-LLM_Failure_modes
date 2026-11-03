@@ -17,6 +17,8 @@ Double-click `Warrant Demo.command` in the project folder. It opens the prototyp
 3. **Over-cap credit:** held, with the clause and its source on the card. Click **Keep held**.
 4. **Run again, keep my rulings.** The next clean credit shows the lower P(safe).
 
+If the model API or anything live fails, use **Replay a recorded run** on the same tab. It makes no calls and also works when the prototype is opened from the file. Say it is a replay. It includes the recorded Commit click that wrote a second credit.
+
 Rehearsal only, in a separate run: click **Commit** on the lag card. It should refuse and say why.
 
 Say first: real are the agent, gate, HubSpot and Chargebee test reads, the credit write and Slack clicks. Scripted are the tickets. Contracts and risk are local fixtures. Each run uses clean accounts from the pool; `seed_live.py` adds more if `POOL` is raised.

@@ -385,6 +385,8 @@ def test_a_card_shows_the_clause_and_does_not_repeat_itself():
     shown = json.dumps(slack_card.card(rec))
     assert "may not exceed 10%" in shown and "OF-2001, order form, signed" in shown and "CLM" in shown
     assert shown.count("900 against cap 600") == 1 and "Commit anyway?" in shown
+    rec["question"]["text"] = fact
+    assert "Keep this held, or commit it?" in json.dumps(slack_card.card(rec)), "a question must never be blank"
 
 
 def test_a_person_cannot_commit_a_credit_the_hold_never_named():
@@ -444,6 +446,17 @@ def test_the_demo_server_serves_little_and_starts_clean():
         assert b"<html" in call("GET", "/")[1].lower() and json.loads(call("GET", "/api/status")[1])["phase"] == "finished"
     finally:
         server.shutdown()
+
+
+def test_the_replay_comes_from_the_recorded_run_and_shows_no_names():
+    text = open("runs/replay/replay-data.js").read()
+    data = json.loads(text[text.index("{"):text.rindex("}") + 1])
+    assert data["run"] == "v4-agent-20261103T0504" and [s["decision"] for s in data["steps"]] == ["act", "gather", "hold"]
+    assert data["steps"][1]["ruling"] == "commit" and data["steps"][2]["ruling"] == "reject"
+    cards = json.dumps([s["card"] for s in data["steps"]])
+    for name in [p["name"] for p in D["people"]] + ["Harbor Freight Labs", "Alex Moreno"]:
+        assert name not in cards, name
+    assert "may not exceed 10%" in cards
 
 
 def test_rule_applies_only_inside_its_scope():

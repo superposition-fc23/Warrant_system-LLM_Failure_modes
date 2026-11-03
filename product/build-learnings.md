@@ -45,6 +45,8 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | All evals passed, then the first live agent run double-credited a customer. Chargebee's credit list lagged the write by over a minute, and an empty list looks exactly like a true "no prior credit" | The gate keeps its own commit ledger and cross-checks the balance against listed credits | A clean read is not a current read. Fixtures cannot show the failures only a real system has, so go live before trusting a score |
 | Sonnet 5.5 in one call beat Haiku then Opus on latency and cost: median 14.5 s to 4.2 s, $0.0173 to $0.0098 per decision | One model for the gate, a stronger one for the judge | Try one good model before building a tier. Keep the stronger model for grading |
 
+| Labelling 15 records took over an hour, and the reviewer made one selection error. At $30 to $40 an hour, that is at least $2 to $2.67 a record against $0.0101 a gate decision | Review cost now has its own table. At the middle volume it is below the assumed account price, so the case rests on avoided mistakes | Time your own evaluators. The cost of the human check is a product number, and it can weaken your pitch |
+
 ## Privacy and governance
 
 | What happened | What changed | Rule |
@@ -58,6 +60,8 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | A rewrite was tested on a copy, then pushed to a private repo and scanned from a fresh clone of every ref before the visibility changed | Went public with 0 addresses, secrets or forum text in 139 blobs | Verify the published artifact, not the local one, and flip visibility last |
 | A commit address swap could have looked like losing the activity graph | Checked commit attribution before, and the logged-out graph after | Test what the audience will see, from their position |
 
+| A new drawing of all data exits found the agent path unredacted and real names on Slack cards. The old drawing and the guardrail text had claimed less exposure than the code had | Same tokens on every model path, roles on Slack, three new tests | Draw every exit from the code, not from the design. Fix the guard everywhere the data goes |
+
 ## Working with AI agents
 
 Full evidence: [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
@@ -67,6 +71,8 @@ Full evidence: [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
 | An instruction about public text became a ban on naming a tool, then hardened through agent memory and a context summary | Corrected the rule and its memory entry | State scope when instructing an agent. Treat its saved beliefs as claims to re-check, especially after a summary |
 | The same model wrote the cases, prompts, audit and judge | Blind cases and human labels proposed | An agent's tests share its blind spots. Keep one evaluator outside the writer |
 | Most catches came from traces, recounts, scans and people, rarely from rereading | The log records who caught each failure | Build checks that do not depend on the author's reasoning |
+
+| A code comment called one function "the only route to the money" while a second path wrote credits directly, and that path had no shadow-mode check | One guarded function now holds both routes, with tests | A comment that claims a guarantee needs a test that would fail if it stopped being true |
 
 ## Process
 

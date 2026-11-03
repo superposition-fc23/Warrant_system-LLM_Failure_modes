@@ -94,7 +94,6 @@ def test_a_stale_source_gathers():
 
 
 def test_money_moves_only_on_an_act_for_that_exact_proposal():
-    import agent
     written = []
     live_sources.add_credit = lambda *x: written.append(x) or "pc_1"
     warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
@@ -102,11 +101,11 @@ def test_money_moves_only_on_an_act_for_that_exact_proposal():
     for rec in ({"decision": "hold", "action": p, "record_id": "R"}, {"decision": "gather", "action": p, "record_id": "R"},
                 {"decision": "act", "action": {**p, "amount": 11}, "record_id": "R"}):
         try:
-            agent.commit_credit(rec, p)
+            warrant.commit_credit(rec, p)
             raise AssertionError("wrote without an act")
         except PermissionError:
             pass
-    assert not written and agent.commit_credit({"decision": "act", "action": p, "record_id": "R"}, p) == "pc_1"
+    assert not written and warrant.commit_credit({"decision": "act", "action": p, "record_id": "R"}, p) == "pc_1"
 
 
 def test_a_credit_the_source_does_not_show_yet_still_stops_a_second_one():
@@ -202,6 +201,68 @@ def test_names_are_redacted_from_the_prompt():
     prompts.clear()
     run("PL-11")
     assert "Priya Shah" not in prompts[-1] and "Wren Analytics" not in prompts[-1]
+
+
+def test_a_ruling_writes_through_the_same_guard():
+    written = []
+    live_sources.add_credit = lambda *x: written.append(x) or "pc_1"
+    warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
+    p = {"account_id": "A", "amount": 10, "currency": "USD", "incident_id": "I", "agent": "x"}
+    held = {"decision": "hold", "action": p, "record_id": "R", "trace_id": "t1"}
+    for rec, who in ((held, None), ({**held, "action": {**p, "amount": 11}}, "analyst"), ({**held, "mode": "shadow"}, "analyst")):
+        try:
+            warrant.commit_credit(rec, p, ruled_by=who)
+            raise AssertionError("wrote without authority")
+        except PermissionError:
+            pass
+    assert not written and warrant.commit_credit(held, p, ruled_by="analyst") == "pc_1"
+    assert json.loads(open(warrant.LEDGER_PATH).read())["ruled_by"] == "analyst"
+    try:
+        warrant.commit_credit(held, p, ruled_by="analyst")
+        raise AssertionError("committed one record twice")
+    except PermissionError:
+        assert len(written) == 1
+
+
+def test_the_agent_loop_sends_no_names_and_the_customer_gets_them_back():
+    import agent
+    case = CASES["CT-01"]
+    name, sent, phone = case["world"]["crm"]["name"], [], "-".join(("206", "555", "0142"))    # built here so the repo scan stays clean
+    blocks = lambda *b: type("R", (), {"content": list(b)})()
+    use = type("B", (), {"type": "tool_use", "id": "1", "input": {"account_id": "ACC-2001", "amount": 10, "incident_id": "I", "rationale": "for ACCOUNT"}})()
+    text = type("B", (), {"type": "text", "text": "Sorry, ACCOUNT."})()
+    replies = [blocks(use), blocks(text)]
+
+    class Client:
+        class beta:
+            class messages:
+                @staticmethod
+                def create(**k):
+                    sent.append(json.dumps(k["messages"], default=str))
+                    return replies.pop(0)
+
+    async def issue(args, *a):
+        assert args["rationale"] == f"for {name}", "the proposal must carry the real name"
+        return {}, {"status": "held", "reason": f"{name} has a credit; call {phone}"}
+    agent.issue_credit = issue
+    ticket = {"id": "T", "agent": "a", "account": "ACC-2001", "text": f"Ticket from {name}, account ACC-2001."}
+    row = asyncio.run(agent.run_ticket(ticket, None, D, {"ACC-2001": case}, Client()))
+    assert name not in "".join(sent) and phone not in "".join(sent)
+    assert row["reply"] == f"Sorry, {name}."
+
+
+def test_a_slack_card_shows_roles_and_ids_not_names():
+    import slack_card
+    case = CASES["CT-01"]
+    crm_mcp.load(case["world"], D["people"], D["authority"])
+    crm, person = case["world"]["crm"], D["people"][0]
+    p = {**case["proposal"], "rationale": f"{crm['name']} asked {person['name']}"}
+    rec = {"record_id": "R", "trace_id": "t", "action": p, "beliefs": [{"source": "crm", "value": crm}], "discriminating_fact": f"{person['name']} issued it to {crm['name']}",
+           "question": {"to_role": "Billing analyst", "text": f"Ask {crm.get('csm')}?"}}
+    shown = json.dumps(slack_card.card(rec))
+    for n in (crm["name"], person["name"], crm.get("csm")):
+        assert n and n not in shown, n
+    assert p["account_id"] in shown and person["role"] in shown
 
 
 def test_rule_applies_only_inside_its_scope():

@@ -18,6 +18,7 @@ import sys
 from datetime import datetime, timezone
 
 import llm
+import pii
 import telemetry
 import warrant
 
@@ -33,8 +34,8 @@ Return JSON: fact_named (true|false), note (one sentence)."""
 def judge(case, rec, people):
     failed = [f"{c['name']}: {c['detail']}" for c in rec["checks"] if c["result"] != "pass"]
     m = warrant.redaction_map({"authority": {"people": people}, "sources": {"crm": case["world"]["crm"]}})
-    prompt = warrant.swap(JUDGE.format(expected=case["discriminating_fact"], named=rec["discriminating_fact"], checks=failed,
-                                       conflict=rec["conflict"]), m)
+    prompt = pii.scrub(warrant.swap(JUDGE.format(expected=case["discriminating_fact"], named=rec["discriminating_fact"], checks=failed,
+                                                 conflict=rec["conflict"]), m))
     out = llm.ask(JUDGE_MODEL, prompt, system=JUDGE_SYSTEM, max_tokens=800, effort="low")
     cin, cout = llm.MODELS[JUDGE_MODEL]["cost"]
     judge_cost[0] += (llm.LAST_USAGE[0] * cin + llm.LAST_USAGE[1] * cout) / 1e6

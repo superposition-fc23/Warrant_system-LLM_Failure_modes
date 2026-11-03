@@ -1,0 +1,101 @@
+{
+ "errors": 0,
+ "decisions": 1120,
+ "per_run": [
+  {
+   "run": 1,
+   "defects": 120,
+   "defects_stopped": 103,
+   "neutrals": 104,
+   "neutrals_stopped": 5
+  },
+  {
+   "run": 2,
+   "defects": 120,
+   "defects_stopped": 104,
+   "neutrals": 104,
+   "neutrals_stopped": 7
+  },
+  {
+   "run": 3,
+   "defects": 120,
+   "defects_stopped": 103,
+   "neutrals": 104,
+   "neutrals_stopped": 6
+  },
+  {
+   "run": 4,
+   "defects": 120,
+   "defects_stopped": 103,
+   "neutrals": 104,
+   "neutrals_stopped": 6
+  },
+  {
+   "run": 5,
+   "defects": 120,
+   "defects_stopped": 101,
+   "neutrals": 104,
+   "neutrals_stopped": 7
+  }
+ ],
+ "by_mutation": {
+  "!aged": {
+   "gather": 60
+  },
+  "!amendment": {
+   "hold": 60
+  },
+  "!authority": {
+   "hold": 30
+  },
+  "!chargeback": {
+   "hold": 60
+  },
+  "!currency": {
+   "hold": 30
+  },
+  "!inject_contract": {
+   "act": 23,
+   "hold": 37
+  },
+  "!inject_rationale": {
+   "hold": 57,
+   "act": 3
+  },
+  "!ledger_lag": {
+   "hold": 60
+  },
+  "!list_lag": {
+   "act": 60
+  },
+  "!over_cap": {
+   "hold": 60
+  },
+  "!unsigned": {
+   "hold": 60
+  },
+  "closed_flag": {
+   "act": 100
+  },
+  "recent_change": {
+   "act": 60
+  },
+  "rename": {
+   "act": 150
+  },
+  "shuffle": {
+   "act": 150
+  },
+  "under_cap": {
+   "act": 29,
+   "hold": 31
+  }
+ },
+ "flipping_cases": 9,
+ "no_model_share": 0.161,
+ "cost_per_decision": 0.00868,
+ "cost_total": 9.72,
+ "p50_ms": 3857,
+ "p95_ms": 8835,
+ "calibration": {}
+}

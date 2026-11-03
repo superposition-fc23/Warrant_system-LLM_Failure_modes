@@ -25,3 +25,11 @@ Inputs for the next version. Assumed figures are marked; the working is in repor
 - **Minimise contract text** before it reaches the provider, and settle provider retention before any real data.
 
 Folded into [`v4-plan.md`](v4-plan.md): one held state, the invoice date, the additive review mark, time to ruling. Still open after v4: discovery numbers, reviewers who did not build it, and the privacy items.
+
+## From the v4 runs
+
+- **Keep the model from contradicting itself.** A conflict whose own reason says there is none should not count as material.
+- **Do not let the stake rule hide a conflict.** At high stakes one sample runs, and PL-08 went unnamed. Run the full set there, or say plainly that the stake alone stopped it.
+- **Calibrate, or stop calling it a probability.** Fit the share table on held-out cases, and report policy priors apart from measured ones.
+- **Reduce false waits.** A recent billing change that was not a credit also waits. Reading the change type from the source would separate them.
+- **Build the review-mark correction,** cut from v4 for time.

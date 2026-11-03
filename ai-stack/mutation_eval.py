@@ -39,7 +39,7 @@ def cheap_rules(case, authority):
     return "act"
 
 
-async def shard(path, out, runs, index, count):
+async def shard(path, out, runs, index, count, only=None):
     import crm_mcp  # noqa: F401
     import telemetry
     import warrant
@@ -52,9 +52,11 @@ async def shard(path, out, runs, index, count):
         belief.STATE_PATH = os.path.join(tmp, "beliefs.json")
     except ImportError:
         pass
-    with open(f"{out}/decisions-{index}.jsonl", "a") as f:
+    with open(f"{out}/decisions-{index}{'-fill' if only else ''}.jsonl", "a") as f:
         for run in range(1, runs + 1):
             for c in d["cases"][index::count]:
+                if only and [c["id"], run] not in only:
+                    continue
                 if os.path.exists(warrant.LEDGER_PATH):
                     os.remove(warrant.LEDGER_PATH)
                 if c.get("seed_ledger"):
@@ -90,7 +92,8 @@ def score(folder):
     for n in sorted(os.listdir(folder)):
         if n.startswith("decisions-"):
             rows += [json.loads(l) for l in open(os.path.join(folder, n))]
-    bad = [r for r in rows if "error" in r]
+    good = {(r["case_id"], r["run"]) for r in rows if "error" not in r}
+    bad = [r for r in rows if "error" in r and (r["case_id"], r["run"]) not in good]
     rows = [r for r in rows if "error" not in r]
     runs = sorted({r["run"] for r in rows})
     per = []
@@ -147,5 +150,12 @@ if __name__ == "__main__":
         main_run(sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), sys.argv[5] if len(sys.argv) > 5 else CASES)
     elif cmd == "shard":
         asyncio.run(shard(sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), int(sys.argv[6])))
+    elif cmd == "fill":    # rerun only the decisions that errored, from the same checkout
+        folder, path = os.path.abspath(sys.argv[2]), sys.argv[3]
+        rows = [json.loads(l) for n in os.listdir(folder) if n.startswith("decisions-") for l in open(os.path.join(folder, n))]
+        good = {(r["case_id"], r["run"]) for r in rows if "error" not in r}
+        only = sorted({(r["case_id"], r["run"]) for r in rows if "error" in r} - good)
+        print(len(only), "to fill", flush=True)
+        asyncio.run(shard(path, folder, 5, 0, 1, [list(x) for x in only]))
     elif cmd == "score":
         score(sys.argv[2])

@@ -143,7 +143,7 @@ def decide(f, at_stake, table=None, cost=None):
     if best and best_loss < cost:
         wait = next((t for t in range(15, MAX_WAIT + 1, 15) if (1 - p_safe({**f, best: 1 - (1 - f[best]) * math.exp(-t / PRIORS["credit_list_tau_seconds"])})) * at_stake < cost), MAX_WAIT) if best == "credit_list_complete" else 0
         return {**out, "decision": "gather", "gather": best, "wait_seconds": wait, "loss_after_gather": round(best_loss, 2)}
-    return {**out, "decision": "hold", "gather": best}
+    return {**out, "decision": "hold"}
 
 
 def assume_clean(f, table=None):

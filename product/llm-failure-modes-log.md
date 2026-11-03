@@ -44,6 +44,9 @@ A running log from one real build: failures of LLMs and agentic workflows, in th
 | 28 | Build | Test not independent | The fixture had one record per source that was always current, so the lag could not appear in any test | `ai-stack/evals/crm_cases.json` | Same live run | 2 Nov | Fault tests added; fixtures still cannot model unknown lags |
 | 29 | Build | Comment claims a guarantee | A comment called `commit_credit` the only route to the money. The Slack commit wrote directly, with no shadow-mode check, and a second comment said writes follow only an act | `ai-stack/agent.py`, `ai-stack/slack_card.py` at PR 6 | Drawing the architecture from the code | 3 Nov | Fixed: one guarded function, new tests |
 | 30 | Build | Guard narrower than claimed | Redaction covered the compare and judge paths; the agent's own model calls sent names, and Slack cards showed them | `ai-stack/agent.py`, `ai-stack/slack_card.py` at PR 6 | Drawing every data exit | 3 Nov | Fixed for known names; a name outside the roster still passes |
+| 31 | Product | Self-contradicting answer | The model titled a conflict "exceeds the cap", then wrote that the amount is under it, and code counted it as material. v3 held 31 of 60 under-cap cases and v4 37 of 60 | `ai-stack/runs/v4-mut-*` | Reading the answers behind the over-holds | 2 Nov | Reported, not fixed: changing it after seeing results would need a rerun |
+| 32 | Eval | Wrong label | My generator labelled under-cap cases on CT-07 as clean, though that account's amendment lowers the rate, so the conflict is real | `ai-stack/mutate.py` | Same review | 2 Nov | Left in, disclosed, scored both ways |
+| 33 | Build | Test touched live state | A Slack test wrote rulings to the demo's `state/beliefs.json`, which lowered the live P(safe) to 0.957 | `ai-stack/test_warrant.py` | A live P(safe) that did not match the arithmetic | 2 Nov | Fixed; evals were not affected |
 
 ## Patterns so far
 

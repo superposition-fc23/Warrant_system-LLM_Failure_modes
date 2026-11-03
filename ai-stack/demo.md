@@ -12,8 +12,8 @@ Line to carry: output evals tell you it was wrong after it was wrong; belief eva
 
 Before the call, clear earlier rulings so the first run posts both cards:
 
-    rm -f state/rules.json state/ledger.jsonl
-    .venv/bin/python agent.py v3 slack 900
+    rm -f state/rules.json state/ledger.jsonl state/beliefs.json
+    .venv/bin/python agent.py v4 slack belief-only 900
 
 1. Clean credit: applied, written to the Chargebee test site, no notification.
 2. Second agent, same incident: held, naming the first credit. Click Keep held, then Make this a standing rule.

@@ -7,3 +7,17 @@
 5. **Routing:** `.venv/bin/python router.py` shows why the gate uses a reasoning model and triage would use a cheap one.
 
 Line to carry: output evals tell you it was wrong after it was wrong; belief evals tell you it is about to be.
+
+## Warrant v3 live path (test accounts, seeded data)
+
+Before the call, clear earlier rulings so the first run posts both cards:
+
+    rm -f state/rules.json state/ledger.jsonl
+    .venv/bin/python agent.py v3 slack 900
+
+1. Clean credit: applied, written to the Chargebee test site, no notification.
+2. Second agent, same incident: held, naming the first credit. Click Keep held, then Make this a standing rule.
+3. Over-cap credit: held, naming the contract cap. Click either button.
+4. Run the same command again without clearing: the duplicate is settled by the rule, with no card.
+
+Say first: real are the agent, gate, HubSpot and Chargebee test reads, the credit write and Slack clicks. Scripted are the tickets. Contracts and risk are local fixtures. Each run uses clean accounts from the pool; `seed_live.py` adds more if `POOL` is raised.

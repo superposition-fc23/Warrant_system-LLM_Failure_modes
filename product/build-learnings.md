@@ -24,6 +24,8 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | v1 held 3 clean controls. The gate was right: my test data had invoices past the window, missing add-on lines and seats already granted | Added a model audit of the eval set that runs before evals | Audit the eval set. A failing case may be a wrong answer key |
 | One clean control could not measure over-holding | Controls now match planted cases, 10 and 10 | Give the counter-metric enough clean cases to move |
 
+| The first Reddit search returned 0 rows from 16 failed calls, and the report drew a clean table of zeros | Read the error before reading the table | A zero from a failed call is not a finding. Same rule as the severity outcome: check recall first |
+
 ## AI architecture and cost
 
 | What happened | What changed | Rule |
@@ -38,6 +40,11 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | A system map showed all 11 acts rest on a model finding nothing, and that 2 "code" catches rest on a limit the model read | The dependence is now stated, and miss rate is proposed for v3 | "Model proposes, code decides" is only as strong as what code can see. Trace which decisions depend on model silence |
 | v2 escalation overwrote the first answer: last write wins, in a gate built to stop that | Logged as a recursive failure | Check your own system against the failure you are selling |
 
+| The first v3 eval held all 5 injection cases, but 1 held only because the reply could not be parsed. Failing closed hid a format bug behind a passing score | Output schema enforced; unreadable replies counted separately | Check why a case passed, not only that it passed. A safe default can hide a broken step |
+| Five runs found 2 flipping cases that one run would have reported as simply passing or failing | Every measure in the bar now reads from the worst of five runs | Do not trust one run of a model step. Repeat before reading a result |
+| All evals passed, then the first live agent run double-credited a customer. Chargebee's credit list lagged the write by over a minute, and an empty list looks exactly like a true "no prior credit" | The gate keeps its own commit ledger and cross-checks the balance against listed credits | A clean read is not a current read. Fixtures cannot show the failures only a real system has, so go live before trusting a score |
+| Sonnet 5.5 in one call beat Haiku then Opus on latency and cost: median 14.5 s to 4.2 s, $0.0173 to $0.0098 per decision | One model for the gate, a stronger one for the judge | Try one good model before building a tier. Keep the stronger model for grading |
+
 ## Privacy and governance
 
 | What happened | What changed | Rule |
@@ -45,6 +52,7 @@ Add an entry at the end of each iteration, and whenever a run or a review overtu
 | Scraped forum text put 28 third-party email addresses in git history, found only when preparing to go public | Added scrubbing on collection, a pre-commit scan, a CI scan and a governance doc | Build as if public from the first commit. Scrub at ingestion, not at release |
 | Scrubbing history is not enough on GitHub: pull request refs keep old commits reachable | History is scrubbed before publishing, and the limit is documented | Treat a commit as permanent. Prevention is far cheaper than cleanup |
 | Reddit and Medium refused automated reads, and browser spoofing was blocked | Used official APIs only; the gap is named in the evidence | Use official channels, and record the gap instead of working around it |
+| A search API gave Reddit coverage without touching Reddit, but pulling thread text would have repeated the block we had accepted | Rows hold URL, classification and a short quote, labelled as snippets | Take the coverage the channel allows, and label how thin it is |
 
 | Removing emails was not enough: 100 of 407 items still held personal details such as names and employers | Full forum text left the repo. Committed rows keep the link, classification and a short quote | Minimise before masking. Do not publish what the analysis does not need |
 | A rewrite was tested on a copy, then pushed to a private repo and scanned from a fresh clone of every ref before the visibility changed | Went public with 0 addresses, secrets or forum text in 139 blobs | Verify the published artifact, not the local one, and flip visibility last |
@@ -82,6 +90,7 @@ Full evidence: [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
 
 These come from the log above and [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
 
+0. **The best moment of the build.** Evals were perfect, then the first live agent double-credited a customer because the billing list lagged. Show this one.
 1. **Reported misses are the proof of method.** v2 improved three measures and failed the bar on latency, and we said so.
 2. **The best catch was in our own test data.** v1's over-holds were wrong answer keys; the gate was right.
 3. **Traces beat intuition.** "Smaller is faster" was false, and non-model time was about 36 ms of 14.5 s.

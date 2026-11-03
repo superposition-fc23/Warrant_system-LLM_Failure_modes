@@ -180,7 +180,7 @@ table.grid th{font-size:11px}
 <main class="wrap" style="padding-top:24px;padding-bottom:48px">
   <div class="mb-4 rounded border border-solid border-rule bg-surface px-4 py-3 text-sm">
     <div class="flex flex-wrap gap-x-6 gap-y-1">
-      <span><span class="pill ok">Real</span> <span class="text-fg-2">the gate, MCP reads, model calls, traces and evals, on synthetic systems of record</span></span>
+      <span><span class="pill ok">Real</span> <span class="text-fg-2">the gate, MCP reads, model calls, traces and evals. These screens show the fixture run. HubSpot, Chargebee and the live agent run from the terminal (<span class="font-mono text-xs">agent.py</span>), on test accounts</span></span>
       <span><span class="pill warn">Staged</span> <span class="text-fg-2">the human ruling and the question delivery</span></span>
     </div>
     <div id="runline" class="mt-2 font-mono text-xs text-fg-3"></div>
@@ -191,6 +191,9 @@ table.grid th{font-size:11px}
     <button class="tab" data-screen="s2" aria-selected="false">2 &middot; Contested action held</button>
     <button class="tab" data-screen="s3" aria-selected="false">3 &middot; Ruling becomes a rule</button>
     <button class="tab" data-screen="s4" aria-selected="false">4 &middot; Run and evals</button>
+    <button class="tab" data-screen="s5" aria-selected="false">5 &middot; Autonomy boundary</button>
+    <button class="tab" data-screen="s6" aria-selected="false">6 &middot; Shadow report</button>
+    <button class="tab" data-screen="s7" aria-selected="false">7 &middot; Review</button>
   </div>
 
   <div class="screen on" id="s1">
@@ -230,6 +233,24 @@ table.grid th{font-size:11px}
       <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mock-url">ai-stack / runs / <span id="s4-url">latest</span></span></div>
       <div class="mock-top"><span class="brand">Warrant &middot; run and evals</span><div class="right" id="s4-count"></div></div>
       <div id="s4-body"></div>
+    </div>
+  </div>
+  <div class="screen" id="s5">
+    <div class="mock">
+      <div class="mock-top"><span class="brand">Warrant &middot; autonomy boundary, for the support or applied AI engineer</span></div>
+      <div id="s5-body" class="p-4"></div>
+    </div>
+  </div>
+  <div class="screen" id="s6">
+    <div class="mock">
+      <div class="mock-top"><span class="brand">Warrant &middot; shadow report, for the VP of Support</span><div class="right"><span class="pill warn">Seeded data</span></div></div>
+      <div id="s6-body" class="p-4"></div>
+    </div>
+  </div>
+  <div class="screen" id="s7">
+    <div class="mock">
+      <div class="mock-top"><span class="brand">Warrant &middot; human review</span><div class="right" id="s7-count"></div></div>
+      <div id="s7-body" class="p-4"></div>
     </div>
   </div>
 </main>
@@ -528,6 +549,101 @@ renderS2();
   var first = (held[0] || D[0]);
   if(first){ var fr = tb.querySelector('tr[data-case="' + first.case_id + '"]'); if(fr) fr.classList.add('sel'); renderTrace(first.case_id); }
 })();
+})();
+</script>
+
+<script>
+(function(){
+var RUN = window.RUN; if(!RUN || !RUN.decisions) return;
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+var D = RUN.decisions.filter(function(d){ return d.kind !== 'pair'; }), S = RUN.summary || {};
+var FIELD = {service_credit:'amount', refund:'amount', discount:'pct', entitlement_grant:'seats'};
+function val(d){ return d.action[FIELD[d.action.type]]; }
+var B = RUN.boundary || {};
+var edge = {}; Object.keys(FIELD).forEach(function(t){ edge[t] = (B[t] || {}).act_up_to; });
+var base = {}; Object.keys(edge).forEach(function(t){ base[t] = edge[t]; });
+
+function renderBoundary(){
+  var rows = Object.keys(FIELD).map(function(t){
+    var ds = D.filter(function(d){ return d.action.type === t; });
+    var acts = ds.filter(function(d){ return d.decision === 'act'; });
+    var added = acts.filter(function(d){ return val(d) != null && val(d) > edge[t]; });
+    var held = ds.length - acts.length + added.length;
+    var overHeld = ds.filter(function(d){ return d.kind === 'control' && (d.decision !== 'act' || added.indexOf(d) >= 0); }).length;
+    var unit = (B[t] || {}).unit || '';
+    return '<tr><td class="font-mono text-xs">' + esc(t) + '</td><td><span class="pill ' + ((B[t]||{}).mode === 'enforce' ? 'ok' : 'warn') + '">' + esc((B[t]||{}).mode) + '</span></td>' +
+      '<td><input data-t="' + t + '" type="range" min="0" max="' + (base[t] * 1.0) + '" step="' + (base[t] > 100 ? 50 : 1) + '" value="' + edge[t] + '" class="align-middle" style="width:150px" aria-label="Boundary for ' + esc(t) + '"> <span class="font-mono text-xs">' + esc(edge[t]) + ' ' + esc(unit) + '</span></td>' +
+      '<td class="num">' + ds.length + '</td><td class="num">' + (acts.length - added.length) + '</td><td class="num">' + held + (added.length ? ' <span class="text-warn">(+' + added.length + ')</span>' : '') + '</td>' +
+      '<td class="num ' + (overHeld ? 'text-stop' : '') + '">' + overHeld + '</td></tr>';
+  }).join('');
+  $('s5-body').innerHTML = '<p class="text-sm text-fg-2 mt-0">Set what agents may commit alone. Move a limit to see the decisions change across this run. Too tight and the queue grows; too loose and reversals repeat.</p>' +
+    '<table class="grid"><thead><tr><th>Action type</th><th>Mode</th><th>Agents act alone up to</th><th>Cases</th><th>Act</th><th>Held</th><th>Clean cases held</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    '<p class="text-xs text-fg-3 mb-0">Saved in <span class="font-mono">ai-stack/boundary.json</span>. Moving a limit here is a preview over recorded decisions; the file is what the gate reads. Reversals are not measured, because no real action has been reversed yet. Limits only tighten: they never release a case held for another reason.</p>';
+  $('s5-body').querySelectorAll('input[data-t]').forEach(function(i){
+    i.addEventListener('change', function(){ edge[i.getAttribute('data-t')] = Number(i.value); renderBoundary(); });
+  });
+}
+renderBoundary();
+
+function sumBy(ds){ var o = {}; ds.forEach(function(d){ if(d.action.amount){ o[d.action.currency] = (o[d.action.currency] || 0) + d.action.amount; } }); return Object.keys(o).map(function(c){ return o[c].toLocaleString('en-US') + ' ' + c; }).join(' + ') || 'none'; }
+(function(){
+  var held = D.filter(function(d){ return d.decision !== 'act'; });
+  var heldBad = held.filter(function(d){ return d.kind !== 'control'; });
+  var ctl = D.filter(function(d){ return d.kind === 'control'; }), over = ctl.filter(function(d){ return d.decision !== 'act'; });
+  function stat(n, l){ return '<div class="rounded border border-solid border-rule bg-surface p-3"><div class="text-xl font-mono">' + n + '</div><div class="text-xs text-fg-2">' + l + '</div></div>'; }
+  $('s6-body').innerHTML = '<div class="banner warn mt-0 mb-3">A sample of what a seven-day parallel run would produce. These are seeded cases, not customer data, so no figure here estimates real savings.</div>' +
+    '<div class="grid-cols-2 md:grid-cols-4 gap-3" style="display:grid;margin-bottom:16px">' +
+    stat(esc(sumBy(heldBad)), 'Money held on cases with a real defect') + stat(D.length ? Math.round(held.length / D.length * 100) + '%' : '', 'Hold rate, ' + held.length + ' of ' + D.length + ' decisions') +
+    stat(over.length + ' of ' + ctl.length, 'Clean cases wrongly held (counter-metric)') + stat('$' + (S.cost_usd_per_decision || 0).toFixed(4), 'Model cost per decision') + '</div>' +
+    '<table class="grid"><thead><tr><th>Action type</th><th>Decisions</th><th>Held</th><th>Money held</th></tr></thead><tbody>' + Object.keys(FIELD).map(function(t){
+      var ds = D.filter(function(d){ return d.action.type === t; }), h = ds.filter(function(d){ return d.decision !== 'act'; });
+      return '<tr><td class="font-mono text-xs">' + esc(t) + '</td><td class="num">' + ds.length + '</td><td class="num">' + h.length + '</td><td>' + esc(sumBy(h)) + '</td></tr>'; }).join('') + '</tbody></table>' +
+    '<h3 class="text-sm mb-1">How a buyer would check it</h3><p class="text-sm text-fg-2 mt-0">Finance compares money held with the leakage it already sees at quarter-end reconciliation. If the run finds nothing worth paying for, the customer does not pay. Kill switch: stop and widen nothing if clean cases held pass the agreed limit.</p>' +
+    '<h3 class="text-sm mb-1">What this does not prove</h3><p class="text-sm text-fg-2 mt-0 mb-0">Held does not mean saved, since a person might have approved it anyway. Real leakage and over-hold rates need a run on real tickets.</p>';
+})();
+
+var IDS = ['PL-05','CT-02','PL-12','IN-02','CT-07','PL-01','CT-09','PL-11','CT-04','PL-08','IN-05','PL-13','CT-05','PL-04','PL-02'];
+var LABELS = {}; var KEY = 'warrant-review-' + RUN.run_id;
+try { LABELS = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(LABELS)); } catch(e) {} }
+var byId = {}; D.forEach(function(d){ byId[d.case_id] = d; });
+var cur = 0, list = IDS.filter(function(i){ return byId[i] && byId[i].evidence; });
+function ev(d){
+  var e = d.evidence, b = e.billing, c = e.crm;
+  var doc = e.contracts.map(function(x){ return '<li><span class="font-mono text-xs">' + esc(x.id) + '</span> ' + esc(x.kind) + ', <strong>' + esc(x.status) + '</strong><div class="text-fg-2">' + esc(x.text) + '</div></li>'; }).join('');
+  var inv = b.invoices.map(function(i){ return esc(i.id) + ' ' + esc(i.amount) + ' ' + esc(i.currency) + ' ' + esc(i.status) + ' ' + esc(i.date) + ' (' + i.lines.map(function(l){ return esc(l.item) + ' ' + esc(l.amount); }).join(', ') + ')'; }).join('; ');
+  var cr = b.credits.map(function(x){ return esc(x.id) + ' ' + esc(x.amount) + ' ' + esc(x.currency) + ' for ' + esc(x.incident_id) + ' by ' + esc(x.issued_by); }).join('; ') || 'none';
+  var msg = (c.recent_messages || []).map(function(m){ return '<li>' + esc(m.channel) + ', ' + esc(m.from) + ': ' + esc(m.text) + '</li>'; }).join('');
+  var risk = e.risk.map(function(f){ return '<li>' + esc(f.id) + ' ' + esc(f.type) + ', <strong>' + esc(f.status) + '</strong>: ' + esc(f.note) + '</li>'; }).join('') || '<li>no flags</li>';
+  return '<dl class="kv"><dt>CRM</dt><dd>' + esc(c.entitlements.seats) + ' seats entitled, ' + esc(c.tier) + (c.notes ? '. Note: ' + esc(c.notes) : '') + '</dd>' +
+    '<dt>Billing</dt><dd>' + esc(b.seats_billed) + ' seats, ' + esc(b.monthly_fee) + ' ' + esc(b.currency) + ' a month. Invoices: ' + inv + '. Credits: ' + cr + '</dd></dl>' +
+    '<div class="text-xs text-fg-3 mt-3">Contracts</div><ul class="text-sm mt-1 mb-2 pl-4">' + doc + '</ul>' +
+    '<div class="text-xs text-fg-3">Risk</div><ul class="text-sm mt-1 mb-2 pl-4">' + risk + '</ul>' + (msg ? '<div class="text-xs text-fg-3">Recent messages</div><ul class="text-sm mt-1 mb-2 pl-4">' + msg + '</ul>' : '');
+}
+function renderReview(){
+  var done = list.filter(function(i){ return LABELS[i]; }).length;
+  $('s7-count').innerHTML = '<span class="pill new">' + done + ' of ' + list.length + ' marked</span>';
+  var d = byId[list[cur]], l = LABELS[d.case_id], a = d.action;
+  var value = a.amount != null ? a.amount + ' ' + a.currency : a.pct != null ? a.pct + '%' : a.seats + ' seats';
+  var q = !l ? '<div class="mt-3 text-sm font-semibold">Should this commit?</div><div class="flex gap-2 mt-2">' + ['act','gather','hold'].map(function(x){ return '<button data-mark="' + x + '" class="rounded border border-solid border-rule bg-surface-2 text-fg px-3 py-2 text-sm cursor-pointer">' + {act:'Act: commit it',gather:'Gather: get more data',hold:'Hold: ask a person'}[x] + '</button>'; }).join('') + '</div>' :
+    '<div class="banner ' + (l.human === d.decision ? 'ok' : 'warn') + ' mt-3">You: <strong>' + esc(l.human) + '</strong>. Gate: <strong>' + esc(d.decision) + '</strong>. ' + esc(d.discriminating_fact || '') + '</div>' +
+    '<label class="block text-sm mt-2">Note, especially if you disagree<textarea id="s7-note" rows="2" class="block w-full mt-1 rounded border border-solid border-rule bg-surface text-fg p-2">' + esc(l.note) + '</textarea></label>';
+  $('s7-body').innerHTML = '<p class="text-sm text-fg-2 mt-0">Decide from the evidence first; the gate\'s answer appears after you mark. Your labels are the check that does not come from the model that wrote the cases.</p>' +
+    '<div class="text-xs text-fg-3 font-mono">Record ' + (cur + 1) + ' of ' + list.length + '</div>' +
+    '<div class="text-base font-semibold mt-1">' + esc(a.agent) + ' proposes ' + esc(a.type.replace('_',' ')) + ' of ' + esc(value) + '</div><div class="text-sm text-fg-2 mb-3">Rationale: ' + esc(d.rationale) + (a.summary && d.action.incident_id ? '' : '') + '</div>' + ev(d) + q +
+    '<div class="flex gap-2 mt-4 items-center"><button id="s7-prev" class="rounded border border-solid border-rule bg-surface px-3 py-2 text-sm cursor-pointer">Previous</button><button id="s7-next" class="rounded border border-solid border-rule bg-surface px-3 py-2 text-sm cursor-pointer">Next</button><span style="flex:1"></span><button id="s7-dl" class="rounded border border-solid border-rule bg-accent-soft text-fg px-3 py-2 text-sm cursor-pointer">Download labels</button></div>';
+  $('s7-body').querySelectorAll('[data-mark]').forEach(function(b){ b.addEventListener('click', function(){
+    LABELS[d.case_id] = {case_id: d.case_id, run_id: RUN.run_id, human: b.getAttribute('data-mark'), gate: d.decision, agree: b.getAttribute('data-mark') === d.decision, note: '', at: new Date().toISOString()}; save(); renderReview(); }); });
+  var n = $('s7-note'); if(n) n.addEventListener('input', function(){ l.note = n.value; save(); });
+  $('s7-prev').addEventListener('click', function(){ cur = (cur + list.length - 1) % list.length; renderReview(); });
+  $('s7-next').addEventListener('click', function(){ cur = (cur + 1) % list.length; renderReview(); });
+  $('s7-dl').addEventListener('click', function(){
+    var blob = new Blob([JSON.stringify(Object.keys(LABELS).map(function(k){ return LABELS[k]; }), null, 1)], {type:'application/json'});
+    var u = URL.createObjectURL(blob), x = document.createElement('a'); x.href = u; x.download = 'warrant-labels.json'; x.click(); URL.revokeObjectURL(u);
+  });
+}
+if(list.length){ renderReview(); } else { $('s7-body').innerHTML = '<div class="banner warn">This run has no evidence fields. Run crm_eval.py again.</div>'; }
 })();
 </script>
 

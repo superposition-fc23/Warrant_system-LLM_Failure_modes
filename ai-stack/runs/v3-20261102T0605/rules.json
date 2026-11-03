@@ -1,0 +1,16 @@
+[
+ {
+  "id": "SR-01",
+  "pattern": {
+   "action_type": "service_credit",
+   "check": "prior_compensation"
+  },
+  "scope": {
+   "max_amount": 1000,
+   "currency": "USD"
+  },
+  "effect": "hold",
+  "owner": "Priya Shah",
+  "expires": "2026-12-01"
+ }
+]

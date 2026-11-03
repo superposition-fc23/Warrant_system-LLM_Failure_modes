@@ -33,7 +33,9 @@ from langgraph.graph import END, START, StateGraph
 from mcp.client.client import Client
 
 import crm_mcp
+import live_sources
 import llm
+import pii
 from telemetry import tracer
 
 FRESHNESS = {"crm": timedelta(hours=6), "billing": timedelta(hours=6), "risk": timedelta(hours=24), "contracts": timedelta(days=30)}
@@ -60,11 +62,24 @@ def ledger_entries(account_id, incident_id):
     return [r for r in rows if r["account_id"] == account_id and r["incident_id"] == incident_id]
 
 
-def record_commit(proposal, ref, at):
+def record_commit(proposal, ref, at, trace_id=None, ruled_by=None):
     os.makedirs(os.path.dirname(LEDGER_PATH) or ".", exist_ok=True)
     with open(LEDGER_PATH, "a") as f:
         f.write(json.dumps({"id": ref, "account_id": proposal["account_id"], "incident_id": proposal["incident_id"], "amount": proposal["amount"],
-                            "currency": proposal["currency"], "issued_by": proposal["agent"], "issued_at": at}) + "\n")
+                            "currency": proposal["currency"], "issued_by": proposal["agent"], "issued_at": at, "trace_id": trace_id, "ruled_by": ruled_by}) + "\n")
+
+
+def commit_credit(rec, proposal, ruled_by=None):
+    """The only route to the money: the gate's act on exactly this proposal, or a named person's ruling on exactly this held proposal.
+    A ruling overrides the gate by design, so it does not rerun it; the caller first checks that billing has not moved. Never in shadow mode, and once per record."""
+    if rec["action"] != proposal or rec.get("mode") == "shadow" or (not ruled_by and rec["decision"] != "act"):
+        raise PermissionError(f"no authority to write for this proposal: {rec['record_id']} is {rec['decision']}")
+    trace = rec.get("trace_id")
+    if trace and any(r.get("trace_id") == trace for r in ledger_entries(proposal["account_id"], proposal["incident_id"])):
+        raise PermissionError(f"{rec['record_id']} has already been committed")
+    ref = live_sources.add_credit(proposal["account_id"], proposal["amount"], proposal["incident_id"], proposal["agent"])
+    record_commit(proposal, ref, time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), trace, ruled_by)
+    return ref
 
 
 def ts(s):
@@ -309,8 +324,8 @@ def compare(s: State) -> State:
     p, src = s["case"]["proposal"], s["sources"]
     current = [a for a in s["assertions"] if a["used"]]
     m = redaction_map(s)
-    prompt = swap(COMPARE_PROMPT.format(now=s["now"], agent=p["agent"], summary=summary(p), proposal=json.dumps({**p, "asserted": current}),
-                                        sources=json.dumps(src, indent=1), assertions=json.dumps(current)), m)
+    prompt = pii.scrub(swap(COMPARE_PROMPT.format(now=s["now"], agent=p["agent"], summary=summary(p), proposal=json.dumps({**p, "asserted": current}),
+                                                  sources=json.dumps(src, indent=1), assertions=json.dumps(current)), m))
     with tracer.start_as_current_span("pii.redact") as sp:
         sp.set_attribute("pii.redacted_names", len(m))
     data, usage = ask_compare(COMPARE_MODEL, prompt)
@@ -393,7 +408,7 @@ async def reread(s: State) -> State:
 
 def commit(s: State) -> State:
     with tracer.start_as_current_span("commit") as sp:
-        sp.set_attribute("note", "the prototype records the commit; it does not write to billing")
+        sp.set_attribute("note", "this step only clears the commit; commit_credit writes it")
     return {"question": None}
 
 

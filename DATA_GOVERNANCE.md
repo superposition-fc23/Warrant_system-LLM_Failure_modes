@@ -13,7 +13,8 @@ This repo is built in public, so anything committed is treated as published perm
 
 ## Controls
 
-- **Before a model call:** `warrant.py` replaces people and account names with tokens and restores them afterwards.
+- **Before a model call:** the agent, compare and judge paths replace known people and account names with tokens, remove emails and phone numbers, and restore the names afterwards.
+- **In Slack:** cards show roles and account IDs. The names stay in the decision record.
 - **Before storage:** `pii.scrub()` runs on collected text.
 - **Before a commit:** `.githooks/pre-commit` runs `ai-stack/pii.py scan --staged`. Enable it once per clone: `git config core.hooksPath .githooks`.
 - **On every push:** the `pii-scan` workflow scans all tracked files, so a skipped hook is still caught.

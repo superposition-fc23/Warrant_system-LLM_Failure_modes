@@ -1,7 +1,8 @@
 """The person in the loop: a hold becomes a Slack card with buttons, and the click returns as a ruling on the decision record.
 
 A clean commit sends nothing. One case gets one card, updated in place. Socket Mode means no public URL. A ruling to commit reads
-billing again first, and a standing rule needs an owner, a scope and an expiry. Slack user ids stay in gitignored state, never in run logs.
+billing again first, and a standing rule needs an owner, a scope and an expiry. Cards show roles and account IDs, not names; the names
+stay in the record. Slack user ids stay in gitignored state, never in run logs.
 
     .venv/bin/python slack_card.py check
 """
@@ -16,7 +17,9 @@ from slack_sdk.socket_mode import SocketModeClient
 from slack_sdk.socket_mode.request import SocketModeRequest
 from slack_sdk.socket_mode.response import SocketModeResponse
 
+import crm_mcp
 import live_sources
+import pii
 import warrant
 
 load_dotenv()
@@ -42,12 +45,20 @@ def button(text, action, value, style=None):
     return {**b, "style": style} if style else b
 
 
+def mask(rec, text):
+    """A channel can hold more people than a record should reach, so people show as roles and the account as its ID."""
+    crm = next((b["value"] for b in rec["beliefs"] if b["source"] == "crm"), {})
+    m = {p["name"]: p["role"] for p in crm_mcp.PEOPLE}
+    m.update({crm[k]: v for k, v in (("csm", "the CSM"), ("name", rec["action"]["account_id"])) if crm.get(k)})
+    return pii.scrub(warrant.swap(text or "", m))
+
+
 def card(rec):
     key = rec["trace_id"]
     q = rec["question"] or {}
     return [{"type": "section", "text": {"type": "mrkdwn", "text": f":raised_hand: *Held before commit*\n{header(rec)}"}},
-            {"type": "section", "text": {"type": "mrkdwn", "text": f"*Why:* {rec['discriminating_fact']}\n*Question for {q.get('to_role', 'the owner')}:* {q.get('text', '')}"}},
-            {"type": "context", "elements": [{"type": "mrkdwn", "text": f"Rationale: {rec['action']['rationale']}  |  record {rec['record_id']}  |  seeded test data"}]},
+            {"type": "section", "text": {"type": "mrkdwn", "text": f"*Why:* {mask(rec, rec['discriminating_fact'])}\n*Question for {q.get('to_role', 'the owner')}:* {mask(rec, q.get('text', ''))}"}},
+            {"type": "context", "elements": [{"type": "mrkdwn", "text": f"Rationale: {mask(rec, rec['action']['rationale'])}  |  record {rec['record_id']}  |  seeded test data"}]},
             {"type": "actions", "elements": [button("Keep held", "ruling_hold", key, "danger"), button("Commit as proposed", "ruling_commit", key)]}]
 
 
@@ -59,7 +70,7 @@ def ruled_card(rec, text, offer_rule=False):
 
 
 def post_hold(rec, out):
-    r = client().chat_postMessage(channel=os.environ["SLACK_CHANNEL"], text=f"Held: {rec['discriminating_fact']}", blocks=card(rec))
+    r = client().chat_postMessage(channel=os.environ["SLACK_CHANNEL"], text=f"Held: {mask(rec, rec['discriminating_fact'])}", blocks=card(rec))
     PENDING[rec["trace_id"]] = {"rec": rec, "ts": r["ts"], "channel": r["channel"], "out": out}
     return r["ts"]
 
@@ -105,11 +116,13 @@ def handle(action_id, key):
             row.update(ruling="commit refused", note="billing changed since the check")
             blocks = ruled_card(rec, ":warning: *Not committed:* billing changed since the check, so this needs a fresh look.")
         else:
-            p = rec["action"]
-            ref = live_sources.add_credit(p["account_id"], p["amount"], p["incident_id"], p["agent"])
-            warrant.record_commit(p, ref, at)
-            row.update(ruling="commit", credit_id=ref)
-            blocks = ruled_card(rec, f":white_check_mark: *Committed by a person's ruling.* Credit {ref} on the Chargebee test site.")
+            try:
+                ref = warrant.commit_credit(rec, rec["action"], ruled_by=row["ruled_by"])
+                row.update(ruling="commit", credit_id=ref)
+                blocks = ruled_card(rec, f":white_check_mark: *Committed by a person's ruling.* Credit {ref} on the Chargebee test site.")
+            except PermissionError as e:
+                row.update(ruling="commit refused", note=str(e))
+                blocks = ruled_card(rec, f":warning: *Not committed:* {e}.")
     elif action_id == "make_rule":
         rule = standing_rule(rec, now)
         warrant.save_rule(rule)

@@ -46,7 +46,7 @@ class Fig:
 
 def architecture():
     f = Fig(1200, 500, "wa", "Warrant v3 architecture. A live support agent calls one credit tool, which sends each proposal through a fixed pipeline of code steps with one model step. "
-            "An act writes to the Chargebee test site. A hold posts a Slack card, and a person can keep it held, commit it, or make a standing rule.")
+            "One guarded function writes to the Chargebee test site, on an act or a person's ruling. A hold posts a Slack card, and a person can keep it held, commit it, or make a standing rule.")
     f.lane(10, 6, 1180, 86, "AGENT AND PEOPLE")
     f.node(20, 30, 120, 52, "Tickets", "scripted", dashed=True)
     f.node(170, 30, 170, 52, "Support agent", "Sonnet 5.5, in a loop", "model")
@@ -81,9 +81,9 @@ def architecture():
     f.text(540, 100, "act only: writes the credit", 11.5)
     f.edge("M893 188V82")
     f.text(899, 112, "card", 11.5)
-    f.node(1022, 142, 158, 58, "Chargebee write", "test site, promo credit", "out")
+    f.node(1022, 142, 158, 58, "Chargebee write", "via commit_credit only", "out")
     f.edge("M1000 56H1120V142")
-    f.text(1010, 48, "Commit, if billing has not moved", 11.5)
+    f.text(1010, 48, "Commit, if billing is unchanged", 11.5)
 
     f.lane(10, 246, 994, 164, "SOURCES, MODEL AND STATE")
     f.node(20, 270, 460, 44, "Read-only MCP server", "5 tools, nothing here writes")
@@ -109,7 +109,7 @@ def architecture():
     f.text(1022, 352, "or planned", 12, weight=600)
 
     f.lane(10, 422, 1180, 72, "PROOF AROUND THE GATE: NEVER DECIDES")
-    for i, (a, b, k, d) in enumerate([("Eval runner", "36 cases, 5 runs", "code", False), ("Judge", "Opus 5.5, redacted", "model", False), ("Gate tests", "19, no model calls", "code", False),
+    for i, (a, b, k, d) in enumerate([("Eval runner", "36 cases, 5 runs", "code", False), ("Judge", "Opus 5.5, redacted", "model", False), ("Gate tests", "22, no model calls", "code", False),
                                       ("OpenTelemetry", "a span per step", "code", False), ("PII, secret scan", "pre-commit and CI", "code", False),
                                       ("Prototype", "boundary, shadow, review", "code", False), ("SageOx", "planned", "code", True)]):
         f.node(20 + i * 166, 442, 156, 44, a, b, k, d)
@@ -119,8 +119,8 @@ def architecture():
 
 
 def data_flow():
-    f = Fig(1200, 556, "wf", "Warrant v3 data flow. Data leaves the process on six paths: the agent's own model calls without redaction, CRM and billing reads, "
-            "the compare call with names redacted, the credit write, the Slack card with names restored, and the eval judge with names redacted.")
+    f = Fig(1200, 556, "wf", "Warrant v3 data flow. Data leaves the process on six paths: the agent's model calls and the compare call with names as tokens, CRM and billing reads, "
+            "the credit write, the Slack card with roles and account IDs in place of names, and the eval judge with names as tokens.")
     f.text(20, 16, "INSIDE OUR PROCESS", 11, "--fg-3", weight=600)
     f.text(900, 16, "LEAVES OUR PROCESS", 11, "--warn", weight=600)
     f.parts.append('<line x1="870" y1="4" x2="870" y2="552" style="stroke:var(--warn);stroke-width:1.3;stroke-dasharray:6 4"/>')
@@ -128,10 +128,10 @@ def data_flow():
 
     f.node(20, 30, 130, 50, "Ticket", "scripted", dashed=True)
     f.node(190, 30, 170, 50, "1 Agent loop", "Sonnet 5.5", "model")
-    out(30, "Anthropic: agent", "not redacted")
+    out(30, "Anthropic: agent", "names as tokens")
     f.edge("M150 55H190")
     f.edge("M360 55H900", both=True)
-    f.text(372, 48, "ticket text, proposal, tool results: not redacted", 12)
+    f.text(372, 48, "ticket and tool results, names as tokens; names restored on return", 12)
     f.edge("M275 80V120")
     f.text(283, 104, "proposal: account, amount, incident, rationale", 12)
 
@@ -156,7 +156,7 @@ def data_flow():
     f.text(283, 284, "a check fails: no model call", 12)
     f.edge("M505 260V313H360")
     f.text(373, 306, "limits, conflicts", 12)
-    f.node(560, 300, 190, 50, "6 Reread, commit", "then ledger entry")
+    f.node(560, 300, 190, 50, "6 Reread, commit", "commit_credit, then ledger")
     out(300, "Chargebee write", "test site")
     f.edge("M360 338H560")
     f.text(440, 332, "act", 12, weight=600)
@@ -168,12 +168,12 @@ def data_flow():
     f.edge("M275 350V390")
     f.text(283, 374, "hold, gather", 12)
     f.edge("M360 403H900")
-    f.text(372, 397, "reason and question, names restored", 12)
+    f.text(372, 397, "reason, question: roles and account ID", 12)
     f.node(560, 418, 190, 46, "8 Ruling", "keep, commit, make rule")
     f.edge("M900 430H750")
     f.text(760, 449, "the click", 12)
     f.edge("M655 418V350")
-    f.text(663, 386, "commit, if unchanged", 12)
+    f.text(663, 386, "commit, same guard", 12)
     f.node(20, 418, 130, 46, "Rule store", "owner, scope, expiry")
     f.edge("M560 452H150")
     f.text(372, 468, "standing rule", 12)

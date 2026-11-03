@@ -10,7 +10,7 @@ import sys
 import live_sources as L
 
 DEMO = ["CT-01", "CT-03", "CT-09", "PL-02", "PL-03", "PL-04"]
-POOL = 10
+POOL = 24
 PRICE_ID, SEAT_PRICE = "warrant-business-usd-monthly", 30
 PROPS = {"warrant_account_id": "Warrant account id", "warrant_tier": "Warrant tier", "warrant_seats": "Warrant seats entitled",
          "warrant_plan": "Warrant plan", "warrant_csm": "Warrant CSM", "warrant_region": "Warrant region"}

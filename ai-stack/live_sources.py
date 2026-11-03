@@ -105,7 +105,7 @@ def read_billing(account_id):
 
 
 def add_credit(account_id, amount, incident_id, issued_by):
-    """The one write Warrant makes, and only after an act decision. Test site only."""
+    """The one write Warrant makes. Outside seeding, only warrant.commit_credit calls it. Test site only."""
     d = chargebee("POST", "/promotional_credits/add", data={"customer_id": account_id, "amount": round(amount * 100),
                                                              "description": f"{incident_id} by {issued_by}", "credit_type": "general"})
     return d["promotional_credit"]["id"]

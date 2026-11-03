@@ -42,6 +42,8 @@ A running log from one real build: failures of LLMs and agentic workflows, in th
 | 26 | Build | Own rule broken | The repeat loop kept decisions but dropped records, right after a change meant to store every answer | `ai-stack/crm_eval.py` | Needing the data to explain a flip | 2 Nov | Fixed: repeats written to file |
 | 27 | Product | Passed tests, failed live | The first live agent run committed a second credit for the same incident. Every eval passed; Chargebee's credit list showed nothing for over a minute after the write, and the gate trusted the empty list | `ai-stack/runs/v3-agent-*` | Running a real agent against a real system | 2 Nov | Fixed: gate keeps a commit ledger, and holds when balance exceeds listed credits |
 | 28 | Build | Test not independent | The fixture had one record per source that was always current, so the lag could not appear in any test | `ai-stack/evals/crm_cases.json` | Same live run | 2 Nov | Fault tests added; fixtures still cannot model unknown lags |
+| 29 | Build | Comment claims a guarantee | A comment called `commit_credit` the only route to the money. The Slack commit wrote directly, with no shadow-mode check, and a second comment said writes follow only an act | `ai-stack/agent.py`, `ai-stack/slack_card.py` at PR 6 | Drawing the architecture from the code | 3 Nov | Fixed: one guarded function, new tests |
+| 30 | Build | Guard narrower than claimed | Redaction covered the compare and judge paths; the agent's own model calls sent names, and Slack cards showed them | `ai-stack/agent.py`, `ai-stack/slack_card.py` at PR 6 | Drawing every data exit | 3 Nov | Fixed for known names; a name outside the roster still passes |
 
 ## Patterns so far
 

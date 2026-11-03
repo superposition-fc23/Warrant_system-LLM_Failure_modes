@@ -1,0 +1,2 @@
+{"record_id": "DR-0002", "trace_id": "a47cdbe4b0953f1a02ce92edc0cf5772", "case_id": "LIVE-INC-110305041", "at": "2026-11-03T05:10:06Z", "ruled_by": "Billing analyst, via Slack", "seconds_to_ruling": 311, "ruling": "commit", "credit_id": "pc_AzqZ6BVZsrQdXJ5E", "belief_update": {"source": "billing", "before": 0.995, "after": 0.995}}
+{"record_id": "DR-0003", "trace_id": "c77338a51894accb613cb41b98d1b397", "case_id": "LIVE-INC-110305042", "at": "2026-11-03T05:14:54Z", "ruled_by": "Billing analyst, via Slack", "seconds_to_ruling": 588, "ruling": "reject"}

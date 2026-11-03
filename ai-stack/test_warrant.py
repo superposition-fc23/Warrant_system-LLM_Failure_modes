@@ -5,8 +5,10 @@
 import asyncio
 import json
 import os
+import re
 import tempfile
 
+import belief
 import crm_mcp
 import live_sources
 import llm
@@ -14,7 +16,7 @@ import warrant
 
 D = json.load(open("evals/crm_cases.json"))
 CASES = {c["id"]: c for c in D["cases"]}
-CLEAN = json.dumps({"limits": [], "conflicts": [], "discriminating_fact": None, "owner_role": None, "question": None})
+CLEAN = json.dumps({"limits": [], "conflicts": [], "checked": [{"fact": "contract_terms", "record_id": "__DOC__"}], "discriminating_fact": None, "owner_role": None, "question": None})
 prompts = []
 
 
@@ -24,7 +26,8 @@ def stub(reply=CLEAN, stop="end_turn", during=None):
         llm.LAST_USAGE, llm.LAST_META = (10, 10), {"served_model": "stub", "stop_reason": stop}
         if during:
             during()
-        return reply
+        doc = re.search(r'"id": "((?:OF|AM|EM|TR|RN)-[^"]+)"', prompt)
+        return reply.replace("__DOC__", doc.group(1) if doc else "none")
     llm.ask = ask
 
 
@@ -152,6 +155,7 @@ def slack_setup():
     slack_card.RULED.clear()
     warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
     warrant.RULES_PATH = os.path.join(tempfile.mkdtemp(), "rules.json")
+    belief.STATE_PATH = os.path.join(tempfile.mkdtemp(), "beliefs.json")
     return slack_card, sent
 
 
@@ -263,6 +267,145 @@ def test_a_slack_card_shows_roles_and_ids_not_names():
     for n in (crm["name"], person["name"], crm.get("csm")):
         assert n and n not in shown, n
     assert p["account_id"] in shown and person["role"] in shown
+
+
+def belief_state():
+    belief.STATE_PATH = os.path.join(tempfile.mkdtemp(), "beliefs.json")
+
+
+def test_a_hard_veto_beats_any_belief():
+    stub()
+    belief_state()
+    case = json.loads(json.dumps(CASES["CT-01"]))
+    case["proposal"]["amount"] = 1500    # above agent authority, while every source is fresh and the model finds nothing
+    r = asyncio.run(warrant.run(case, D["now"], D["people"], D["authority"]))
+    assert r["decision"] == "hold" and r["belief"]["vetoed_by"] == "authority" and r["belief"]["p_safe"] <= 0.005
+
+
+def test_the_lag_case_gathers_on_belief_alone():
+    stub()
+    belief_state()
+    warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "none.jsonl")
+    case = json.loads(json.dumps(CASES["CT-01"]))
+    case["world"]["billing"]["updated_at"] = "2026-11-01T08:59:20Z"    # changed 40 s ago; the credit list shows nothing yet
+    prompts.clear()
+    r = asyncio.run(warrant.run(case, D["now"], D["people"], D["authority"]))
+    assert r["decision"] == "gather" and r["belief"]["gather"] == "credit_list_complete" and r["belief"]["wait_seconds"] > 0
+    assert "Re-read in" in r["discriminating_fact"] and not prompts, "a re-read must come before any model call"
+    assert r["question"]
+
+
+def test_a_ruling_moves_the_right_source_the_right_way():
+    belief_state()
+    start = belief.reliability("billing")
+    assert belief.rule_on("billing", kept_held=True) < start
+    assert belief.reliability("risk") == json.load(open(belief.STATE_PATH))["risk"]["alpha"] / 200
+    low = belief.reliability("billing")
+    assert belief.rule_on("billing", kept_held=False) > low
+
+
+def test_a_ruling_on_an_agent_error_blames_no_source():
+    assert warrant.ruling_source({"checks": [{"name": "authority", "result": "fail"}], "belief": {"top_doubt_source": "crm"}}) is None
+    assert warrant.ruling_source({"checks": [{"name": "prior_compensation", "result": "fail"}], "belief": {}}) == "billing"
+
+
+def test_decay_falls_with_age_and_matches_the_old_window():
+    w = [belief.weight(h, 6) for h in (0, 1, 3, 6, 9, 24, 100)]
+    assert w == sorted(w, reverse=True) and w[3] == 0.5 and w[1] > 0.99
+
+
+def test_a_case_settled_by_belief_makes_no_model_call():
+    stub()
+    belief_state()
+    case = json.loads(json.dumps(CASES["CT-01"]))
+    case["proposal"]["amount"] = 40
+    prompts.clear()
+    r = asyncio.run(warrant.run(case, D["now"], D["people"], D["authority"]))
+    assert r["decision"] == "act" and not prompts and r["usage"] == {}
+
+
+def test_three_samples_run_and_one_dissent_stops_the_act():
+    belief_state()
+    clean = CLEAN.replace("__DOC__", "OF-2001")
+    replies = [clean, clean, json.dumps({"limits": [], "conflicts": [{"fact": "open dispute", "kind": "payment_risk", "amount_at_stake": None, "values": []}], "checked": [{"fact": "contract_terms", "record_id": "OF-2001"}],
+                                         "discriminating_fact": "open dispute", "owner_role": None, "question": "Is it open?"})]
+
+    def ask(model, prompt, **kw):
+        llm.LAST_USAGE, llm.LAST_META = (10, 10), {"served_model": "stub", "stop_reason": "end_turn"}
+        return replies.pop()
+    llm.ask = ask
+    r = run("CT-01")
+    assert r["decision"] == "hold" and sum(x["raised"] for x in r["samples"]) == 1 and len(r["usage"]["answers"]) == 3
+    assert r["belief"]["p_safe"] < 0.75
+
+
+def silent(checked):
+    belief_state()
+    stub(reply=json.dumps({"limits": [], "conflicts": [], "checked": checked, "discriminating_fact": None, "owner_role": None, "question": None}))
+    return run("CT-01")
+
+
+def test_silence_without_a_check_is_not_evidence():
+    r = silent([])
+    assert r["decision"] == "gather" and r["belief"]["gather"] == "evidence_agrees"
+    assert r["belief"]["facts"]["evidence_agrees"] == belief.PRIORS["unread_fact_policy"] and "contract_terms" in r["samples"][0]["omitted"]
+
+
+def test_a_claimed_check_needs_a_real_contract_id():
+    for bad in ("OF-9999", "ACC-2001", "INV-20011"):
+        r = silent([{"fact": "contract_terms", "record_id": bad}])
+        assert r["decision"] != "act" and r["samples"][0]["bad_citations"] == [bad], bad
+    r = silent([{"fact": "contract_terms", "record_id": "OF-2001"}])
+    assert r["decision"] == "act" and r["samples"][0]["checked"]
+
+
+def test_mutation_labels_hold_where_code_can_tell():
+    import mutate
+    out = mutate.build()
+    by = {c["id"]: c for c in out["cases"]}
+    assert len(by) == len(out["cases"]) and {c["unsafe"] for c in out["cases"]} == {True, False}
+    for c in out["cases"]:
+        if c["mutation"] == "under_cap":
+            assert c["proposal"]["amount"] < c["world"]["billing"]["monthly_fee"] * 0.10
+        if c["mutation"] == "over_cap":
+            assert c["world"]["billing"]["monthly_fee"] * 0.10 < c["proposal"]["amount"] <= 1000
+        if c["mutation"] == "authority":
+            assert c["proposal"]["amount"] > 1000
+    assert mutate.build() == out, "the same seed must give the same file"
+
+
+def test_a_card_shows_the_clause_and_does_not_repeat_itself():
+    import slack_card
+    case = CASES["CT-01"]
+    crm_mcp.load(case["world"], D["people"], D["authority"])
+    fact = "Above the contract's credit cap: 900 against cap 600 (10% of 6000, OF-2001)"
+    rec = {"record_id": "R", "trace_id": "t", "action": case["proposal"], "belief": {"vetoed_by": "contract_cap", "top_doubt": "evidence_agrees"}, "discriminating_fact": fact,
+           "beliefs": [{"source": "contracts", "value": case["world"]["contracts"]}, {"source": "crm", "value": case["world"]["crm"]}],
+           "question": {"to_role": "Billing analyst", "text": f"{fact}. Commit anyway?"}}
+    shown = json.dumps(slack_card.card(rec))
+    assert "may not exceed 10%" in shown and "OF-2001, order form, signed" in shown and "CLM" in shown
+    assert shown.count("900 against cap 600") == 1 and "Commit anyway?" in shown
+
+
+def test_a_person_cannot_commit_a_credit_the_hold_never_named():
+    slack_card, sent = slack_setup()
+    written = []
+    live_sources.add_credit = lambda *x: written.append(x) or "pc_2"
+    item = slack_card.PENDING["abc123"]
+    item["rec"]["belief"] = {"gather": "credit_list_complete"}
+    p = item["rec"]["action"]
+    warrant.BELIEF_ONLY = True
+    warrant.record_commit(p, "pc_1", "2026-11-01T09:00:00Z", "other-trace")
+    live_sources.read_billing = lambda a: {"a": 1, "credit_balance": 0, "credits": []}
+    try:
+        row = slack_card.handle("ruling_commit", "abc123")
+    finally:
+        warrant.BELIEF_ONLY = False
+    assert row["ruling"] == "commit refused" and "pc_1" in row["note"] and not written
+    os.remove(warrant.LEDGER_PATH)
+    live_sources.read_billing = lambda a: {"a": 1, "credit_balance": 300, "credits": []}
+    row = slack_card.handle("ruling_commit", "abc123")
+    assert row["ruling"] == "commit refused" and "balance" in row["note"] and not written
 
 
 def test_rule_applies_only_inside_its_scope():

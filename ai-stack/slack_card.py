@@ -17,6 +17,7 @@ from slack_sdk.socket_mode import SocketModeClient
 from slack_sdk.socket_mode.request import SocketModeRequest
 from slack_sdk.socket_mode.response import SocketModeResponse
 
+import belief
 import crm_mcp
 import live_sources
 import pii
@@ -53,11 +54,33 @@ def mask(rec, text):
     return pii.scrub(warrant.swap(text or "", m))
 
 
+def clause(rec):
+    """The contract text behind a hold, so the person can check it from the card. None if the hold does not rest on a document."""
+    docs = next((b["value"].get("documents", []) for b in rec["beliefs"] if b["source"] == "contracts"), [])
+    fact = rec.get("discriminating_fact") or ""
+    doc = next((d for d in docs if d.get("id") and d["id"] in fact), None)
+    if not doc:
+        return None
+    word = {"service_credit": "credit", "refund": "refund", "entitlement_grant": "seat", "discount": "discount"}.get(rec["action"]["type"], "")
+    sentence = next((x.strip() for x in doc["text"].split(". ") if word and word in x.lower()), doc["text"])
+    return f"*Source:* {doc['id']}, {doc['kind'].replace('_', ' ')}, {doc['status']}, from the local contract records (a CLM in production)\n*Clause:* \"{mask(rec, sentence.rstrip('.'))}.\""
+
+
+def question_text(rec, q):
+    """The question without repeating the reason already shown above it."""
+    text, fact = q.get("text", ""), rec.get("discriminating_fact") or ""
+    return text[len(fact):].lstrip(". ") if fact and text.startswith(fact) else text
+
+
 def card(rec):
     key = rec["trace_id"]
     q = rec["question"] or {}
-    return [{"type": "section", "text": {"type": "mrkdwn", "text": f":raised_hand: *Held before commit*\n{header(rec)}"}},
-            {"type": "section", "text": {"type": "mrkdwn", "text": f"*Why:* {mask(rec, rec['discriminating_fact'])}\n*Question for {q.get('to_role', 'the owner')}:* {mask(rec, q.get('text', ''))}"}},
+    b = rec.get("belief") or {}
+    doubt = belief.describe(b) if b.get("top_doubt") and not b.get("vetoed_by") and belief.describe(b) != rec.get("discriminating_fact") else ""
+    why = f"*Why:* {mask(rec, rec['discriminating_fact'])}"
+    source = clause(rec)
+    return [{"type": "section", "text": {"type": "mrkdwn", "text": f":raised_hand: *Held before commit*\n{header(rec)}" + (f"\n{doubt}" if doubt else "")}},
+            {"type": "section", "text": {"type": "mrkdwn", "text": why + (f"\n{source}" if source else "") + f"\n*Question for {q.get('to_role', 'the owner')}:* {mask(rec, question_text(rec, q))}"}},
             {"type": "context", "elements": [{"type": "mrkdwn", "text": f"Rationale: {mask(rec, rec['action']['rationale'])}  |  record {rec['record_id']}  |  seeded test data"}]},
             {"type": "actions", "elements": [button("Keep held", "ruling_hold", key, "danger"), button("Commit as proposed", "ruling_commit", key)]}]
 
@@ -71,7 +94,7 @@ def ruled_card(rec, text, offer_rule=False):
 
 def post_hold(rec, out):
     r = client().chat_postMessage(channel=os.environ["SLACK_CHANNEL"], text=f"Held: {mask(rec, rec['discriminating_fact'])}", blocks=card(rec))
-    PENDING[rec["trace_id"]] = {"rec": rec, "ts": r["ts"], "channel": r["channel"], "out": out}
+    PENDING[rec["trace_id"]] = {"rec": rec, "ts": r["ts"], "channel": r["channel"], "out": out, "posted": datetime.now(timezone.utc)}
     return r["ts"]
 
 
@@ -98,6 +121,19 @@ def stale_since(rec):
     return {k: v for k, v in before.items() if k not in ("synced_at", "source")} != {k: v for k, v in now.items() if k != "synced_at"}
 
 
+def unseen_credit(rec):
+    """A hold on a possibly stale list did not name any earlier credit, so the person ruling cannot have weighed one. If the ledger or the balance shows one, say so instead of writing."""
+    if (rec.get("belief") or {}).get("gather") != "credit_list_complete":
+        return None
+    p = rec["action"]
+    earlier = [e for e in warrant.ledger_entries(p["account_id"], p.get("incident_id"), always=True) if e.get("trace_id") != rec.get("trace_id")]
+    if earlier:
+        return f"the ledger shows credit {earlier[0]['id']} for this incident, which the credit list did not"
+    now = live_sources.read_billing(p["account_id"])
+    listed = sum(c["amount"] for c in now.get("credits", []))
+    return f"the balance is {now['credit_balance']:g} with only {listed:g} in listed credits" if now.get("credit_balance", 0) > listed else None
+
+
 def handle(action_id, key):
     """Apply one button click. Returns the ruling, or None for an unknown card."""
     item = PENDING.get(key)
@@ -106,13 +142,19 @@ def handle(action_id, key):
     rec, now = item["rec"], datetime.now(timezone.utc)
     at = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     row = {"record_id": rec["record_id"], "trace_id": key, "case_id": rec["case_id"], "at": at, "ruled_by": "Billing analyst, via Slack"}
+    if item.get("posted"):
+        row["seconds_to_ruling"] = round((now - item["posted"]).total_seconds())
     if action_id == "ruling_hold":
         row.update(ruling="reject")
         rule_ok = bool(failed_check(rec)) and failed_check(rec) in ("prior_compensation", "boundary", "authority", "currency")
         text = ":no_entry: *Kept held* by the billing analyst. Nothing was written." + (" Should this pattern settle without a person next time?" if rule_ok else "")
         blocks = ruled_card(rec, text, offer_rule=rule_ok)
     elif action_id == "ruling_commit":
-        if stale_since(rec):
+        unseen = unseen_credit(rec)
+        if unseen:
+            row.update(ruling="commit refused", note=unseen)
+            blocks = ruled_card(rec, f":warning: *Not committed:* {unseen}. Nothing was written.")
+        elif stale_since(rec):
             row.update(ruling="commit refused", note="billing changed since the check")
             blocks = ruled_card(rec, ":warning: *Not committed:* billing changed since the check, so this needs a fresh look.")
         else:
@@ -130,6 +172,10 @@ def handle(action_id, key):
         blocks = ruled_card(rec, f":scroll: *Standing rule {rule['id']}:* {rule['pattern']['action_type']} failing {rule['pattern']['check']} holds with no question, up to {rule['scope']['max_amount']} {rule['scope']['currency']}. Owner {rule['owner']}, expires {rule['expires']}.")
     else:
         return None
+    src = warrant.ruling_source(rec)
+    if src and row["ruling"] in ("reject", "commit"):
+        before = belief.reliability(src)
+        row["belief_update"] = {"source": src, "before": round(before, 4), "after": round(belief.rule_on(src, row["ruling"] == "reject"), 4)}
     write_ruling(item["out"], row)
     client().chat_update(channel=item["channel"], ts=item["ts"], text=row["ruling"], blocks=blocks)
     return row

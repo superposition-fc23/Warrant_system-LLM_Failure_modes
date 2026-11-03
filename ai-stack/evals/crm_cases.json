@@ -122,7 +122,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -199,7 +199,7 @@
        "amount": 2150,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -280,7 +280,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -357,7 +357,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -435,7 +435,7 @@
        "amount": 5000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -518,7 +518,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -603,7 +603,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -687,7 +687,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -778,7 +778,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -861,7 +861,7 @@
        "amount": 2700,
        "currency": "EUR",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -950,7 +950,7 @@
        "amount": 3000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1027,7 +1027,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1112,7 +1112,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1189,7 +1189,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1275,7 +1275,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1359,7 +1359,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1443,7 +1443,7 @@
        "amount": 3450,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1524,7 +1524,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1601,7 +1601,7 @@
        "amount": 400,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1692,7 +1692,7 @@
        "amount": 1500,
        "currency": "EUR",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1769,13 +1769,14 @@
        "amount": 6000,
        "currency": "USD",
        "status": "overdue",
-       "date": "2026-08-29",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
          "amount": 6000
         }
-       ]
+       ],
+       "date": "2026-08-29"
       }
      ],
      "credits": [],
@@ -1860,7 +1861,7 @@
        "amount": 3450,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -1941,7 +1942,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2025,7 +2026,7 @@
        "amount": 2150,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2113,7 +2114,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2198,7 +2199,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2282,7 +2283,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2368,7 +2369,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2452,7 +2453,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2529,7 +2530,7 @@
        "amount": 400,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2622,7 +2623,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2722,7 +2723,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2802,7 +2803,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2889,7 +2890,7 @@
        "amount": 5000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -2974,7 +2975,7 @@
        "amount": 6000,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",
@@ -3053,7 +3054,7 @@
        "amount": 2500,
        "currency": "USD",
        "status": "paid",
-       "date": "2026-10-20",
+       "invoice_date": "2026-10-20",
        "lines": [
         {
          "item": "Business subscription",

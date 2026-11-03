@@ -4,7 +4,7 @@ Status: steps 1 to 5 built on branch `v4`, with priors frozen in commit `764324f
 
 ## Hard deadline
 
-`CLAUDE.md` says materials are shared Tue 3 Nov and nothing changes after that except rehearsal. So v4 either passes its bar and merges before materials go out, or it does not merge at all. **Cutoff: __:__ Tue 3 Nov (I set this).** If the bar is not met by then, ship v3 materials unchanged and report the v4 attempt as a labelled experiment on its branch.
+`CLAUDE.md` says materials are shared Tue 3 Nov and nothing changes after that except rehearsal. So v4 either passes its bar and merges before materials go out, or it does not merge at all. **Cutoff: 21:30 PT Mon 2 Nov.** If the bar is not met by then, ship v3 materials unchanged and report the v4 attempt as a labelled experiment on its branch.
 
 ## Why v4
 

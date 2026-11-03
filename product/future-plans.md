@@ -23,3 +23,5 @@ Inputs for the next version. Assumed figures are marked; the working is in repor
 
 - **Catch unknown names.** Redaction relies on the roster, so a name outside it passes in free text.
 - **Minimise contract text** before it reaches the provider, and settle provider retention before any real data.
+
+Folded into [`v4-plan.md`](v4-plan.md): one held state, the invoice date, the additive review mark, time to ruling. Still open after v4: discovery numbers, reviewers who did not build it, and the privacy items.

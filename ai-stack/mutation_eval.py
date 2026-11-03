@@ -22,8 +22,13 @@ CASES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "evals", "mutat
 
 
 def cheap_rules(case, authority):
-    """What a buyer can already do with no model: dedupe by incident on the billing list and the ledger, and an approval threshold."""
+    """What a buyer can already do with no model, given every benefit of the doubt: dedupe by incident on the billing list and the ledger, a currency check,
+    a per-account credit cap configured from the original order form, and an approval threshold. It cannot read an amendment, a signature or a dispute note."""
     p, b = case["proposal"], case["world"]["billing"]
+    if p.get("amount") is not None and p["currency"] != b["currency"]:
+        return "hold"
+    if p["type"] == "service_credit" and p.get("amount") is not None and p["amount"] > b["monthly_fee"] * 0.10:
+        return "hold"
     known = b["credits"] + case.get("seed_ledger", [])
     if p.get("incident_id") and any(x["incident_id"] == p["incident_id"] for x in known):
         return "hold"

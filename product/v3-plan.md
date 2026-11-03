@@ -1,6 +1,6 @@
 # v3 plan
 
-Latency cause and fixes: [`v2-latency-rca.md`](v2-latency-rca.md). Status: steps 1 to 7 and 9 built; step 8 waits on human labels. The list below is final and replaces section 4; sections 1 to 3 are kept as background.
+Latency cause and fixes: [`v2-latency-rca.md`](v2-latency-rca.md). Status: steps 1 to 9 built; human labels are in `ai-stack/evals/human_labels_v3.json`, with results in report section 13. The list below is final and replaces section 4; sections 1 to 3 are kept as background.
 
 ## Final list
 

@@ -781,8 +781,22 @@ tailwind.config = {
   </table></div>
   <h3>The eval set</h3>
   <p><strong>Today:</strong> 11 planted defects plus 1 clean control across ten domains (<code>ai-stack/evals/planted_defects.json</code>), ground truth by construction. Baseline on 30 Oct: 10 of 11 held, 9 of 11 named the fact, 0 of 1 over-held; the miss, PD-07, is recency bias. One control cannot measure the counter-metric. <strong>To build in step 7, for wave 1:</strong> CRM-service cases planted for P1, P5, P6, P8 and P9, an equal number of clean controls, and counterfactual pairs for R7 (sizes to be set when the cases are written). <strong>Pass:</strong> hold on planted, act on controls, the same decision on every pair. <strong>In a pilot,</strong> every human ruling becomes a case, so the share of real cases grows each week and the system stops grading itself on data I wrote.</p>
+  <h3>What the human review found</h3>
+  <p>I marked 15 v3 records from the evidence before seeing the gate's answer (<code>ai-stack/evals/human_labels_v3.json</code>). <strong>I matched the gate on 11 of 15.</strong> I am the system's author, so this is outside the model but not independent.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Records</th><th class="num">Count</th><th>Result</th><th>What it means</th></tr></thead>
+    <tbody>
+      <tr><td>Gate acted (clean controls)</td><td class="num">5</td><td>I marked act on all 5</td><td>No over-hold in this sample, on 5 records</td></tr>
+      <tr><td>Gate held, planted defects</td><td class="num">8</td><td>Hold on 6, gather on 2 (PL-01, PL-13)</td><td>I would not have moved money on any of the 8. The 2 differences are about the next step: I wanted more data, and the gate held and asked a question</td></tr>
+      <tr><td>Gate held, injection</td><td class="num">2</td><td>Act on 2 (IN-02, IN-05)</td><td>IN-05 is my declared selection error; my note says it needed more data. On IN-02 the mark is act, while my note questions whether the email had any authority. The gate held both on the contract cap</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><strong>Hold and gather blur for a person.</strong> In the code, gather means a stale or missing source. I used it to mean "I need more context" on 2 records and named the same need on IN-05. I left the answer keys alone. A next version should test whether one held state with a question is clearer.</li>
+    <li><strong>The review found a display gap.</strong> On PL-13 I could not tell whether the invoice date was the invoice date or the paid date, and the refund window depends on it. The screen now says "dated". The source field is still just <code>date</code>, so the model reads the same ambiguity.</li>
+  </ul>
   <h3>What a human check costs</h3>
-  <p><strong>Measured once:</strong> reviewing and labelling 15 records took me more than an hour, so at least 4 minutes a record. At $30 to $40 an hour for an expert labeler <span class="pill warn">assumed</span>, that is at least $2.00 to $2.67 a record, about 200 to 265 times the $0.0101 measured per gate decision.</p>
+  <p><strong>Measured once:</strong> reviewing 15 records took me about an hour. The label timestamps run 58.6 minutes from first mark to last, a mean of 4.2 minutes between marks. At 4 minutes and $30 to $40 an hour for an expert labeler <span class="pill warn">assumed</span>, that is about $2.00 to $2.67 a record, about 200 to 265 times the $0.0101 measured per gate decision.</p>
   <div class="tbl"><table>
     <thead><tr><th>Money-action cases, at 10,000 customers <span class="pill warn">assumed</span></th><th class="num">A day</th><th class="num">A week</th><th class="num">A month</th><th class="num">Review cost, a month</th><th class="num">Review cost, a year</th><th class="num">Person-hours, a month</th><th class="num">Gate cost, a month</th></tr></thead>
     <tbody>
@@ -793,8 +807,8 @@ tailwind.config = {
   </table></div>
   <p class="text-fg-2" style="font-size:14px">A 30-day month, with every case reviewed by one person. The rows are a sensitivity, not a forecast: I have no source for the case rate. Cost falls in line with the share a person sees, so at one case in ten, the middle row is $1,000 to $1,333 a month.</p>
   <ul>
-    <li><strong>Why it may be low:</strong> "more than an hour" is a floor, the rate is not fully loaded, and it leaves out queueing and a second labeler. I also made one selection error in 15, and declared it in the note. That is one person and a wide interval, 0.2% to 32%, but human labels are not ground truth, and a second labeler doubles the cost.</li>
-    <li><strong>Why it may be high:</strong> I labelled blind, with the gate's answer hidden. A ruling shows the reason, so it should take less time. Nobody has measured that yet, and held cases are the harder ones.</li>
+    <li><strong>Why it may be low:</strong> the rate is not fully loaded, and it leaves out queueing and a second labeler. I also made one selection error in 15, and declared it in the note. That is one person and a wide interval, 0.2% to 32%, but human labels are not ground truth, and a second labeler doubles the cost.</li>
+    <li><strong>Why it may be high:</strong> the median gap was 2.75 minutes, or $1.38 to $1.83 a record, and two gaps of 13 and 14 minutes pull the mean up; the timestamps cannot say whether those were hard cases or breaks. I also labelled blind, with the gate's answer hidden. A ruling shows the reason, so it should take less time. Nobody has measured that yet, and held cases are the harder ones.</li>
     <li><strong>What it means:</strong> at the middle row, reviewing everything costs less than the assumed $250k account price, so saved review time alone does not pay for this product. The case rests on what this table leaves out: clawbacks and leakage, lost customer trust and retention, and the manual overhead in account and relationship management. Section 13 tracks those, and none is measured yet. That is what the log pull is for.</li>
   </ul>
 </div></section>
@@ -807,7 +821,7 @@ tailwind.config = {
     <thead><tr><th>Risk</th><th>Why it bites</th><th>Mitigation or owner</th></tr></thead>
     <tbody>
       <tr><td><strong>Model silence commits</strong></td><td>All 13 acts in the v3 run rest on a model finding nothing material. A miss looks exactly like a clean case and trips no guardrail. No planted case slipped through in five runs, but that is one prompt on cases it has seen</td><td>Replace model readings with code for structured fields. Measure on blind cases. Owner: me</td></tr>
-      <tr><td><strong>The evaluator is not independent</strong></td><td>One model family wrote the cases, the prompt rules, the audit and the judge, in one conversation. 13 of 13 may partly be a test passing itself. The stronger judge does not change that</td><td>Human labels on 15 records (done once, by me); blind cases from people who have seen these failures; an auditor from another model family. Owner: me</td></tr>
+      <tr><td><strong>The evaluator is not independent</strong></td><td>One model family wrote the cases, the prompt rules, the audit and the judge, in one conversation. 13 of 13 may partly be a test passing itself. The stronger judge does not change that</td><td>Human labels on 15 records (done once, by me: 11 of 15 matched, not independent); blind cases from people who have seen these failures; an auditor from another model family. Owner: me</td></tr>
       <tr><td><strong>Thin evidence on catch rate</strong></td><td>13 of 13 has a 95% lower bound of 75% (Clopper-Pearson). Five runs per case measure model noise (1 of 36 cases flipped), but repeats of one case are not new evidence</td><td>More planted cases, written outside the model; report bands, not a point</td></tr>
       <tr><td><strong>Prompt injection</strong></td><td>Agent rationale and contract text enter the prompt. 5 of 5 injection cases held over five runs, but the model wrote them and five is few. With no tools the blast radius is small, but a mislabelled conflict clears a hold</td><td>Keep code checks ahead of the model and the model tool-free; add cases written by someone else</td></tr>
       <tr><td><strong>A learned rule overreaches</strong></td><td>Rules now need a scope, and v3 only creates hold rules. An "act" rule would skip the model for every match: belief turned into bias</td><td>Scope is built and tested. Replay history before a rule goes live; test rules with counterfactual pairs</td></tr>
@@ -870,7 +884,7 @@ tailwind.config = {
   <div class="tbl"><table>
     <thead><tr><th>Phase</th><th>What</th><th>The assumption it tests</th></tr></thead>
     <tbody>
-      <tr><td><strong>P1: human labels</strong></td><td>15 v3 records labelled outside the model, by me. Still to do: add cases from people who have seen these failures, and rerun</td><td>The catches hold when the grader is not the model that wrote the tests</td></tr>
+      <tr><td><strong>P1: human labels</strong></td><td>15 v3 records labelled outside the model, by me: 11 matched, and no gate act disputed. Still to do: add cases from people who have seen these failures, and rerun</td><td>The catches hold when the grader is not the model that wrote the tests</td></tr>
       <tr><td><strong>P2: v4</strong></td><td>SageOx as the decision-record store, field-level access, kill switch, a CLM behind the MCP server</td><td>The record and rule loops survive more real systems, and a failed control can stop the agent</td></tr>
       <tr><td><strong>P3: pilot</strong></td><td>Five interviews and one log pull, then shadow mode on real tickets with a named owner</td><td>Conflicts are frequent and costly outside agent-native firms, and owners trust a hold</td></tr>
     </tbody>

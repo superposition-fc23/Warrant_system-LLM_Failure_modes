@@ -1,6 +1,6 @@
 # v4 plan: an uncertainty-aware decision layer
 
-Status: steps 1 to 6 and 8 done on branch `v4`, with priors frozen before the first full run. Two bar rows missed; see report section 15. Step 7 needs a live Slack run. Cut for time: stretch S1, the review-mark correction, and the full slide arc. One pull request, results and misses in its description. The revert point is the tag `v3-final` (PR 8). Follow `CLAUDE.md` throughout (no em dashes, no invented numbers, report before slides, no new frameworks or CDN links).
+Status: steps 1 to 6 and 8 done on branch `v4`, with priors frozen before the first full run. Two bar rows missed; see report section 15. Step 7 ran live: decisions correct, and it found a double credit by Commit and a τ that is too short; both are in the report. Cut for time: stretch S1, the review-mark correction, and the full slide arc. One pull request, results and misses in its description. The revert point is the tag `v3-final` (PR 8). Follow `CLAUDE.md` throughout (no em dashes, no invented numbers, report before slides, no new frameworks or CDN links).
 
 ## Hard deadline
 

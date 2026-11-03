@@ -64,8 +64,8 @@ REQUIRED = {"crm": {"entitlements", "tier"}, "billing": {"monthly_fee", "currenc
             "contracts": {"documents"}, "risk": {"flags"}}
 
 
-def ledger_entries(account_id, incident_id):
-    if BELIEF_ONLY or not (incident_id and os.path.exists(LEDGER_PATH)):
+def ledger_entries(account_id, incident_id, always=False):
+    if (BELIEF_ONLY and not always) or not (incident_id and os.path.exists(LEDGER_PATH)):
         return []
     rows = [json.loads(l) for l in open(LEDGER_PATH)]
     return [r for r in rows if r["account_id"] == account_id and r["incident_id"] == incident_id]
@@ -407,7 +407,7 @@ def decide(s: State) -> State:
         if l.get("name") == "credit_cap" and l.get("unit") == "pct_of_monthly_fee" and p.get("amount") is not None and p["type"] == "service_credit":
             cap = l["value"] * fee / 100
             extra.append({"name": "contract_cap", "result": "pass" if p["amount"] <= cap else "fail",
-                          "detail": f"{p['amount']} against cap {cap:g} ({l['value']}% of {fee}, {l.get('doc_id')})"})
+                          "detail": f"{p['amount']:g} against cap {cap:g} ({l['value']:g}% of {fee:g}, {l.get('doc_id')})"})
     checks = s["checks"] + sorted(extra, key=lambda x: x["result"] == "pass")
     samples = c.get("samples")
     f = belief.facts(src, s["now"], samples if samples else None)

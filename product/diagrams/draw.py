@@ -109,7 +109,7 @@ def architecture():
     f.text(1022, 352, "or planned", 12, weight=600)
 
     f.lane(10, 422, 1180, 72, "PROOF AROUND THE GATE: NEVER DECIDES")
-    for i, (a, b, k, d) in enumerate([("Eval runner", "36 + 224 cases, 5 runs", "code", False), ("Judge", "Opus 5.5, redacted", "model", False), ("Gate tests", "32, no model calls", "code", False),
+    for i, (a, b, k, d) in enumerate([("Eval runner", "36 + 224 cases, 5 runs", "code", False), ("Judge", "Opus 5.5, redacted", "model", False), ("Gate tests", "34, no model calls", "code", False),
                                       ("OpenTelemetry", "a span per step", "code", False), ("PII, secret scan", "pre-commit and CI", "code", False),
                                       ("Prototype", "boundary, shadow, review", "code", False), ("SageOx", "planned", "code", True)]):
         f.node(20 + i * 166, 442, 156, 44, a, b, k, d)

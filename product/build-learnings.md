@@ -70,6 +70,8 @@ How I got to the v4 plan: [`v4-plan-approach.md`](v4-plan-approach.md). The meth
 | v4 stopped 120 of 120 generated defects against v3's 101 and cheap rules' 36, and missed two bars. Its review share stayed about 6% to 7% | Reported as more catches, not savings; the calibration miss traced partly to a policy prior | Separate a decision that improved from a number that is calibrated. A policy written as a probability will not calibrate |
 | Arithmetic before any run found the planned half-life would stop nearly every clean case | The decay shape changed before the first run, for free | Do the threshold arithmetic by hand before spending on a run |
 | My prediction that three samples would raise P95 was wrong: 6.3 s, level with v3. The first reading of 11.6 s came from runs competing for capacity | Measured again alone | Do not compare latency across runs with different load |
+| The second live observation of the billing lag refuted the prior set from the first: over 5 minutes, against 90 s. A click in the same run wrote a second credit | The hard rules stayed, Commit now checks them, and the prior is disclosed as too short | One observation is not a distribution. Keep the deterministic control until the model of it has survived more than the data it came from |
+| Asked to rule on a hold, I could not find where the contract lived. The card cited an ID and nothing else | The card now shows the clause and its source, and stops repeating the reason | Try to do the user's job with only what the screen shows. If you have to ask, so will they |
 
 ## Privacy and governance
 

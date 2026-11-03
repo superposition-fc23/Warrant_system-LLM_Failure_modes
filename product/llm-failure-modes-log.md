@@ -47,6 +47,8 @@ A running log from one real build: failures of LLMs and agentic workflows, in th
 | 31 | Product | Self-contradicting answer | The model titled a conflict "exceeds the cap", then wrote that the amount is under it, and code counted it as material. v3 held 31 of 60 under-cap cases and v4 37 of 60 | `ai-stack/runs/v4-mut-*` | Reading the answers behind the over-holds | 2 Nov | Reported, not fixed: changing it after seeing results would need a rerun |
 | 32 | Eval | Wrong label | My generator labelled under-cap cases on CT-07 as clean, though that account's amendment lowers the rate, so the conflict is real | `ai-stack/mutate.py` | Same review | 2 Nov | Left in, disclosed, scored both ways |
 | 33 | Build | Test touched live state | A Slack test wrote rulings to the demo's `state/beliefs.json`, which lowered the live P(safe) to 0.957 | `ai-stack/test_warrant.py` | A live P(safe) that did not match the arithmetic | 2 Nov | Fixed; evals were not affected |
+| 34 | Product | Guard passed on stale data | With the ledger and balance check off for the demo, a person's Commit wrote a second $300 credit for one incident. The billing recheck compared two equally stale lists and passed | `ai-stack/runs/v4-agent-20261103T0504` | Reading the rulings after a live Slack run | 2 Nov | Fixed: Commit reads the ledger and balance first. Unit tested, not repeated live |
+| 35 | Product | Prior refuted by the next observation | τ of 90 s came from one lag of over a minute. The next live run saw the list stale past 5 minutes, where the prior says 97% complete | Same run | Same review | 2 Nov | Not refit, since scoring is frozen. Disclosed; ledger and balance check stay |
 
 ## Patterns so far
 

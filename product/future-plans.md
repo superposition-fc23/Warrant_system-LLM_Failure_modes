@@ -33,3 +33,5 @@ Folded into [`v4-plan.md`](v4-plan.md): one held state, the invoice date, the ad
 - **Calibrate, or stop calling it a probability.** Fit the share table on held-out cases, and report policy priors apart from measured ones.
 - **Reduce false waits.** A recent billing change that was not a credit also waits. Reading the change type from the source would separate them.
 - **Build the review-mark correction,** cut from v4 for time.
+- **Refit τ on real lags.** Log list-lag per write on the test site; one observation over a minute and one past 5 minutes are not enough. Until then, do not present the suggested re-read time as safe.
+- **Repeat the Commit refusal and a Keep held belief update live.** Both are unit tested only.

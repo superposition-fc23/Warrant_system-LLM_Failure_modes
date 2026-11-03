@@ -374,6 +374,40 @@ def test_mutation_labels_hold_where_code_can_tell():
     assert mutate.build() == out, "the same seed must give the same file"
 
 
+def test_a_card_shows_the_clause_and_does_not_repeat_itself():
+    import slack_card
+    case = CASES["CT-01"]
+    crm_mcp.load(case["world"], D["people"], D["authority"])
+    fact = "Above the contract's credit cap: 900 against cap 600 (10% of 6000, OF-2001)"
+    rec = {"record_id": "R", "trace_id": "t", "action": case["proposal"], "belief": {"vetoed_by": "contract_cap", "top_doubt": "evidence_agrees"}, "discriminating_fact": fact,
+           "beliefs": [{"source": "contracts", "value": case["world"]["contracts"]}, {"source": "crm", "value": case["world"]["crm"]}],
+           "question": {"to_role": "Billing analyst", "text": f"{fact}. Commit anyway?"}}
+    shown = json.dumps(slack_card.card(rec))
+    assert "may not exceed 10%" in shown and "OF-2001, order form, signed" in shown and "CLM" in shown
+    assert shown.count("900 against cap 600") == 1 and "Commit anyway?" in shown
+
+
+def test_a_person_cannot_commit_a_credit_the_hold_never_named():
+    slack_card, sent = slack_setup()
+    written = []
+    live_sources.add_credit = lambda *x: written.append(x) or "pc_2"
+    item = slack_card.PENDING["abc123"]
+    item["rec"]["belief"] = {"gather": "credit_list_complete"}
+    p = item["rec"]["action"]
+    warrant.BELIEF_ONLY = True
+    warrant.record_commit(p, "pc_1", "2026-11-01T09:00:00Z", "other-trace")
+    live_sources.read_billing = lambda a: {"a": 1, "credit_balance": 0, "credits": []}
+    try:
+        row = slack_card.handle("ruling_commit", "abc123")
+    finally:
+        warrant.BELIEF_ONLY = False
+    assert row["ruling"] == "commit refused" and "pc_1" in row["note"] and not written
+    os.remove(warrant.LEDGER_PATH)
+    live_sources.read_billing = lambda a: {"a": 1, "credit_balance": 300, "credits": []}
+    row = slack_card.handle("ruling_commit", "abc123")
+    assert row["ruling"] == "commit refused" and "balance" in row["note"] and not written
+
+
 def test_rule_applies_only_inside_its_scope():
     warrant.RULES_PATH = os.path.join(tempfile.mkdtemp(), "rules.json")
     rule = {"id": "SR-T", "pattern": {"action_type": "service_credit", "check": "prior_compensation"}, "effect": "hold", "expires": "2026-12-01"}

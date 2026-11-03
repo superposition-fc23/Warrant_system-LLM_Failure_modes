@@ -48,7 +48,7 @@ def ask(model_key: str, prompt: str, system: str = "", max_tokens: int = 16000, 
         import anthropic
         # Keys not scoped to a workspace need the workspace id sent as a header.
         ws = os.getenv("ANTHROPIC_WORKSPACE_ID")
-        client = anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None)
+        client = anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None, max_retries=8)
         kwargs = dict(model=m["id"], max_tokens=max_tokens, messages=[{"role": "user", "content": prompt}],
                       output_config={"effort": effort, **({"format": {"type": "json_schema", "schema": schema}} if schema else {})})
         if system:

@@ -155,6 +155,7 @@ def slack_setup():
     slack_card.RULED.clear()
     warrant.LEDGER_PATH = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
     warrant.RULES_PATH = os.path.join(tempfile.mkdtemp(), "rules.json")
+    belief.STATE_PATH = os.path.join(tempfile.mkdtemp(), "beliefs.json")
     return slack_card, sent
 
 

@@ -104,6 +104,7 @@ async def main(version, slack=False, wait=600):
         warrant.RULES_PATH, warrant.LEDGER_PATH = "state/rules.json", "state/ledger.jsonl"
     sock = slack_card.listen() if slack else None
     crm_mcp.LIVE = True
+    warrant.BELIEF_ONLY = "belief-only" in sys.argv    # no ledger and no balance check: the lag has to be caught by decay alone
     ws = os.getenv("ANTHROPIC_WORKSPACE_ID")
     client = anthropic.Anthropic(default_headers={"anthropic-workspace-id": ws} if ws else None)
     rows = []
@@ -135,4 +136,4 @@ async def main(version, slack=False, wait=600):
 
 
 if __name__ == "__main__":
-    asyncio.run(main(sys.argv[1] if len(sys.argv) > 1 else "v3", "slack" in sys.argv, int(sys.argv[3]) if len(sys.argv) > 3 else 600))
+    asyncio.run(main(sys.argv[1] if len(sys.argv) > 1 else "v3", "slack" in sys.argv, next((int(x) for x in sys.argv[2:] if x.isdigit()), 600)))

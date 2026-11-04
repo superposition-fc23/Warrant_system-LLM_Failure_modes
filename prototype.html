@@ -717,7 +717,7 @@ el('replay-open').onclick = function(){ at = 0; render(); };
 </script>
 <script>
 (function(){
-var served = location.protocol.indexOf('http') === 0, busy = false;
+var served = location.hostname === '127.0.0.1', busy = false;
 function el(id){ return document.getElementById(id); }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function buttons(s){
@@ -758,7 +758,7 @@ function poll(){
   });
 }
 if(!served){
-  el('live-now').innerHTML = '<div class="banner warn">To run this, double-click <span class="font-mono">Warrant Demo.command</span> in the project folder. It opens this page with the Live demo ready. The other tabs work as they are.</div>';
+  el('live-now').innerHTML = '<div class="banner warn">The live run needs the project\'s keys and test accounts, so it is off in this copy. Use the replay below, a labelled recording of a real run. The other tabs work as they are. With the keys set up, <span class="font-mono">Warrant Demo.command</span> in the project folder starts the live run.</div>';
   return;
 }
 buttons(null); poll(); setInterval(poll, 2000);

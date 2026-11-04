@@ -6,6 +6,8 @@ Built for an enterprise AI case challenge. The commits and pull requests are kep
 
 ## Where to look
 
+Open it in a browser, no setup: [report](https://superposition-fc23.github.io/Warrant_system-LLM_Failure_modes/), [prototype](https://superposition-fc23.github.io/Warrant_system-LLM_Failure_modes/prototype.html), [slides](https://superposition-fc23.github.io/Warrant_system-LLM_Failure_modes/slides.html). Tab 8 of the prototype replays a recorded run; a live run needs the project's keys and test accounts.
+
 | What | Where |
 |---|---|
 | The product report, from failure mode to requirements | [`index.html`](index.html) |

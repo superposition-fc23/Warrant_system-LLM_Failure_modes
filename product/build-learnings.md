@@ -107,6 +107,7 @@ Full evidence: [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
 | I pushed straight to main, so the pull requests tab stayed empty and the iterations were hard to see | One branch and one pull request per iteration, with results and failures in the description | Make the iteration visible as it happens: small commits, one pull request per version |
 | The demo shell and backend were built in parallel without collisions | The data contract was written first | Fix the interface before splitting work between agents |
 | My first reason for sitting beside the CRM was "habit". Challenged, the real reason was separation of duties, and it exposed where we lose | The non-goal was rewritten with its losing case | Ask why a buyer would pay for two tools. A non-goal needs a reason that survives that |
+| A fresh clone showed the repo link gave a reader source code, and the launcher needed a local environment | Published the pages with GitHub Pages, with the live controls off on the hosted copy | Test the deliverable the way its reader will get it, from a clean copy, before sending the link |
 
 ## Product judgement
 

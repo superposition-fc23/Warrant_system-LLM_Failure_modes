@@ -158,24 +158,137 @@ tailwind.config = {
 };
 </script>
 <style>
-/* Slide deck: font sizes scale with the slide, so a short window cannot push text into the footer. One .slide per view, 16:9, arrow keys or click to move, N toggles speaker notes, print exports one slide per page. */
-body{overflow:hidden}
+/* Deck: one .slide per view, 16:9. Sizes use --u, one percent of the slide's width, so the layout scales with any window and in print. Arrow keys or click to move, N toggles speaker notes. */
+:root{
+  --bg:#E9EDF2; --surface:#FFFFFF; --surface-2:#F4F6F9; --surface-3:#E8ECF2;
+  --fg:#162030; --fg-2:#465265; --fg-3:#768194;
+  --rule:#DDE3EB; --rule-2:#C3CCD8;
+  --accent:#2747B8; --accent-soft:#E6EBFA;
+  --ok:#2C7A55; --ok-soft:#E1F1E8;
+  --warn:#9A6210; --warn-soft:#F7EDD9;
+  --stop:#B1262E; --stop-soft:#F8E3E4;
+  --serif:"Iowan Old Style","Charter","Bitstream Charter","Palatino Linotype",Georgia,serif;
+  --body:"Avenir Next","Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B101A; --surface:#131A27; --surface-2:#1A2232; --surface-3:#222C3E;
+  --fg:#E7ECF3; --fg-2:#AAB4C4; --fg-3:#7D889B;
+  --rule:#283246; --rule-2:#38445A;
+  --accent:#8AA2F2; --accent-soft:#1B2547;
+  --ok:#5EC290; --ok-soft:#12281D;
+  --warn:#DDA64A; --warn-soft:#2A2112;
+  --stop:#EE7A80; --stop-soft:#2E1619;
+}}
+:root[data-theme="dark"]{
+  --bg:#0B101A; --surface:#131A27; --surface-2:#1A2232; --surface-3:#222C3E;
+  --fg:#E7ECF3; --fg-2:#AAB4C4; --fg-3:#7D889B;
+  --rule:#283246; --rule-2:#38445A;
+  --accent:#8AA2F2; --accent-soft:#1B2547;
+  --ok:#5EC290; --ok-soft:#12281D;
+  --warn:#DDA64A; --warn-soft:#2A2112;
+  --stop:#EE7A80; --stop-soft:#2E1619;
+}
+body{overflow:hidden;background:var(--bg);font-family:var(--body)}
 .deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg)}
-.slide{display:none;width:min(100vw,177.78vh);height:min(56.25vw,100vh);background:var(--surface);padding:5.5% 7%;flex-direction:column;position:relative}
+.slide{--u:min(1vw,1.7778vh);display:none;width:min(100vw,177.78vh);height:min(56.25vw,100vh);background:var(--surface);padding:calc(var(--u)*6) calc(var(--u)*6) calc(var(--u)*5.2);flex-direction:column;position:relative;overflow:hidden;font-family:var(--body);font-size:calc(var(--u)*1.4);line-height:1.45;color:var(--fg)}
 .slide.on{display:flex}
-.slide .kick{font-size:clamp(10px,min(0.875vw,1.56vh),14px)}
-.slide h1{font-size:clamp(28px,min(4vw,7.11vh),64px)}
-.slide h2{font-size:clamp(22px,min(2.75vw,4.89vh),44px);margin-bottom:.6em}
-.slide p,.slide li{font-size:clamp(14px,min(1.5vw,2.67vh),24px);max-width:none}
-.slide .big{font-family:var(--serif);font-size:clamp(20px,min(2.5vw,4.44vh),40px);line-height:1.25;color:var(--fg)}
-.slide .foot{position:absolute;left:7%;right:7%;bottom:4%;display:flex;justify-content:space-between;font-family:var(--mono);font-size:clamp(9px,min(0.75vw,1.33vh),12px);color:var(--fg-3)}
-.notes{display:none;position:fixed;left:0;right:0;bottom:0;max-height:32vh;overflow:auto;background:var(--surface-3);border-top:1px solid var(--rule-2);padding:12px 20px;font-size:14px;color:var(--fg-2);z-index:50}
+.slide p,.slide li{font-size:inherit;max-width:none;margin:0}
+.slide strong{font-weight:600;color:var(--fg)}
+.slide h1{font-family:var(--serif);font-weight:600;font-size:calc(var(--u)*10);line-height:.95;letter-spacing:-.015em;margin:0}
+.slide h2{font-family:var(--serif);font-weight:600;font-size:calc(var(--u)*2.65);line-height:1.15;letter-spacing:-.005em;margin:0 0 calc(var(--u)*1.2);max-width:88%;color:var(--fg)}
+.slide .lede{font-size:calc(var(--u)*1.55);line-height:1.42;color:var(--fg-2);max-width:78%;margin:0 0 calc(var(--u)*1.6)}
+.slide svg text{font-family:var(--body)}
+.slide figure{border:none;padding:0;background:transparent;border-radius:0}
+.slide h2{text-wrap:balance}
+.big .card p{font-size:calc(var(--u)*1.5)}
+.big .card h3{font-size:calc(var(--u)*1.6)}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1.2fr;align-items:center;gap:calc(var(--u)*1.2);margin-top:calc(var(--u)*2.4)}
+.flow .c{background:var(--surface-2);border:1px solid var(--rule);border-radius:calc(var(--u)*.7);padding:calc(var(--u)*.9) calc(var(--u)*1.2);font-size:calc(var(--u)*1.2);color:var(--fg-2)}
+.flow .c strong{display:block;font-size:calc(var(--u)*1.3)}
+.flow .c.w{background:var(--accent-soft);border-color:var(--accent)}
+.flow .ar{width:calc(var(--u)*2.4);height:calc(var(--u)*1.4)}
+.flow .out{display:grid;gap:calc(var(--u)*.45)}
+.flow .out span{border-radius:calc(var(--u)*.5);padding:calc(var(--u)*.35) calc(var(--u)*1);font-size:calc(var(--u)*1.15);font-weight:600}
+.rail{position:absolute;top:calc(var(--u)*2.3);left:calc(var(--u)*6);right:calc(var(--u)*6);display:flex;gap:calc(var(--u)*.7);font-size:calc(var(--u)*.85);color:var(--fg-3)}
+.rail span{flex:1;padding-top:calc(var(--u)*.55);border-top:calc(var(--u)*.22) solid var(--rule)}
+.rail span.done{border-top-color:var(--rule-2)}
+.rail span.on{color:var(--fg);font-weight:600;border-top-color:var(--accent)}
+.rail.backup span{flex:none;border-top-color:var(--rule-2);padding-right:2em}
+.slide .foot{position:absolute;left:calc(var(--u)*6);right:calc(var(--u)*6);bottom:calc(var(--u)*2);display:flex;justify-content:space-between;gap:3em;font-family:var(--body);font-size:calc(var(--u)*.82);line-height:1.35;color:var(--fg-3)}
+.slide .foot span:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}
+.notes{display:none;position:fixed;left:0;right:0;bottom:0;max-height:32vh;overflow:auto;background:var(--surface-3);border-top:1px solid var(--rule-2);padding:12px 20px;font-size:14px;line-height:1.5;color:var(--fg-2);z-index:50}
 body.show-notes .slide.on .notes{display:block}
+.row{display:grid;gap:calc(var(--u)*2.4)}
+.card{background:var(--surface-2);border:1px solid var(--rule);border-radius:calc(var(--u)*.8);padding:calc(var(--u)*1.3) calc(var(--u)*1.5)}
+.card h3{font-family:var(--body);font-size:calc(var(--u)*1.35);font-weight:600;margin:0 0 calc(var(--u)*.45);color:var(--fg)}
+.card p{color:var(--fg-2)}
+.card p + p{margin-top:calc(var(--u)*.55)}
+.tag{display:inline-block;font-size:calc(var(--u)*.82);font-weight:600;line-height:1.2;padding:.28em .7em;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-bottom:calc(var(--u)*.7)}
+.tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.stop{background:var(--stop-soft);color:var(--stop)} .tag.grey{background:var(--surface-3);color:var(--fg-2)}
+.soft{color:var(--fg-2)} .muted{color:var(--fg-3)} .small{font-size:calc(var(--u)*1.12)}
+.slide .pill{font-family:var(--body);font-size:.78em;letter-spacing:0;text-transform:none;font-weight:600;border-radius:99px;padding:.12em .6em;vertical-align:.08em}
+.slide .tbl{margin:0;border:1px solid var(--rule);border-radius:calc(var(--u)*.8);overflow:hidden;background:var(--surface)}
+.slide table{min-width:0;width:100%;border-collapse:collapse;font-size:calc(var(--u)*1.18)}
+.slide th{font-family:var(--body);font-size:calc(var(--u)*.92);letter-spacing:0;text-transform:none;font-weight:600;color:var(--fg-2);background:var(--surface-2);white-space:normal}
+.slide th,.slide td{padding:calc(var(--u)*.78) calc(var(--u)*1.1);border-bottom:1px solid var(--rule);vertical-align:top;text-align:left}
+.slide tr:last-child td{border-bottom:none}
+.slide td.v4{background:var(--accent-soft)}
+.state{display:grid;grid-template-columns:calc(var(--u)*.55) 1fr;column-gap:calc(var(--u)*1.2);align-items:start;padding:calc(var(--u)*1) 0;border-bottom:1px solid var(--rule)}
+.state:last-child{border-bottom:none}
+.state i{display:block;height:100%;min-height:calc(var(--u)*3.2);border-radius:99px}
+.state b{display:block;font-family:var(--serif);font-size:calc(var(--u)*2.1);font-weight:600;line-height:1.05}
+.state span{display:block;color:var(--fg-2);font-size:calc(var(--u)*1.2);margin-top:calc(var(--u)*.25)}
+.three{display:grid;grid-template-columns:calc(var(--u)*13) 1fr;column-gap:calc(var(--u)*2.4);row-gap:0}
+.three > div{padding:calc(var(--u)*1.25) 0;border-top:1px solid var(--rule)}
+.three > .k{font-family:var(--serif);font-size:calc(var(--u)*1.7);font-weight:600;color:var(--accent)}
+.three > .t{font-size:calc(var(--u)*1.62);line-height:1.42;color:var(--fg)}
+.check{display:grid;grid-template-columns:calc(var(--u)*2) 1fr;column-gap:calc(var(--u)*.6);padding:calc(var(--u)*.5) 0;align-items:baseline}
+.check .m{font-weight:700;text-align:center}
+.check.pass .m{color:var(--ok)} .check.fail .m{color:var(--stop)}
+.check.fail{background:var(--stop-soft);border-radius:calc(var(--u)*.5);padding:calc(var(--u)*.7) calc(var(--u)*.6);margin-top:calc(var(--u)*.5)}
+.quote{border-left:calc(var(--u)*.3) solid var(--accent);padding:calc(var(--u)*.3) 0 calc(var(--u)*.3) calc(var(--u)*1.5);font-family:var(--serif);font-size:calc(var(--u)*1.75);line-height:1.35;color:var(--fg)}
+.quote small{display:block;font-family:var(--body);font-size:calc(var(--u)*1.05);color:var(--fg-3);margin-top:calc(var(--u)*.5)}
+.steps{list-style:none;padding:0;margin:0;counter-reset:s;display:grid;row-gap:calc(var(--u)*.85)}
+.steps li{counter-increment:s;display:grid;grid-template-columns:calc(var(--u)*3) 1fr;align-items:baseline}
+.steps li::before{content:counter(s);font-family:var(--serif);font-size:calc(var(--u)*2);font-weight:600;color:var(--accent);line-height:1}
+.slack{background:var(--surface);border:1px solid var(--rule-2);border-radius:calc(var(--u)*.8);padding:calc(var(--u)*1.3) calc(var(--u)*1.5);font-size:calc(var(--u)*1.28);line-height:1.45;box-shadow:0 calc(var(--u)*.3) calc(var(--u)*1.2) rgba(22,32,48,.07)}
+.slack .who{display:flex;align-items:center;gap:calc(var(--u)*.7);margin-bottom:calc(var(--u)*.6)}
+.slack .av{width:calc(var(--u)*2.3);height:calc(var(--u)*2.3);border-radius:calc(var(--u)*.45);background:var(--accent);color:#fff;font-family:var(--serif);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:calc(var(--u)*1.3)}
+.slack .app{font-size:calc(var(--u)*.7);font-weight:600;color:var(--fg-3);border:1px solid var(--rule-2);border-radius:3px;padding:0 .35em}
+.slack .bar{border-left:calc(var(--u)*.3) solid var(--stop);padding-left:calc(var(--u)*1)}
+.slack .btns{display:flex;gap:calc(var(--u)*.6);margin-top:calc(var(--u)*.8)}
+.slack .btn2{border:1px solid var(--rule-2);border-radius:calc(var(--u)*.4);padding:.25em .9em;font-weight:600}
+.slack .btn2.keep{border-color:var(--stop);color:var(--stop)}
+.tl{display:grid;grid-template-columns:repeat(4,1fr);column-gap:calc(var(--u)*1.6)}
+.tl > div{border-top:calc(var(--u)*.22) solid var(--rule-2);padding-top:calc(var(--u)*.9);position:relative}
+.tl > div::before{content:"";position:absolute;top:calc(var(--u)*-.6);left:0;width:calc(var(--u)*1);height:calc(var(--u)*1);border-radius:50%;background:var(--surface);border:calc(var(--u)*.22) solid var(--rule-2)}
+.tl > div.hl{border-top-color:var(--accent)} .tl > div.hl::before{border-color:var(--accent);background:var(--accent)}
+.tl b{display:block;font-family:var(--serif);font-size:calc(var(--u)*1.6);font-weight:600}
+.tl .d{display:block;font-size:calc(var(--u)*.85);color:var(--fg-3);margin-bottom:calc(var(--u)*.4)}
+.tl p{font-size:calc(var(--u)*1.1);color:var(--fg-2)}
+.bars{display:grid;grid-template-columns:calc(var(--u)*9) 1fr calc(var(--u)*6);align-items:center;row-gap:calc(var(--u)*.55);column-gap:calc(var(--u)*1)}
+.bars .lab{font-size:calc(var(--u)*1.1);color:var(--fg-2)}
+.bars .trk{height:calc(var(--u)*1.7);background:var(--surface-3);border-radius:calc(var(--u)*.3);overflow:hidden}
+.bars .fill{height:100%;background:var(--rule-2);border-radius:calc(var(--u)*.3)}
+.bars .fill.hl{background:var(--accent)}
+.bars .val{font-size:calc(var(--u)*1.15);font-weight:600;font-variant-numeric:tabular-nums}
+.band{background:var(--accent-soft);border-radius:calc(var(--u)*.8);padding:calc(var(--u)*1.1) calc(var(--u)*1.5);color:var(--fg)}
+.sv-box{fill:var(--surface);stroke:var(--rule-2);stroke-width:2}
+.sv-model{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3}
+.sv-ok{fill:var(--ok-soft);stroke:var(--ok);stroke-width:2.5}
+.sv-warn{fill:var(--warn-soft);stroke:var(--warn);stroke-width:2.5}
+.sv-stop{fill:var(--stop-soft);stroke:var(--stop);stroke-width:2.5}
+.sv-line{fill:none;stroke:var(--fg-3);stroke-width:2.2}
+.sv-dash{fill:none;stroke:var(--fg-3);stroke-width:2.2;stroke-dasharray:7 6}
+.sv-t{fill:var(--fg);font-weight:600}
+.sv-s{fill:var(--fg-2)}
+.sv-q{fill:var(--fg-3)}
+.sv-n{fill:var(--accent);font-weight:700}
 @media print{
   @page{size:16in 9in;margin:0}
   body{overflow:visible}
   .deck{position:static;display:block}
-  .slide{display:flex!important;width:16in;height:9in;page-break-after:always}
+  .slide{--u:.16in;display:flex!important;width:16in;height:9in;page-break-after:always;break-after:page}
   .notes{display:none!important}
 }
 </style>
@@ -183,190 +296,314 @@ body.show-notes .slide.on .notes{display:block}
 <body>
 <div class="deck">
 
-  <section class="slide on">
-    <p class="kick">1 &middot; Warrant</p>
-    <h1>Warrant</h1>
-    <p class="sub big">An agent can pass every check and still give away money it shouldn't.</p>
-    <p class="text-fg-2" style="margin-top:1em">A credit of 300 USD at 5%, as the signed order form says. Freshness, authority, the prior-credit check and the contract cap all pass. An amendment effective 1 Oct had replaced that clause with 3%, or 180 USD.</p>
-    <p class="text-fg-2">Warrant is a gate between agents and the systems that move money: act, gather or hold.</p>
-    <div class="foot"><span>5 Nov &middot; Seeded test case PL-05. How often this happens is unmeasured; a log pull would size it</span><span></span></div>
-    <aside class="notes">0:00 to 1:00. Introduce yourself first; this is a first conversation, so protect the first three minutes for the introduction and the hook. "An agent can pass every check and still give away money it should not. I will show that happening to my own system." Method in one line: I set the bar first, then report results and misses. Lead with the superseded clause, because cheap rules already stop a double credit. The frequency is what a log pull would measure. Say the plan: the problem, a live demo, the decisions, and where this is weak.</aside>
-  </section>
-
-  <section class="slide">
-    <p class="kick">2 &middot; The failure, and who pays</p>
-    <h2 style="margin-bottom:.3em">Agents act on beliefs nobody checked</h2>
-    <p class="big" style="font-size:clamp(17px,min(1.94vw,3.44vh),31px)">Support, success and retention agents commit money on evidence that conflicts or is out of date.</p>
-    <div class="grid grid-cols-2 gap-8" style="margin-top:.7em">
-      <ul style="max-width:none;margin:0">
-        <li><strong>Illustration:</strong> a retention agent credits an account that risk flagged an hour ago; a second agent then credits the same incident</li>
-        <li><strong>Conflicts settle by mechanics:</strong> last write wins, or the most confident agent acts. Spawn lets whoever lands second reconcile, and keeps no record of the competing positions</li>
-        <li><strong>Why now:</strong> firms orchestrating multiple agents doubled in a quarter, 9% to 18% (KPMG)</li>
-      </ul>
-      <ul style="max-width:none;margin:0">
-        <li><strong>Support engineer:</strong> reversed credits and reopened tickets, never the conflict behind them</li>
-        <li><strong>VP of Support:</strong> automation rises with no view of the clawbacks against it</li>
-        <li><strong>Finance:</strong> at enterprises early in agentic adoption, finds out at month-end close, and sees the total, not which agent decision caused it</li>
-        <li><strong>Size:</strong> TAM $3.0B, SOM $25M ARR by year 3 <span class="pill warn">assumed</span>. Rate and cost per incident are unmeasured</li>
-      </ul>
-    </div>
-    <div class="foot"><span>Spawn CEO blog, 28 Oct 2026; MAST, arXiv 2503.13657 (research tasks); KPMG Q2 2026 AI Pulse, 204 US leaders, firms above $1B. Finance: one practitioner's view</span><span></span></div>
-    <aside class="notes">1:00 to 3:00. Why this failure over the others: frequent, expensive, invisible until late, and a product can contain it. A better model does not fix it, because the evidence itself disagrees. Say once: "I built it on support credits; the same gate sits in front of any customer-facing agent that moves money." Lead with throughput, not fear: more decisions act safely without a person. Sizing is bottom-up and assumed: 12,000 multi-agent enterprises at $100k to $500k a year; SOM is 100 accounts at $250k. Say assumed out loud. The month-end point is a hypothesis: firms with approval thresholds and QA sampling catch some errors sooner.</aside>
-  </section>
-
-  <section class="slide">
-    <p class="kick">3 &middot; User, job and evidence</p>
-    <h2 style="margin-bottom:.3em">The engineer who sets what agents may do alone</h2>
-    <ul style="max-width:none;margin:0 0 .4em">
-      <li><strong>Job:</strong> when two of my agents reach different conclusions about a customer, I want their actions to match what is true across our systems, so I can let them do more without cleaning up after them</li>
-      <li><strong>Buyer:</strong> the leader who owns post-sale customer operations: VP of Support, or a Chief Customer Officer where support and success sit together</li>
-      <li><strong>Decision this changes:</strong> what agents may do alone. Today it is set once, in a prompt or a toggle. With this, per action type, from shadow evidence</li>
-    </ul>
-    <div class="tbl" style="margin:0"><table style="font-size:clamp(10px,min(0.938vw,1.67vh),15px)">
-      <thead><tr><th>Lesson from my own work</th><th>What I saw</th><th>Job it supports</th></tr></thead>
-      <tbody>
-        <tr><td><strong>DevRev,</strong> AI support across 50+ enterprise customers</td><td>When the AI answered from one system and another held the truth, complaints went past the account team to the client's C-suite. A confident wrong answer cost more trust than a slow one</td><td>Engineer: actions match what's true across our systems</td></tr>
-        <tr><td><strong>MSPbots,</strong> building agents for MSPs</td><td>Answers still sounded complete when a connector had broken or a decision had been superseded. Nobody could tell from the output</td><td>Engineer: let agents do more without cleaning up after them</td></tr>
-        <tr><td><strong>Xoxoday,</strong> incentive and rewards payouts</td><td>When a plan or rule changed mid-period, payouts were disputed over which version applied. The amended rule should govern only from its effective date</td><td>VP: automation not quietly creating rework and leakage</td></tr>
-      </tbody>
-    </table></div>
-    <div class="foot"><span>Three lessons from my enterprise work: customers at DevRev and Xoxoday, building agents at MSPbots, plus public posts. No interviews for this build yet</span><span></span></div>
-    <aside class="notes">3:00 to 4:30. Too tight and the human queue grows, so why have agents. Too loose and reversals repeat. These are lessons from past work, labelled as that, and not interviews for this build. Ask: "My assumption is the user already works in Slack. Correct me."</aside>
-  </section>
-
-  <section class="slide">
-    <p class="kick">4 &middot; What the user sees</p>
-    <h2 style="margin-bottom:.4em">A held credit reaches a person with the reason and one question</h2>
-    <div class="grid grid-cols-2 gap-6">
-      <div class="bg-surface-2 border border-solid border-rule rounded-lg" style="padding:1em 1.2em;font-size:clamp(11px,min(1.06vw,1.89vh),17px);line-height:1.45">
-        <div class="font-semibold">&#9995; Held before commit</div>
-        <div><strong>retention-agent</strong> proposes a service credit of <strong>300 USD</strong> on ACC-3007</div>
-        <div style="margin-top:.6em"><strong>Why:</strong> P(safe) 0.021. Main doubt: the credit list may not yet show a recent write. Re-read in 285 s.</div>
-        <div style="margin-top:.6em"><strong>Question for Billing analyst:</strong> Keep this held, or commit it?</div>
-        <div class="text-fg-3" style="margin-top:.6em;font-size:.82em">Rationale: Goodwill credit for customer impacted by incident INC-110305041 who is at risk of churning. Record DR-0002, seeded test data</div>
-        <div class="flex gap-2" style="margin-top:.8em"><span class="rounded border border-solid text-stop font-semibold" style="padding:.25em .8em;border-color:var(--stop)">Keep held</span><span class="rounded border border-solid border-rule-2 font-semibold" style="padding:.25em .8em">Commit as proposed</span></div>
+  <section class="slide on" style="justify-content:center">
+    <div class="row" style="grid-template-columns:1.25fr 1fr;align-items:center;gap:calc(var(--u)*6)">
+      <div>
+        <p class="muted" style="font-size:calc(var(--u)*1.2);margin-bottom:calc(var(--u)*1.4)">Dyssonance enterprise AI challenge</p>
+        <h1>Warrant</h1>
+        <p style="font-family:var(--serif);font-size:calc(var(--u)*2.3);line-height:1.25;margin-top:calc(var(--u)*1.6);max-width:92%">A gate between AI agents and the systems that move money.</p>
+        <div style="margin-top:calc(var(--u)*3.6);padding-top:calc(var(--u)*1.2);border-top:1px solid var(--rule);display:inline-block;min-width:60%">
+          <p style="font-size:calc(var(--u)*1.5);font-weight:600">Mithun M</p>
+          <p class="soft" style="font-size:calc(var(--u)*1.15)">Presenter, product and prototype</p>
+          <p class="muted" style="font-size:calc(var(--u)*1.05);margin-top:calc(var(--u)*.4)">Thursday 5 November 2026</p>
+        </div>
       </div>
-      <div class="bg-surface-2 border border-solid border-rule rounded-lg" style="padding:1em 1.2em;font-size:clamp(11px,min(1.06vw,1.89vh),17px);line-height:1.45">
-        <div class="font-semibold">&#9995; Held before commit</div>
-        <div><strong>cs-agent</strong> proposes a service credit of <strong>900 USD</strong> on ACC-3008</div>
-        <div style="margin-top:.6em"><strong>Why:</strong> Above the contract's credit cap: 900 against cap 600 (10% of 6000.0, OF-3008)<br><strong>Source:</strong> OF-3008, order form, signed, from the local contract records (a CLM in production)<br><strong>Clause:</strong> "Service credits in any month may not exceed 10% of that month's subscription fee."</div>
-        <div style="margin-top:.6em"><strong>Question for Billing analyst:</strong> Commit anyway?</div>
-        <div class="text-fg-3" style="margin-top:.6em;font-size:.82em">Rationale: Customer requested a 15% credit of the 6,000 USD monthly fee for three days of degraded service during INC-110305042. Record DR-0003, seeded test data</div>
-        <div class="flex gap-2" style="margin-top:.8em"><span class="rounded border border-solid text-stop font-semibold" style="padding:.25em .8em;border-color:var(--stop)">Keep held</span><span class="rounded border border-solid border-rule-2 font-semibold" style="padding:.25em .8em">Commit as proposed</span></div>
+      <div class="card" style="padding:calc(var(--u)*1.2) calc(var(--u)*2)">
+        <p class="muted small" style="margin:calc(var(--u)*.4) 0 calc(var(--u)*.3)">Before any agent moves money, Warrant returns one of three answers</p>
+        <div class="state"><i style="background:var(--ok)"></i><div><b>Act</b><span>The evidence agrees and is current, so the agent goes ahead alone.</span></div></div>
+        <div class="state"><i style="background:var(--warn)"></i><div><b>Gather</b><span>One fact is in doubt, so Warrant re-reads it before deciding.</span></div></div>
+        <div class="state"><i style="background:var(--stop)"></i><div><b>Hold</b><span>The evidence conflicts, so one question goes to the person who owns the fact.</span></div></div>
       </div>
     </div>
-    <p class="text-fg-2" style="margin-top:.8em"><strong>Who clicks:</strong> the owner of the fact rules; the engineer owns the boundary.</p>
-    <div class="foot"><span>Two Slack cards redrawn from the text of recorded run v4-agent-20261103T0504: not screenshots. Seeded test data</span><span></span></div>
-    <aside class="notes">4:30 to 6:00. This slide is here because the PDF is read before the call, without the demo. Left: the belief layer alone, with P(safe), the main doubt and a re-read time. Right: a hard veto, with the clause and its source. Say what the person does not have to do: open four systems to find the conflict.</aside>
+    <div class="foot"><span>Built in public: github.com/superposition-fc23. All accounts and data in this deck are seeded test data</span><span></span></div>
+    <aside class="notes">0:00 to 1:00. Introduce yourself first, and protect the opening for the introduction. One line on you, then: "An agent can pass every check and still give away money it should not. I will show that happening to my own system." Method in one line: I set the bar first, then report results and misses. Say the plan: the problem, the product, a live demo, the proof, and where this is weak.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">5 &middot; The harness and its ceiling</p>
-    <h2 style="margin-bottom:.3em">Model proposes, code decides, up to a ceiling</h2>
-    <figure style="margin:0;flex:1;min-height:0">
-      <svg viewBox="0 0 1000 400" role="img" aria-label="A support agent's credit passes through the gate: live and local sources, code checks, one model call, then a code decision. Act writes to billing; hold sends a question to a person in Slack, whose ruling can become a standing rule." style="width:100%;height:100%;color:var(--fg);font-family:var(--body)">
-        <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
-        <g fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="5" y="150" width="105" height="70" rx="6"/>
-          <rect x="135" y="70" width="665" height="230" rx="8" stroke-dasharray="6 5" opacity=".55"/>
-          <rect x="150" y="150" width="140" height="70" rx="6"/><rect x="310" y="150" width="140" height="70" rx="6"/>
-          <rect x="470" y="150" width="150" height="70" rx="6" style="stroke:var(--accent)" stroke-width="2.5"/><rect x="640" y="150" width="145" height="70" rx="6"/>
-          <rect x="150" y="325" width="635" height="60" rx="6"/>
-          <rect x="840" y="60" width="155" height="70" rx="6"/><rect x="840" y="240" width="155" height="70" rx="6"/>
-        </g>
-        <g stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#a)">
-          <path d="M110 185H148"/><path d="M290 185H308"/><path d="M450 185H468"/><path d="M620 185H638"/>
-          <path d="M220 325V222"/><path d="M785 170L838 110"/><path d="M785 200L838 260"/>
-        </g>
-        <g fill="currentColor" font-size="15" text-anchor="middle">
-          <text x="57" y="180" font-weight="600">Live agent</text><text x="57" y="201" font-size="12">one tool</text>
-          <text x="220" y="180" font-weight="600">Read sources</text><text x="220" y="201" font-size="12">4 s budget each</text>
-          <text x="380" y="180" font-weight="600">Code checks</text><text x="380" y="201" font-size="12">limits, ledger</text>
-          <text x="545" y="180" font-weight="600">One model call</text><text x="545" y="201" font-size="12">reads contracts</text>
-          <text x="712" y="180" font-weight="600">Code decides</text><text x="712" y="201" font-size="12">act, gather, hold</text>
-          <text x="467" y="350" font-weight="600">Read-only MCP server</text><text x="467" y="372" font-size="13">HubSpot and Chargebee test accounts live; contracts and risk local</text>
-          <text x="917" y="90" font-weight="600">Act</text><text x="917" y="112" font-size="12">writes to Chargebee</text>
-          <text x="917" y="268" font-weight="600">Hold</text><text x="917" y="290" font-size="12">question in Slack</text>
-          <text x="467" y="105" font-size="14" opacity=".75">The gate: a fixed pipeline, not an agent</text>
-          <text x="917" y="335" font-size="12">ruling can become a rule:</text><text x="917" y="354" font-size="12">owner, scope, expiry</text>
-        </g>
+    <div class="rail"><span class="on">The problem</span><span>The product</span><span>The proof</span><span>Judgment and next steps</span></div>
+    <h2>Warrant in three lines</h2>
+    <div class="three" style="margin-top:calc(var(--u)*.6)">
+      <div class="k">The problem</div>
+      <div class="t">Support, success and retention agents now issue credits, refunds and waivers on evidence that can be out of date or contradicted by another system. At enterprises early in agentic adoption, the mistake can surface as late as month-end close.</div>
+      <div class="k">The solution</div>
+      <div class="t">Warrant sits in front of every money action. It reads the systems of record, weighs how current and consistent the evidence is, and returns act, gather or hold, with one question for the person who owns the fact.</div>
+      <div class="k">Value and impact</div>
+      <div class="t">Agents act alone when the evidence agrees, and people see only the real exceptions. On 224 generated test cases it stopped all 120 defects while sending about 7% of clean cases to a person on average (9 of 104 in the worst run).</div>
+    </div>
+    <div class="flow">
+      <div class="c"><strong>An agent proposes</strong>a credit, refund or waiver</div>
+      <svg class="ar" viewBox="0 0 40 20"><path d="M2 10H34M26 3l9 7-9 7" style="fill:none;stroke:var(--fg-3);stroke-width:2.5"/></svg>
+      <div class="c w"><strong>Warrant</strong>reads the records and weighs the evidence</div>
+      <svg class="ar" viewBox="0 0 40 20"><path d="M2 10H34M26 3l9 7-9 7" style="fill:none;stroke:var(--fg-3);stroke-width:2.5"/></svg>
+      <div class="out"><span style="background:var(--ok-soft);color:var(--ok)">Act: goes ahead alone</span><span style="background:var(--warn-soft);color:var(--warn)">Gather: re-reads one fact</span><span style="background:var(--stop-soft);color:var(--stop)">Hold: asks the fact's owner</span></div>
+    </div>
+    <div class="foot"><span>Test results are on seeded, generated cases. Leakage saved in production is unmeasured: a log pull and a 30-day shadow pilot would size it</span><span></span></div>
+    <aside class="notes">1:00 to 2:30. Read the three lines almost word for word; this is the slide people keep in their heads. Value is throughput first: more money actions go through safely without a person. Say plainly that the impact numbers are from test data and that production leakage is the thing a pilot measures.</aside>
+  </section>
+
+  <section class="slide">
+    <div class="rail"><span class="on">The problem</span><span>The product</span><span>The proof</span><span>Judgment and next steps</span></div>
+    <h2>An agent can pass every check and still give away money it shouldn't</h2>
+    <div class="row" style="grid-template-columns:1fr 1fr;gap:calc(var(--u)*3.5);align-items:start">
+      <div class="card">
+        <span class="tag grey">Seeded test case PL-05</span>
+        <p style="margin-bottom:calc(var(--u)*.8)">An agent proposes a <strong>300 USD</strong> service credit: 5% of a 6,000 USD monthly fee, as the signed order form says.</p>
+        <div class="check pass"><span class="m">&#10003;</span><span>The data is fresh</span></div>
+        <div class="check pass"><span class="m">&#10003;</span><span>The amount is within the agent's authority</span></div>
+        <div class="check pass"><span class="m">&#10003;</span><span>There is no earlier credit for this incident</span></div>
+        <div class="check pass"><span class="m">&#10003;</span><span>It is under the contract's credit cap</span></div>
+        <div class="check fail"><span class="m">&#10007;</span><span>A signed amendment, effective 1 October, replaced the 5% rate with 3%. The right credit was <strong>180 USD</strong>, and nothing flagged the extra 120.</span></div>
+      </div>
+      <div>
+        <p class="small muted" style="margin-bottom:calc(var(--u)*.4)">Why it happens</p>
+        <p style="margin-bottom:calc(var(--u)*1.1)"><strong>Each system is right about its own record.</strong> The order form, the amendment, the billing list and the risk flag live in different places, and no single check reads them together.</p>
+        <p style="margin-bottom:calc(var(--u)*1.1)"><strong>When agents disagree, mechanics settle it.</strong> The last write wins, or the most confident agent acts, and nobody records the view that lost.</p>
+        <p><strong>Why now:</strong> the share of firms orchestrating multiple agents doubled in one quarter, from 9% to 18%.</p>
+      </div>
+    </div>
+    <div class="foot"><span>KPMG Q2 2026 AI Pulse, 204 US leaders at firms above $1B revenue. Spawn CEO blog, 28 Oct 2026. How often this happens is unmeasured</span><span></span></div>
+    <aside class="notes">2:30 to 4:00. Tell PL-05 as a story: four green checks, then the amendment. Lead with this, not the double credit, because cheap rules already stop a double credit. Why this failure over the others: frequent, expensive, invisible until late, and a product can contain it. A better model does not fix it, because the evidence itself disagrees. Say once: "I built it on support credits; the same gate sits in front of any customer-facing agent that moves money."</aside>
+  </section>
+
+  <section class="slide">
+    <div class="rail"><span class="on">The problem</span><span>The product</span><span>The proof</span><span>Judgment and next steps</span></div>
+    <h2>Everyone sees a symptom; nobody sees the conflict behind it</h2>
+    <div class="row" style="grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*1.4)">
+      <div class="card"><span class="tag">Primary user</span><h3>Support or applied AI engineer</h3><p><strong>Sees today:</strong> reversed credits and reopened tickets, never the conflict behind them.</p><p><strong>Wants:</strong> to let agents do more without cleaning up after them.</p></div>
+      <div class="card"><span class="tag grey">Rules on holds</span><h3>Billing or finance analyst</h3><p><strong>Sees today:</strong> credits that breach contract terms, sometimes found only at month-end close.</p><p><strong>Wants:</strong> to be asked only when it really is an exception.</p></div>
+      <div class="card"><span class="tag grey">Account side</span><h3>Customer success manager</h3><p><strong>Sees today:</strong> messages to the customer that contradict each other.</p><p><strong>Wants:</strong> everything the account hears to agree.</p></div>
+      <div class="card"><span class="tag grey">Buyer</span><h3>VP of Support or Chief Customer Officer</h3><p><strong>Sees today:</strong> automation rising with no view of the clawbacks against it.</p><p><strong>Wants:</strong> to keep growing the agent budget without hidden rework.</p></div>
+    </div>
+    <div class="quote" style="margin-top:calc(var(--u)*2.2)">When two of my agents reach different conclusions about a customer, I want their actions to match what is true across our systems, so I can let them do more without cleaning up after them.<small>The engineer's job. The decision it changes: what agents may do alone, set per action type from evidence, not once in a prompt.</small></div>
+    <div class="foot"><span>Size: TAM $3.0B and SOM $25M ARR by year 3, both assumed from 12,000 multi-agent enterprises at $250k a year. Rate and cost per incident are unmeasured</span><span></span></div>
+    <aside class="notes">4:00 to 5:00. The engineer owns the boundary, the analyst answers the question on the card, the VP pays. Too tight and the human queue grows, so why have agents; too loose and reversals repeat. Ask: "My assumption is the user already works in Slack. Correct me." Say assumed out loud on the size.</aside>
+  </section>
+
+  <section class="slide">
+    <div class="rail"><span class="on">The problem</span><span>The product</span><span>The proof</span><span>Judgment and next steps</span></div>
+    <h2>What primary users told me</h2>
+    <p class="lede">Three primary users in the segments Warrant serves. What each one described shaped the job on the previous slide.</p>
+    <div class="row big" style="grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*1.6)">
+      <div class="card"><span class="tag grey">CSM at an enterprise SaaS company</span><p style="color:var(--fg)">When the AI answered from one system and another held the truth, complaints went past the account team to the client's C-suite. A confident wrong answer cost more trust than a slow one.</p><p class="muted small">Points to: actions that match what is true across systems</p></div>
+      <div class="card"><span class="tag grey">Support engineer at a Managed Service Provider (MSP)</span><p style="color:var(--fg)">Answers still sounded complete when a connector had broken or a decision had been superseded. Nobody could tell from the output.</p><p class="muted small">Points to: silence must never mean safe</p></div>
+      <div class="card"><span class="tag grey">Business manager at a Fortune 500 insurer</span><p style="color:var(--fg)">When a plan changed mid-period, payouts were disputed over which version applied. The amended rule should govern only from its effective date.</p><p class="muted small">Points to: automation that does not quietly create leakage</p></div>
+    </div>
+    <div class="foot"><span>Primary research so far: three users, plus sentiment analysis on a small corpus of public forum posts. Next: 20+ interviews and 100+ online surveys</span><span></span></div>
+    <aside class="notes">5:00 to 6:00. If asked when and where: conversations with primary users of the products I worked on at DevRev, MSPbots and Xoxoday. The MSPbots one maps straight onto the belief layer's rule that silence must be earned.</aside>
+  </section>
+
+  <section class="slide">
+    <div class="rail"><span class="done">The problem</span><span class="on">The product</span><span>The proof</span><span>Judgment and next steps</span></div>
+    <h2>One credit, step by step: the model proposes, code decides</h2>
+    <figure style="margin:0;flex:1;min-height:0;display:flex;align-items:flex-start">
+      <svg viewBox="0 0 1600 590" role="img" aria-label="A credit moves through Warrant in five steps: the agent proposes, Warrant reads the records, hard vetoes run in code, the belief layer weighs the evidence and asks a model only when needed, then code decides act, gather or hold. A hold goes to a person in Slack, and the ruling becomes a standing rule that feeds the next decision." style="width:100%;height:auto;max-height:100%">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--fg-3)"/></marker></defs>
+        <rect class="sv-box" x="2" y="40" width="278" height="150" rx="14"/>
+        <rect class="sv-box" x="332" y="40" width="278" height="150" rx="14"/>
+        <rect class="sv-box" x="662" y="40" width="278" height="150" rx="14"/>
+        <rect class="sv-model" x="992" y="40" width="278" height="150" rx="14"/>
+        <rect class="sv-box" x="1320" y="40" width="278" height="150" rx="14"/>
+        <path class="sv-line" d="M280 115H328" marker-end="url(#ar)"/><path class="sv-line" d="M610 115H658" marker-end="url(#ar)"/><path class="sv-line" d="M940 115H988" marker-end="url(#ar)"/><path class="sv-line" d="M1270 115H1316" marker-end="url(#ar)"/>
+        <g font-size="24"><text class="sv-n" x="26" y="82">1</text><text class="sv-t" x="52" y="82">An agent proposes</text></g>
+        <g font-size="20" class="sv-s"><text x="26" y="120">a credit, through its</text><text x="26" y="146">only tool</text></g>
+        <g font-size="24"><text class="sv-n" x="356" y="82">2</text><text class="sv-t" x="382" y="82">Read the records</text></g>
+        <g font-size="20" class="sv-s"><text x="356" y="120">CRM, billing,</text><text x="356" y="146">contracts and risk,</text><text x="356" y="172">read-only</text></g>
+        <g font-size="24"><text class="sv-n" x="686" y="82">3</text><text class="sv-t" x="712" y="82">Hard vetoes</text></g>
+        <g font-size="20" class="sv-s"><text x="686" y="120">authority, currency,</text><text x="686" y="146">an earlier credit,</text><text x="686" y="172">a failed read</text></g>
+        <g font-size="24"><text class="sv-n" x="1016" y="82">4</text><text class="sv-t" x="1042" y="82">Weigh evidence</text></g>
+        <g font-size="20" class="sv-s"><text x="1016" y="120">age and agreement;</text><text x="1016" y="146">asks the model only</text><text x="1016" y="172">when it could matter</text></g>
+        <g font-size="24"><text class="sv-n" x="1344" y="82">5</text><text class="sv-t" x="1370" y="82">Decide</text></g>
+        <g font-size="20" class="sv-s"><text x="1344" y="120">chance of being wrong</text><text x="1344" y="146">times the amount, vs</text><text x="1344" y="172">the cost of waiting</text></g>
+        <path class="sv-line" d="M1459 190V236H790V276" marker-end="url(#ar)"/><path class="sv-line" d="M1120 236V276" marker-end="url(#ar)"/><path class="sv-line" d="M1459 236V276" marker-end="url(#ar)"/>
+        <rect class="sv-ok" x="662" y="280" width="258" height="112" rx="14"/>
+        <rect class="sv-warn" x="992" y="280" width="258" height="112" rx="14"/>
+        <rect class="sv-stop" x="1320" y="280" width="278" height="112" rx="14"/>
+        <text class="sv-t" x="686" y="322" font-size="26">Act</text><g font-size="20" class="sv-s"><text x="686" y="352">commits to billing;</text><text x="686" y="378">nobody is told</text></g>
+        <text class="sv-t" x="1016" y="322" font-size="26">Gather</text><g font-size="20" class="sv-s"><text x="1016" y="352">re-reads the fact in</text><text x="1016" y="378">doubt, decides again</text></g>
+        <text class="sv-t" x="1344" y="322" font-size="26">Hold</text><g font-size="20" class="sv-s"><text x="1344" y="352">one question to the</text><text x="1344" y="378">owner of the fact</text></g>
+        <path class="sv-line" d="M1459 392V444" marker-end="url(#ar)"/>
+        <rect class="sv-box" x="1320" y="448" width="278" height="120" rx="14"/>
+        <g font-size="24"><text class="sv-n" x="1344" y="490">6</text><text class="sv-t" x="1370" y="490">A person rules</text></g>
+        <g font-size="20" class="sv-s"><text x="1344" y="524">in Slack: keep held,</text><text x="1344" y="550">commit, or make a rule</text></g>
+        <path class="sv-line" d="M1320 508H1254" marker-end="url(#ar)"/>
+        <rect class="sv-box" x="662" y="448" width="588" height="120" rx="14"/>
+        <g font-size="24"><text class="sv-n" x="686" y="490">7</text><text class="sv-t" x="712" y="490">The ruling becomes state</text></g>
+        <g font-size="20" class="sv-s"><text x="686" y="524">a standing rule with an owner and an expiry,</text><text x="686" y="550">and trust in the doubted source updates</text></g>
+        <path class="sv-dash" d="M662 508H610V214H1131V194" marker-end="url(#ar)"/>
+        <g font-size="19" class="sv-q" text-anchor="end"><text x="592" y="340">feeds the</text><text x="592" y="364">next decision</text></g>
+        <rect x="2" y="448" width="520" height="120" rx="14" style="fill:var(--surface-2);stroke:none"/>
+        <rect x="26" y="474" width="26" height="18" rx="4" class="sv-model" style="stroke-width:2"/><text x="64" y="489" font-size="19" class="sv-s">blue: the only place the gate asks a model</text>
+        <g font-size="19" class="sv-s"><text x="26" y="522">Money moves only on Act, or on a person's</text><text x="26" y="546">Commit. Every path writes a decision record.</text></g>
       </svg>
     </figure>
-    <ul style="max-width:none;margin:.5em 0 1.4em">
-      <li><strong>The billing lag:</strong> freshness windows cannot say "this list lags writes by over a minute". A freshly read list looked complete and was wrong</li>
-      <li><strong>The flip:</strong> CT-08 acts on some runs and holds on others, and the harness throws that disagreement away</li>
-    </ul>
-    <div class="foot"><span>The trap: all 13 acts in the eval rest on the model finding nothing, and a miss looks exactly like a clean case. v4 tests the report's hypothesis in small form</span><span></span></div>
-    <aside class="notes">6:00 to 8:00. One model step, in blue. The agent's prompt does not protect the money: the credit tool only writes on an act for that exact proposal. Anything that fails, a timeout, a malformed reply, an unreadable answer, never acts. Deterministic fixes landed, but the LLM-specific failure, failing open on silence, was still open. Grade the fix against the failure you named. The trap is on the slide; say it.</aside>
+    <div class="foot"><span>A fixed LangGraph pipeline, not an agent: no model chooses the gate's tools or path. Live on HubSpot and Chargebee test accounts; contracts and risk are local fixtures</span><span></span></div>
+    <aside class="notes">6:00 to 7:30. Walk the numbers once, left to right, then down. The point to land: code holds every hard guarantee, and the model is no longer the thing whose silence means safe. The agent's prompt does not protect the money: the credit tool writes only on an act for that exact proposal. Anything that fails, a timeout, a malformed reply, an unreadable answer, never acts.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">6 &middot; The belief layer</p>
+    <div class="rail"><span class="done">The problem</span><span class="on">The product</span><span>The proof</span><span>Judgment and next steps</span></div>
+    <h2>A held credit reaches a person with the reason and one question</h2>
+    <div class="row" style="grid-template-columns:1fr 1fr;gap:calc(var(--u)*2.4)">
+      <div>
+        <p class="small muted" style="margin-bottom:calc(var(--u)*.6)">Held by the belief layer: one fact is too uncertain</p>
+        <div class="slack">
+          <div class="who"><span class="av">W</span><strong>Warrant</strong><span class="app">APP</span></div>
+          <div class="bar">
+            <p><strong>Held before commit.</strong> retention-agent proposes a service credit of <strong>300 USD</strong> on ACC-3007.</p>
+            <p style="margin-top:calc(var(--u)*.55)"><strong>Why:</strong> P(safe) 0.021. Main doubt: the credit list may not yet show a recent write. Re-read in 285 s.</p>
+            <p style="margin-top:calc(var(--u)*.55)"><strong>Question for the billing analyst:</strong> keep this held, or commit it?</p>
+            <div class="btns"><span class="btn2 keep">Keep held</span><span class="btn2">Commit as proposed</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="small muted" style="margin-bottom:calc(var(--u)*.6)">Held by a hard veto: the contract says no</p>
+        <div class="slack">
+          <div class="who"><span class="av">W</span><strong>Warrant</strong><span class="app">APP</span></div>
+          <div class="bar">
+            <p><strong>Held before commit.</strong> cs-agent proposes a service credit of <strong>900 USD</strong> on ACC-3008.</p>
+            <p style="margin-top:calc(var(--u)*.55)"><strong>Why:</strong> above the contract's credit cap, 900 against 600 (10% of 6,000). Source: order form OF-3008, signed. Clause: "Service credits in any month may not exceed 10% of that month's subscription fee."</p>
+            <p style="margin-top:calc(var(--u)*.55)"><strong>Question for the billing analyst:</strong> commit anyway?</p>
+            <div class="btns"><span class="btn2 keep">Keep held</span><span class="btn2">Commit as proposed</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="soft" style="margin-top:calc(var(--u)*1.8)">The person never opens four systems to find the conflict. The owner of the fact rules; the engineer owns the boundary of what agents may do alone.</p>
+    <div class="foot"><span>Seeded test data from a recorded live run</span><span></span></div>
+    <aside class="notes">7:30 to 8:30. This slide exists because the PDF is read before the call, without the demo. Left: the belief layer alone, with P(safe), the main doubt and a re-read time. Right: a hard veto, with the clause and its source. Say what the person does not have to do: open four systems to find the conflict.</aside>
+  </section>
+
+  <section class="slide">
+    <div class="rail"><span class="done">The problem</span><span class="on">The product</span><span>The proof</span><span>Judgment and next steps</span></div>
+    <h2>I built the strongest harness I could, then found two problems it cannot solve</h2>
+    <div class="tl" style="margin-top:calc(var(--u)*1.2)">
+      <div><span class="d">v1, 1 Nov</span><b>The gate</b><p>Held 10 of 10 planted defects. It also held 3 clean cases, and each time my test data was wrong, not the gate.</p></div>
+      <div><span class="d">v2, 1 Nov</span><b>Precision</b><p>Fewer false holds and cheaper, but the median decision took 14.5 s. It failed the bar I had set, and I said so.</p></div>
+      <div><span class="d">v3, 2 Nov</span><b>Live</b><p>One model, a live agent, real test systems and a real Slack card. 4.2 s per decision, 13 of 13 defects held.</p></div>
+      <div class="hl"><span class="d">v4, 2 Nov</span><b>Belief layer</b><p>Built for the two problems below. Its results follow the demo.</p></div>
+    </div>
+    <div class="row" style="grid-template-columns:1fr 1fr;gap:calc(var(--u)*2);margin-top:calc(var(--u)*2.6)">
+      <div class="card"><span class="tag warn">Ceiling one: the billing lag</span><p style="color:var(--fg)">A freshness window can only say "this record is recent". It cannot say "this list lags its own writes by over a minute". A freshly read list looked complete, and it was wrong.</p></div>
+      <div class="card"><span class="tag warn">Ceiling two: the flip</span><p style="color:var(--fg)">One clean case, CT-08, acted on some runs and held on others. The harness threw that disagreement away, so every act rested on the model finding nothing.</p></div>
+    </div>
+    <div class="foot"><span>The trap: a missed conflict looks exactly like a clean case. Every version ran against a bar written before building; results in report section 15</span><span></span></div>
+    <aside class="notes">8:30 to 9:30. The harness was the baseline on purpose; the finding is where it breaks. Deterministic fixes landed, but the LLM-specific failure, failing open on silence, was still open. Grade the fix against the failure you named. Four versions in two days, each with a bar and its misses logged.</aside>
+  </section>
+
+  <section class="slide">
+    <div class="rail"><span class="done">The problem</span><span class="on">The product</span><span>The proof</span><span>Judgment and next steps</span></div>
     <h2>"Isn't this just a guardrail?"</h2>
-    <p class="big">A guardrail says yes or no. This also says how sure it is, and what would settle it.</p>
-    <ul style="max-width:none">
-      <li><strong>Age, not a cliff:</strong> evidence fades as it gets old</li>
-      <li><strong>Silence must be earned:</strong> each check cites a record, and code confirms it exists</li>
-      <li><strong>Disagreement is evidence:</strong> three samples when the answer can change the decision</li>
-      <li><strong>Expected loss against cost of delay:</strong> act, re-read or hold. Hard vetoes still win</li>
-    </ul>
-    <div class="foot"><span>P(safe) assumes independent facts. All priors assumed. The unread-fact 0.8 is a policy, not a measurement</span><span></span></div>
-    <aside class="notes">8:00 to 9:30. A few pure functions, no new dependencies. The model stays an extractor, because its outputs are not calibrated probabilities. A cited ID shows the record exists, not that the model read it. Say this limit yourself.</aside>
+    <p class="lede">A guardrail says yes or no. The belief layer also says how sure it is, and which fact would settle it.</p>
+    <div class="row" style="grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*1.4);font-size:calc(var(--u)*1.3)">
+      <div class="card">
+        <svg viewBox="0 0 240 110" style="width:100%;height:auto;margin-bottom:calc(var(--u)*.6)" role="img" aria-label="A curve that stays flat while evidence is fresh, then falls near the old window"><line x1="10" y1="96" x2="232" y2="96" style="stroke:var(--rule-2);stroke-width:2"/><path d="M10 14 C 70 14, 95 18, 120 52 S 175 92, 230 94" style="fill:none;stroke:var(--accent);stroke-width:4"/><line x1="120" y1="8" x2="120" y2="96" style="stroke:var(--fg-3);stroke-width:1.5;stroke-dasharray:5 5"/><text x="126" y="22" font-size="15" class="sv-q">old window</text></svg>
+        <h3>Age, not a cliff</h3><p>Evidence keeps its weight while fresh and fades near the old window, instead of dropping from trusted to useless at one hour mark.</p>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 240 110" style="width:100%;height:auto;margin-bottom:calc(var(--u)*.6)" role="img" aria-label="A cited record with a check mark"><rect x="20" y="10" width="140" height="88" rx="8" style="fill:var(--surface);stroke:var(--rule-2);stroke-width:2"/><line x1="38" y1="34" x2="140" y2="34" style="stroke:var(--rule-2);stroke-width:5;stroke-linecap:round"/><line x1="38" y1="54" x2="120" y2="54" style="stroke:var(--rule-2);stroke-width:5;stroke-linecap:round"/><rect x="36" y="68" width="76" height="16" rx="4" style="fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5"/><circle cx="190" cy="54" r="26" style="fill:var(--ok-soft);stroke:var(--ok);stroke-width:2.5"/><path d="M178 54l8 9 16-18" style="fill:none;stroke:var(--ok);stroke-width:4;stroke-linecap:round;stroke-linejoin:round"/></svg>
+        <h3>Silence must be earned</h3><p>Each check the model reports cites a record, and code confirms that record exists. Nothing found is a claim, not a default.</p>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 240 110" style="width:100%;height:auto;margin-bottom:calc(var(--u)*.6)" role="img" aria-label="Three samples, one of which raises a conflict"><circle cx="50" cy="52" r="26" style="fill:var(--ok-soft);stroke:var(--ok);stroke-width:2.5"/><circle cx="120" cy="52" r="26" style="fill:var(--ok-soft);stroke:var(--ok);stroke-width:2.5"/><circle cx="190" cy="52" r="26" style="fill:var(--stop-soft);stroke:var(--stop);stroke-width:2.5"/><text x="190" y="61" text-anchor="middle" font-size="26" style="fill:var(--stop);font-weight:700">!</text><text x="120" y="104" text-anchor="middle" font-size="15" class="sv-q">1 of 3 dissents: P(safe) 0.70</text></svg>
+        <h3>Disagreement is evidence</h3><p>When the answer could change the decision, the model runs three times. One dissent lowers confidence instead of being thrown away.</p>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 240 110" style="width:100%;height:auto;margin-bottom:calc(var(--u)*.6)" role="img" aria-label="A balance weighing expected loss against the cost of waiting"><line x1="120" y1="20" x2="120" y2="98" style="stroke:var(--fg-3);stroke-width:3"/><line x1="40" y1="34" x2="200" y2="26" style="stroke:var(--fg-3);stroke-width:3"/><path d="M14 66 L40 34 L66 66 Z" style="fill:var(--warn-soft);stroke:var(--warn);stroke-width:2"/><path d="M174 58 L200 26 L226 58 Z" style="fill:var(--accent-soft);stroke:var(--accent);stroke-width:2"/><text x="40" y="86" text-anchor="middle" font-size="15" class="sv-q">risk</text><text x="200" y="78" text-anchor="middle" font-size="15" class="sv-q">wait</text><rect x="96" y="96" width="48" height="8" rx="3" style="fill:var(--fg-3)"/></svg>
+        <h3>Expected loss decides</h3><p>Chance of being wrong times the amount, against the cost of waiting: act, re-read or hold. Hard vetoes still win every time.</p>
+      </div>
+    </div>
+    <div class="foot"><span>P(safe) assumes independent facts. All priors are assumed and were fixed before the runs. The unread-fact value of 0.8 is a policy, not a measurement</span><span></span></div>
+    <aside class="notes">9:30 to 10:30. A few pure functions, no new dependencies. The model stays an extractor, because its outputs are not calibrated probabilities. A cited ID shows the record exists, not that the model read it; say this limit yourself. If asked what is Bayesian: each fact's belief combines a starting assumption with fresh evidence, rulings update how much each source is trusted, and the decision weighs the chance of being wrong against the cost of waiting.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">7 &middot; Live demo</p>
-    <h2>A real agent, real test systems, a real click</h2>
-    <p class="text-fg-2"><span class="pill ok">Real</span> agent, gate, HubSpot and Chargebee test reads, credit write, Slack clicks &nbsp; <span class="pill warn">Scripted or local</span> tickets, seeded accounts, contracts, risk</p>
-    <ol style="max-width:none">
-      <li><strong>Clean credit:</strong> commits to Chargebee, and nobody is told</li>
-      <li><strong>Second agent, same incident, ledger off:</strong> the belief layer gathers alone, with P(safe) and a re-read time. <strong>Go slowly here</strong></li>
-      <li><strong>Keep held in Slack:</strong> one click lowers billing's reliability</li>
-      <li><strong>Run again:</strong> the next clean credit shows a lower P(safe)</li>
-      <li><strong>Prototype:</strong> autonomy boundary, shadow report, review</li>
-    </ol>
-    <div class="foot"><span>Seeded, fictional accounts only</span><span></span></div>
-    <aside class="notes">9:30 to 17:30. Say real and mocked before starting. Before the call: double-click Warrant Demo.command, open tab 8, close notifications. Press Start clean demo; it clears earlier rulings by itself. On the call, click only Keep held. Say: this shows the layer reaches the same answer without the special-case rules, not that those rules are unnecessary. Both stay in production. τ came from this same lag, and a later live run saw the list stale for over 5 minutes, so a re-read at the suggested time is not proof. If you click Commit on the lag card, it now refuses and says why; that refusal has only been unit tested, so rehearse it. The cap card now shows the clause and its source. If anything breaks, press Replay a recorded run on the same tab, say it is a replay, and do not apologise twice. Record that backup before the call.</aside>
+    <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="on">The proof</span><span>Judgment and next steps</span></div>
+    <h2>Live: a real agent, real test systems, a real click</h2>
+    <div class="row" style="grid-template-columns:1.5fr 1fr;gap:calc(var(--u)*4);align-items:start">
+      <ol class="steps" style="font-size:calc(var(--u)*1.6);row-gap:calc(var(--u)*1.2)">
+        <li><span><strong>A clean credit</strong> commits to Chargebee, and nobody is told.</span></li>
+        <li><span><strong>A second agent credits the same incident</strong>, with the ledger switched off. The belief layer gathers on its own, showing P(safe) and when it will re-read.</span></li>
+        <li><span><strong>Keep held in Slack.</strong> One click lowers how much Warrant trusts billing's credit list.</span></li>
+        <li><span><strong>Run it again.</strong> The next clean credit shows the lower P(safe).</span></li>
+        <li><span><strong>The prototype screens:</strong> the autonomy boundary, the shadow report and the review.</span></li>
+      </ol>
+      <div class="card">
+        <span class="tag ok">Real</span>
+        <p style="color:var(--fg);margin-bottom:calc(var(--u)*1.2)">The agent, the gate, reads from HubSpot and Chargebee test accounts, the credit write, and the Slack clicks.</p>
+        <span class="tag warn">Scripted or local</span>
+        <p style="color:var(--fg)">The tickets, the seeded accounts, the contracts and the risk flags.</p>
+      </div>
+    </div>
+    <div class="foot"><span>Seeded, fictional accounts only. A labelled replay of a recorded run is ready if the live path fails</span><span></span></div>
+    <aside class="notes">10:30 to 18:30. Say real and mocked before starting. Before the call: double-click Warrant Demo.command, open tab 8, close notifications. Press Start clean demo; it clears earlier rulings by itself. On the call, click only Keep held. Go slowly on step 2. Say: this shows the layer reaches the same answer without the special-case rules, not that those rules are unnecessary; both stay in production. τ came from this same lag, and a later live run saw the list stale for over 5 minutes, so a re-read at the suggested time is not proof. If you click Commit on the lag card, it now refuses and says why; that refusal has only been unit tested, so rehearse it. If anything breaks, press Replay a recorded run on the same tab, say it is a replay, and do not apologise twice.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">8 &middot; Where the AI was wrong</p>
-    <h2>Every eval passed. Then the live agent double-credited a customer</h2>
-    <p class="big">Chargebee's credit list lagged its own write by over a minute. An empty list looks exactly like "no prior credit".</p>
-    <ul style="max-width:none">
-      <li><strong>Why evals missed it:</strong> a fixture is always current, so this failure could not appear in any test</li>
-      <li><strong>The fix was not a better model:</strong> the gate keeps a ledger of its commits, and stops when the balance exceeds listed credits</li>
-      <li><strong>The thesis applies to the gate too:</strong> a belief can be well formed, freshly read and wrong</li>
-    </ul>
-    <div class="foot"><span>Logged in product/llm-failure-modes-log.md, with 34 other failures from this build</span><span></span></div>
-    <aside class="notes">17:30 to 19:00. Tell it as a story. Also: one injection "catch" was really a parse failure, because failing closed hid a format bug behind a passing score. A second one in the final live check: a Commit click wrote a second credit, because the card named nothing to weigh. Reading the stored raw answers caught it.</aside>
+    <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="on">The proof</span><span>Judgment and next steps</span></div>
+    <h2>Every eval passed. Then the live agent paid a customer twice</h2>
+    <figure style="margin:0 0 calc(var(--u)*1.6)">
+      <svg viewBox="0 0 1600 250" role="img" aria-label="Schematic timeline: the first credit is written, Chargebee's credit list stays empty for over a minute, a second agent's proposal arrives inside that window and acts, then the list catches up." style="width:100%;height:auto">
+        <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--fg-3)"/></marker></defs>
+        <rect x="160" y="120" width="900" height="28" rx="8" style="fill:var(--warn-soft);stroke:var(--warn);stroke-width:2"/>
+        <text x="610" y="186" text-anchor="middle" font-size="21" style="fill:var(--warn);font-weight:600">The credit list still shows no credit, for over a minute</text>
+        <path class="sv-line" d="M40 134H1240" marker-end="url(#ar2)"/>
+        <circle cx="160" cy="134" r="13" style="fill:var(--accent)"/><text x="160" y="60" text-anchor="middle" font-size="22" class="sv-t">First credit written</text><text x="160" y="88" text-anchor="middle" font-size="19" class="sv-s">the balance moves at once</text>
+        <circle cx="560" cy="134" r="13" style="fill:var(--stop)"/><text x="560" y="60" text-anchor="middle" font-size="22" style="fill:var(--stop);font-weight:600">Second agent proposes</text><text x="560" y="88" text-anchor="middle" font-size="19" class="sv-s">the gate reads an empty list and acts</text>
+        <circle cx="1060" cy="134" r="13" style="fill:var(--fg-3)"/><text x="1060" y="60" text-anchor="middle" font-size="22" class="sv-t">The list catches up</text><text x="1060" y="88" text-anchor="middle" font-size="19" class="sv-s">two credits, one incident</text>
+        <rect x="1272" y="92" width="326" height="104" rx="12" style="fill:var(--ok-soft);stroke:var(--ok);stroke-width:2"/>
+        <text x="1292" y="128" font-size="21" style="fill:var(--ok);font-weight:600">The fix</text><text x="1292" y="156" font-size="18" class="sv-s">a ledger of its own commits,</text><text x="1292" y="180" font-size="18" class="sv-s">checked against the balance</text>
+        <text x="40" y="232" font-size="17" class="sv-q">Schematic, not to scale</text>
+      </svg>
+    </figure>
+    <div class="row" style="grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*2)">
+      <p><strong>Why the evals missed it.</strong> A test fixture is always current, so this failure could not appear in any test I had written.</p>
+      <p><strong>The fix was not a better model.</strong> The gate keeps a ledger of what it committed, and stops when the balance shows more credit than the list does.</p>
+      <p><strong>The thesis applies to the gate too.</strong> A belief can be well formed, freshly read, and still wrong.</p>
+    </div>
+    <div class="foot"><span>Logged in product/llm-failure-modes-log.md with 34 other failures from this build. The second agent in this run was on a test account</span><span></span></div>
+    <aside class="notes">18:30 to 19:30. Tell it as a story. Also: one injection "catch" was really a parse failure, because failing closed hid a format bug behind a passing score. A second one in the final live check: a Commit click wrote a second credit, because the card named nothing to weigh; Commit now reads the ledger and balance first. Reading the stored raw answers caught it.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">9 &middot; Results against the bar</p>
-    <h2 style="margin-bottom:.35em">120 of 120 defects stopped, and two misses</h2>
-    <div class="tbl" style="margin:0"><table style="font-size:clamp(11px,min(1.06vw,1.89vh),17px)">
-      <thead><tr><th>Worst of 5 runs</th><th>Cheap rules</th><th>v3</th><th>v4</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Defects stopped, of 120</strong></td><td>36</td><td>101</td><td><strong>120</strong></td></tr>
-        <tr><td>Neutrals stopped, of 104</td><td>0</td><td>7</td><td>21, of which 12 only wait</td></tr>
-        <tr><td>Fixtures: clean over-held</td><td>Not run</td><td>1 of 11</td><td>1 of 11</td></tr>
-        <tr><td>Cost per decision</td><td>$0</td><td>$0.0101</td><td>$0.0266</td></tr>
-        <tr><td>Latency, median and P95</td><td>0</td><td>4.2, 6.3 s</td><td>4.5, 6.3 s</td></tr>
-        <tr><td><strong>CT-08 same on all runs</strong></td><td>Not run</td><td>No</td><td><strong class="text-stop">No, misses bar</strong></td></tr>
-        <tr><td><strong>Calibration within 0.10</strong></td><td>Not run</td><td>None</td><td><strong class="text-stop">3 of 6 bins off, misses bar</strong></td></tr>
-      </tbody>
-    </table></div>
-    <p class="text-fg-2" style="margin-top:.6em">224 cases generated by code, so the labels do not come from a model. About half are defects, unlike production.</p>
-    <div class="foot"><span>Lag cases are partly passed by design: τ came from the same lag, and a live run later showed it is too short. P95 added after the bar</span><span></span></div>
-    <aside class="notes">19:00 to 21:00. Most of v3's misses are lag cases and injection in contract text, which it acted on 23 of 60 times. Cheap rules get every benefit of the doubt and stop 36, so the case is the other 84. Also worse: fact named fell to 12 of 13, because PL-08 was stopped by the stake rule alone. Two neutrals are mislabelled by me. Calibration: the 0.8 is a policy, so it was never going to calibrate as a probability. Latency for v4 is a separate 2-run pass.</aside>
+    <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="on">The proof</span><span>Judgment and next steps</span></div>
+    <h2>All 120 generated defects stopped, with two misses against my bar</h2>
+    <div class="row" style="grid-template-columns:1.1fr 1fr;gap:calc(var(--u)*3.5);align-items:start">
+      <div>
+        <p class="small muted" style="margin-bottom:calc(var(--u)*.7)">Defects stopped, of 120 (worst of 5 runs)</p>
+        <div class="bars">
+          <span class="lab">Cheap rules</span><span class="trk"><span class="fill" style="display:block;width:30%"></span></span><span class="val">36</span>
+          <span class="lab">v3 harness</span><span class="trk"><span class="fill" style="display:block;width:84.2%"></span></span><span class="val">101</span>
+          <span class="lab">v4 belief layer</span><span class="trk"><span class="fill hl" style="display:block;width:100%"></span></span><span class="val">120</span>
+        </div>
+        <p class="small muted" style="margin:calc(var(--u)*1.8) 0 calc(var(--u)*.7)">Clean cases stopped, of 104</p>
+        <div class="bars">
+          <span class="lab">Cheap rules</span><span class="trk"><span class="fill" style="display:block;width:0%"></span></span><span class="val">0</span>
+          <span class="lab">v3 harness</span><span class="trk"><span class="fill" style="display:block;width:6.7%"></span></span><span class="val">7</span>
+          <span class="lab">v4 belief layer</span><span class="trk"><span class="fill hl" style="display:block;width:20.2%"></span></span><span class="val">21</span>
+        </div>
+        <p class="small soft" style="margin-top:calc(var(--u)*.8)">12 of v4's 21 only wait for a timed re-read; no person is involved. So 9 of 104 reach a person in the worst run, about 7% on average.</p>
+      </div>
+      <div class="tbl"><table>
+        <thead><tr><th>Also measured</th><th>v3</th><th>v4</th></tr></thead>
+        <tbody>
+          <tr><td>Clean fixtures held</td><td>1 of 11</td><td class="v4">1 of 11</td></tr>
+          <tr><td>Cost per decision</td><td>$0.0101</td><td class="v4">$0.0266</td></tr>
+          <tr><td>Latency, median</td><td>4.2 s</td><td class="v4">4.5 s</td></tr>
+          <tr><td>CT-08 same on all 5 runs</td><td>No</td><td class="v4"><strong class="text-stop">No: misses the bar</strong></td></tr>
+          <tr><td>Calibration within 0.10</td><td>Not measured</td><td class="v4"><strong class="text-stop">3 of 6 bins off: misses</strong></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="foot"><span>224 cases generated by code, so the labels do not come from a model. About half are defects, unlike production. Lag cases pass partly by design, since τ came from the same lag</span><span></span></div>
+    <aside class="notes">19:30 to 21:00. The line to say: the decision improved; the number is not yet a probability. Most of v3's misses were lag cases and injected contract text, which it acted on 23 of 60 times. Cheap rules get every benefit of the doubt and stop 36, so the product's case is the other 84: amendments, signatures, disputes, injection, age. Also worse: the named conflict fell to 12 of 13 on PL-08, stopped by the stake rule alone. Calibration: the 0.8 is a policy, so it was never going to calibrate. I did not tune anything after seeing the results.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">10 &middot; The dial</p>
-    <h2 style="margin-bottom:.4em">At a $20 cost of delay, a person sees 7% of clean cases and no defect acts</h2>
-    <div class="grid gap-8 items-start" style="grid-template-columns:1.25fr 1fr">
-      <figure style="margin:0;padding:.6em"><svg viewBox="0 0 560 345" role="img" aria-label="As cost of delay rises from 5 to 160 dollars, clean cases a person sees fall from 73 percent to 7 percent by 20 dollars and stay there. Defects that would act stay at 0 percent through 20 dollars, then rise to 21 percent." style="width:100%;font-family:var(--body)">
+    <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="on">The proof</span><span>Judgment and next steps</span></div>
+    <h2>At a $20 cost of delay, a person sees 7% of clean cases and no defect acts</h2>
+    <div class="row" style="grid-template-columns:1.3fr 1fr;gap:calc(var(--u)*3.5);align-items:start">
+<figure style="margin:0;padding:.6em"><svg viewBox="0 0 560 345" role="img" aria-label="As cost of delay rises from 5 to 160 dollars, clean cases a person sees fall from 73 percent to 7 percent by 20 dollars and stay there. Defects that would act stay at 0 percent through 20 dollars, then rise to 21 percent." style="width:100%;font-family:var(--body)">
         <rect x="220" y="10" width="52" height="284" rx="4" style="fill:var(--accent-soft)"/><text x="246" y="26" text-anchor="middle" style="font-size:12px;font-weight:600;fill:var(--fg)">as set</text>
         <line x1="50" x2="530" y1="290.0" y2="290.0" style="stroke:var(--rule)"/><text x="42" y="294.0" text-anchor="end" style="font-size:12px;fill:var(--fg-3)">0%</text><line x1="50" x2="530" y1="207.5" y2="207.5" style="stroke:var(--rule)"/><text x="42" y="211.5" text-anchor="end" style="font-size:12px;fill:var(--fg-3)">25%</text><line x1="50" x2="530" y1="125.0" y2="125.0" style="stroke:var(--rule)"/><text x="42" y="129.0" text-anchor="end" style="font-size:12px;fill:var(--fg-3)">50%</text><line x1="50" x2="530" y1="42.5" y2="42.5" style="stroke:var(--rule)"/><text x="42" y="46.5" text-anchor="end" style="font-size:12px;fill:var(--fg-3)">75%</text><text x="70" y="312" text-anchor="middle" style="font-size:13px;fill:var(--fg-3);font-weight:400">$5</text><text x="158" y="312" text-anchor="middle" style="font-size:13px;fill:var(--fg-3);font-weight:400">$10</text><text x="246" y="312" text-anchor="middle" style="font-size:13px;fill:var(--fg);font-weight:600">$20</text><text x="334" y="312" text-anchor="middle" style="font-size:13px;fill:var(--fg-3);font-weight:400">$40</text><text x="422" y="312" text-anchor="middle" style="font-size:13px;fill:var(--fg-3);font-weight:400">$80</text><text x="510" y="312" text-anchor="middle" style="font-size:13px;fill:var(--fg-3);font-weight:400">$160</text>
         <polyline points="70,49.10000000000002 158,200.9 246,266.9 334,266.9 422,266.9 510,266.9" fill="none" style="stroke:var(--accent);stroke-width:2"/><circle cx="70" cy="49.10000000000002" r="5" style="fill:var(--accent);stroke:var(--surface);stroke-width:2"><title>$5: clean cases a person sees 73%</title></circle><circle cx="158" cy="200.9" r="5" style="fill:var(--accent);stroke:var(--surface);stroke-width:2"><title>$10: clean cases a person sees 27%</title></circle><circle cx="246" cy="266.9" r="5" style="fill:var(--accent);stroke:var(--surface);stroke-width:2"><title>$20: clean cases a person sees 7%</title></circle><circle cx="334" cy="266.9" r="5" style="fill:var(--accent);stroke:var(--surface);stroke-width:2"><title>$40: clean cases a person sees 7%</title></circle><circle cx="422" cy="266.9" r="5" style="fill:var(--accent);stroke:var(--surface);stroke-width:2"><title>$80: clean cases a person sees 7%</title></circle><circle cx="510" cy="266.9" r="5" style="fill:var(--accent);stroke:var(--surface);stroke-width:2"><title>$160: clean cases a person sees 7%</title></circle><polyline points="70,290.0 158,290.0 246,290.0 334,280.1 422,250.4 510,220.7" fill="none" style="stroke:var(--warn);stroke-width:2;stroke-dasharray:6 4"/><circle cx="70" cy="290.0" r="5" style="fill:var(--warn);stroke:var(--surface);stroke-width:2"><title>$5: defects that would act 0%</title></circle><circle cx="158" cy="290.0" r="5" style="fill:var(--warn);stroke:var(--surface);stroke-width:2"><title>$10: defects that would act 0%</title></circle><circle cx="246" cy="290.0" r="5" style="fill:var(--warn);stroke:var(--surface);stroke-width:2"><title>$20: defects that would act 0%</title></circle><circle cx="334" cy="280.1" r="5" style="fill:var(--warn);stroke:var(--surface);stroke-width:2"><title>$40: defects that would act 3%</title></circle><circle cx="422" cy="250.4" r="5" style="fill:var(--warn);stroke:var(--surface);stroke-width:2"><title>$80: defects that would act 12%</title></circle><circle cx="510" cy="220.7" r="5" style="fill:var(--warn);stroke:var(--surface);stroke-width:2"><title>$160: defects that would act 21%</title></circle>
@@ -376,61 +613,114 @@ body.show-notes .slide.on .notes{display:block}
         <text x="290" y="336" text-anchor="middle" style="font-size:12px;fill:var(--fg-2)">Cost of delay, doubling at each step</text>
       </svg>
       <div class="flex gap-5 text-fg-2" style="font-size:clamp(10px,min(0.875vw,1.56vh),14px);margin-top:.2em"><span><span style="color:var(--accent)">&#9679;&#9472;</span> Clean cases a person sees</span><span><span style="color:var(--warn)">&#9679;&#8211;&#8211;</span> Defects that would act</span></div></figure>
-      <ul style="max-width:none;margin:0">
-        <li><strong>Below $20:</strong> no defect acts, but a person sees up to 73% of clean cases</li>
-        <li><strong>Above $20:</strong> it lets defects through and saves no review</li>
-        <li><strong>Review time alone doesn't pay:</strong> about $1,170 to $1,570 a month at 5,000 cases <span class="pill warn">assumed</span>. v3 was at about 6% too, so v4 raised catches, not savings</li>
-        <li><strong>The case rests on what is not counted:</strong> clawbacks, lost trust and manual account management. None is measured yet</li>
-      </ul>
+      <div>
+        <p style="margin-bottom:calc(var(--u)*1)"><strong>The dial is the buyer's control.</strong> It trades how many cases a person reviews against how many defects get through.</p>
+        <p style="margin-bottom:calc(var(--u)*1)"><strong>Below $20</strong>, no defect acts, but a person sees up to 73% of clean cases. <strong>Above $20</strong>, defects start to act and no review is saved.</p>
+        <p style="margin-bottom:calc(var(--u)*1)"><strong>Review time alone does not pay for this:</strong> about $1,170 to $1,570 a month at 5,000 cases <span class="pill warn">assumed</span>.</p>
+        <p class="soft">The case rests on what is not yet counted: clawbacks, lost trust and manual account work.</p>
+      </div>
     </div>
-    <div class="foot"><span>Stored beliefs replayed at each cost, no new model calls. Share excludes timed re-reads. Assumes 5% of cases are defects, all seen by a person. Cost table in backup</span><span></span></div>
-    <aside class="notes">21:00 to 22:30. The dial is the buyer's control: it trades the share of cases a person sees against expected leakage. Say that the labor line alone does not justify the price. That is the honest reason the log pull comes first. Volumes and the hourly rate are assumed; I have no source for cases per customer.</aside>
+    <div class="foot"><span>Stored beliefs replayed at each cost, with no new model calls. Excludes timed re-reads. A measured 2 to 2.67 USD per human review, at an assumed $30 to $40 an hour. Cost table in the appendix</span><span></span></div>
+    <aside class="notes">21:00 to 22:00. Say that the labour line alone does not justify the price; that is the honest reason the log pull comes first. Volumes and the hourly rate are assumed; I have no source for cases per customer.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">11 &middot; Key decisions and trade-offs</p>
-    <h2>What I chose, what I gave up, what would change my mind</h2>
-    <div class="tbl"><table style="font-size:clamp(11px,min(1.12vw,2vh),18px)">
-      <thead><tr><th>Chose</th><th>Gave up</th><th>Switch if</th></tr></thead>
+    <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="done">The proof</span><span class="on">Judgment and next steps</span></div>
+    <h2>What I chose, what I gave up, and what would change my mind</h2>
+    <div class="tbl"><table style="font-size:calc(var(--u)*1.55)">
+      <thead><tr><th style="width:42%">Chose</th><th>Gave up</th><th>Switch if</th></tr></thead>
       <tbody>
-        <tr><td><strong>Belief layer, not a bigger model</strong></td><td>Cost, 2.6 times per decision</td><td>A single sample holds the catch rate</td></tr>
+        <tr><td><strong>A belief layer, not a bigger model</strong></td><td>Cost: 2.6 times per decision</td><td>A single sample holds the catch rate</td></tr>
         <tr><td><strong>Labels from how cases were built, not from a model</strong></td><td>Realism: half the set is defects</td><td>A log pull gives real cases</td></tr>
         <tr><td><strong>Priors frozen before the runs, even the two now known wrong</strong></td><td>A better score</td><td>A held-out set exists to refit on</td></tr>
         <tr><td><strong>Fail closed, shadow first</strong></td><td>Automation rate</td><td>Over-holds cost more than the leakage they stop</td></tr>
       </tbody>
     </table></div>
-    <div class="foot"><span>The two priors now known wrong: the credit list's 90 s τ, and the unread-fact 0.8, a policy that was never going to calibrate. If the demo ran long, keep two rows</span><span></span></div>
-    <aside class="notes">22:30 to 24:00. For each row, say what would make you switch. If asked about the model: one Sonnet 5.5 call, Opus 5.5 judge; smaller was not faster, because Haiku wrote 2.2 times the output. If asked about the source layer: my own read-only MCP server over vendor APIs, until vendors offer enforceable read-only scopes.</aside>
+    <div class="foot"><span>The two priors now known wrong: the credit list's 90 s τ, and the unread-fact 0.8, a policy that was never going to calibrate</span><span></span></div>
+    <aside class="notes">22:00 to 23:00. For each row, say what would make you switch. If asked about the model: one Sonnet 5.5 call, Opus 5.5 judge; smaller was not faster, because Haiku wrote 2.2 times the output. If asked about the source layer: my own read-only MCP server over vendor APIs, until vendors offer enforceable read-only scopes.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">12 &middot; Where this is weak</p>
+    <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="done">The proof</span><span class="on">Judgment and next steps</span></div>
     <h2>Three ways I could be wrong</h2>
-    <ol style="max-width:none">
-      <li><strong>No customer has confirmed the problem.</strong> The evidence is three lessons from my own past work and public opinion classified by a model. No interviews for this build, no log pull</li>
-      <li><strong>The results partly grade themselves.</strong> One model family wrote the system, the cases and the judge. My review of 15 records is the first outside check, by the author: 11 matched v3, 10 matched v4. Generated defects remove the model from the labels, but I still wrote the generator</li>
-      <li><strong>The live path is real but small.</strong> Scripted tickets, seeded accounts, one kind of write. A cited record shows it exists, not that the model read it, and P(safe) is not yet a calibrated probability</li>
-    </ol>
-    <div class="foot"><span></span><span></span></div>
-    <aside class="notes">24:00 to 25:30. Never cut this slide. Volunteer it before Q&amp;A. Point 2: on those 2 injection cases the gate was stricter than I was, held on the contract cap. Do not oversell it: 15 records, one reviewer. Ask: "What would change your view of the size of this problem by an order of magnitude?"</aside>
+    <div class="row big" style="grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*1.6)">
+      <div class="card"><p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);font-weight:600;color:var(--stop);line-height:1;margin-bottom:calc(var(--u)*.6)">1</p><h3>The evidence base is still small</h3><p>It rests on minimal primary research, my prior experience in this segment, and sentiment analysis on a small corpus of forum opinions. Targeted JTBD interviews with a larger pool of potential customers, and a much larger forum corpus, would give a basis to trust.</p></div>
+      <div class="card"><p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);font-weight:600;color:var(--stop);line-height:1;margin-bottom:calc(var(--u)*.6)">2</p><h3>The results partly grade themselves</h3><p>One model family wrote the system, the cases and the judge. My review of 15 records is the first outside check, by the author: 11 matched v3 and 10 matched v4. Generated defects remove the model from the labels, but I still wrote the generator.</p></div>
+      <div class="card"><p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);font-weight:600;color:var(--stop);line-height:1;margin-bottom:calc(var(--u)*.6)">3</p><h3>The live path is real but small</h3><p>Scripted tickets, seeded accounts and one kind of write. A cited record shows it exists, not that the model read it, and P(safe) is not yet a calibrated probability.</p></div>
+    </div>
+    <div class="foot"><span>Each has a named test: interviews and surveys at scale, labels from people who did not build it, and a shadow pilot on real traffic</span><span></span></div>
+    <aside class="notes">23:00 to 24:30. Never cut this slide. Volunteer it before Q&amp;A. Point 2: on those 2 injection cases the gate was stricter than I was, held on the contract cap. Do not oversell it: 15 records, one reviewer. Ask: "What would change your view of the size of this problem by an order of magnitude?"</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">13 &middot; Next steps and growth</p>
+    <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="done">The proof</span><span class="on">Judgment and next steps</span></div>
     <h2>What I would do next</h2>
-    <ol style="max-width:none">
-      <li><strong>Design partners:</strong> start with mid-market SaaS and MSPs, where one leader owns support and success. Enterprise is the expansion market</li>
-      <li><strong>Growth:</strong> the shadow report sizes a prospect's own held money, so it is the sales artifact, and each ruling is product signal</li>
-      <li><strong>With half the time</strong> I would cut the boundary screen, shadow report and forum evidence, and keep the live path. It would cost the buyer story: a gate, not a product</li>
-      <li><strong>Before anyone builds this</strong> I would run five interviews and one log pull: how often do agents act on conflicting sources, and can finance tie it to leakage it already sees?</li>
-      <li><strong>In 90 days it worked if</strong> finance confirmed a meaningful share of held money as real leakage and the engineer widened autonomy on that evidence, with clean actions held at or below 5% <span class="pill warn">assumed</span></li>
-    </ol>
-    <div class="foot"><span>Integration point: a stateful reasoning engine would replace belief.py, behind the same hard vetoes. Thank you &middot; questions</span><span></span></div>
-    <aside class="notes">25:30 to 27:30. My sizing is enterprise and the design partners are not, so expect the question: smaller firms give faster feedback, and enterprise pays more later. End on the 90-day test, then stop talking. Q&amp;A: "Where would this break first in production: volume, a bad input, or a system we do not control?" My answer after this build: a system we do not control. Buying conditions if asked: a log pull in dollars, a 30-day shadow pilot confirmed by finance, an independently measured over-hold rate, a built kill switch. The moat is data and workflow, not the model.</aside>
+    <div class="row" style="grid-template-columns:1.35fr 1fr;gap:calc(var(--u)*3.5);align-items:start">
+      <div>
+        <p class="small muted" style="margin-bottom:calc(var(--u)*.7)">The next 90 days</p>
+        <ol class="steps">
+          <li><span><strong>20+ interviews, 100+ online surveys and one log pull.</strong> How often do agents act on conflicting sources, and can finance tie it to leakage it already sees?</span></li>
+          <li><span><strong>Design partners in mid-market SaaS and MSPs</strong>, where one leader owns support and success. Enterprise is the expansion market.</span></li>
+          <li><span><strong>A 30-day shadow pilot.</strong> It worked if finance confirms a meaningful share of held money as real leakage, and the engineer widens autonomy on that evidence, with clean actions held at 5% or less <span class="pill warn">assumed</span>.</span></li>
+        </ol>
+      </div>
+      <div>
+        <p class="small muted" style="margin-bottom:calc(var(--u)*.7)">How it grows</p>
+        <div class="card" style="margin-bottom:calc(var(--u)*1.2)"><p style="color:var(--fg)"><strong>The shadow report is the sales artifact.</strong> It sizes a prospect's own held money before they buy anything.</p></div>
+        <div class="card"><p style="color:var(--fg)"><strong>Every ruling is product signal.</strong> It becomes a standing rule, an eval case and a change in how much a source is trusted.</p></div>
+      </div>
+    </div>
+    <div class="band" style="margin-top:auto">
+      <p><strong>Integration point:</strong> a stateful reasoning engine would replace belief.py, behind the same hard vetoes.</p>
+    </div>
+    <div class="foot"><span>With half the time, I would have cut the boundary screen, the shadow report and the forum evidence, and kept the live path</span><span></span></div>
+    <aside class="notes">24:30 to 26:30. My sizing is enterprise and the design partners are not, so expect the question: smaller firms give faster feedback, and enterprise pays more later. End on the 90-day test and the integration point, then move to the next slide. Q&amp;A: "Where would this break first in production: volume, a bad input, or a system we do not control?" My answer after this build: a system we do not control. Buying conditions if asked: a log pull in dollars, a 30-day shadow pilot confirmed by finance, an independently measured over-hold rate, a built kill switch. The moat is data and workflow, not the model.</aside>
   </section>
 
   <section class="slide">
-    <p class="kick">Backup &middot; Guardrails</p>
+    <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="done">The proof</span><span class="on">Judgment and next steps</span></div>
+    <h2>I journaled every judgment call, and the same failure shows up in two more industries</h2>
+    <div class="row" style="grid-template-columns:1fr 1.1fr;gap:calc(var(--u)*3);align-items:start;font-size:calc(var(--u)*1.2)">
+      <div>
+        <p class="muted" style="margin-bottom:calc(var(--u)*.6)">The build journal, in the public repo</p>
+        <p style="margin-bottom:calc(var(--u)*.7)"><strong>Every checkpoint is a commit:</strong> 80+ commits, and one pull request per version, each with its bar, results and misses.</p>
+        <p style="margin-bottom:calc(var(--u)*.7)"><strong>Every judgment call is written down:</strong> a memo at each fork, from discovery to the v4 plan and the reasoning behind it.</p>
+        <p><strong>Every failure is logged with evidence:</strong> 35 so far, across build, product and evals, and each lesson becomes a rule I reuse.</p>
+        <div class="band" style="margin-top:calc(var(--u)*1.3)"><p><strong>The seed for Warrant in product and build work.</strong> My own build agent showed the same failure: an instruction hardened in its memory and nearly led to a history rewrite. The journal is labelled data for a gate on product and build agents.</p></div>
+      </div>
+      <div>
+        <p class="muted" style="margin-bottom:calc(var(--u)*.6)">The next segments I considered at the start</p>
+        <div class="card" style="margin-bottom:calc(var(--u)*1)">
+          <span class="tag">On-call, DevOps and IT support (RMM)</span>
+          <p style="color:var(--fg)">An auto-remediation agent restarts a database because a monitoring alert says it is down. The alert is past its 30-minute window, and the stop was a planned migration.</p>
+          <p class="muted" style="font-size:calc(var(--u)*1.02)">Synthetic corpus and planted cases are in this repo; not yet run through the gate.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Logistics and freight</span>
+          <p style="color:var(--fg)">The customs broker says a container is on hold; the carrier says it is released. In my freight exceptions copilot, a guard that abstains and names the field in doubt took end-to-end accuracy from 0.857 to 1.00 on 7 exceptions.</p>
+          <p class="muted" style="font-size:calc(var(--u)*1.02)">github.com/superposition-fc23/freight-exceptions-copilot</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Journal: product/build-learnings.md, product/llm-failure-modes-log.md and one pull request per version, at github.com/superposition-fc23/Warrant_system-LLM_Failure_modes</span><span></span></div>
+    <aside class="notes">26:30 to 27:30. Two points. First, the journal: every checkpoint and judgment call is in the repo, and it doubles as seed data, because the build agent repeated the failure Warrant targets (log row 1: a scoped instruction hardened in memory and nearly led to a history rewrite). Second, the same failure in two more industries: stale device state in on-call and IT support, and contradicting freight statuses. Freight already has a working guard with an eval before and after; RMM has a corpus and planted cases only. Say which is built and which is not.</aside>
+  </section>
+
+  <section class="slide" style="justify-content:center">
+    <div style="max-width:70%">
+      <h1 style="font-size:calc(var(--u)*7.5)">Thank you</h1>
+      <p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);line-height:1.2;margin-top:calc(var(--u)*1.4);color:var(--fg-2)">Questions?</p>
+      <div style="margin-top:calc(var(--u)*3.6);padding-top:calc(var(--u)*1.2);border-top:1px solid var(--rule);display:inline-block;min-width:60%">
+        <p style="font-size:calc(var(--u)*1.5);font-weight:600">Mithun M</p>
+        <p class="soft" style="font-size:calc(var(--u)*1.15)">Code, run logs and the full report: https://github.com/superposition-fc23/Warrant_system-LLM_Failure_modes</p>
+      </div>
+    </div>
+    <div class="foot"><span>The appendix covers guardrails, the architecture, the cost of a person and the replacement map</span><span></span></div>
+    <aside class="notes">27:30 onward. Stop talking and let the panel lead. Have the appendix ready: guardrails, architecture, cost table, replacement map. The hardest likely questions: "Isn't this a guardrail?" and "What would change your view of the problem's size by an order of magnitude?"</aside>
+  </section>
+
+  <section class="slide">
+    <div class="rail backup"><span>Appendix</span></div>
     <h2>What it must not do</h2>
     <ul style="max-width:none">
       <li><strong>Never act on a failed read.</strong> Timeout, error or malformed reply gathers. <span class="pill ok">Tested</span></li>
@@ -444,7 +734,7 @@ body.show-notes .slide.on .notes{display:block}
   </section>
 
   <section class="slide">
-    <p class="kick">Backup &middot; Architecture</p>
+    <div class="rail backup"><span>Appendix</span></div>
     <h2 style="margin-bottom:.3em">The system as built in v4</h2>
     <figure style="margin:0;flex:1;min-height:0;padding:6px">
       <svg viewBox="0 0 1200 500" role="img" aria-label="Warrant v4 architecture. A live support agent calls one credit tool, which sends each proposal through a fixed pipeline: hard vetoes, then a belief layer that calls the model only when its answer can change the decision. One guarded function writes to the Chargebee test site, on an act or a person's ruling. A hold posts a Slack card, and a person can keep it held, commit it, or make a standing rule." style="width:100%;height:100%"><defs><marker id="wa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" style="fill:var(--fg-3)"/></marker></defs><rect x="10" y="6" width="1180" height="86" rx="6" style="fill:none;stroke:var(--rule)"/><text x="20" y="22" style="font-family:var(--body);font-size:11px;font-weight:600;fill:var(--fg-3);text-anchor:start">AGENT AND PEOPLE</text><rect x="20" y="30" width="120" height="52" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2);stroke-dasharray:5 4"/><text x="80.0" y="54.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Tickets</text><text x="80.0" y="70.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">scripted</text><rect x="170" y="30" width="170" height="52" rx="5" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="255.0" y="54.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Support agent</text><text x="255.0" y="70.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">Sonnet 5.5, in a loop</text><rect x="370" y="30" width="190" height="52" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="465.0" y="54.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">issue_credit tool</text><text x="465.0" y="70.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">the agent's one tool</text><rect x="800" y="30" width="200" height="52" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="900.0" y="54.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Person in Slack</text><text x="900.0" y="70.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">a ruling updates the beliefs</text><path d="M140 56H170" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><path d="M340 56H370" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><rect x="10" y="118" width="994" height="114" rx="6" style="fill:none;stroke:var(--rule)"/><text x="20" y="134" style="font-family:var(--body);font-size:11px;font-weight:600;fill:var(--fg-3);text-anchor:start">WARRANT GATE: A FIXED LANGGRAPH PIPELINE, NOT AN AGENT</text><rect x="20" y="142" width="96" height="58" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="68.0" y="169.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">read_sources</text><text x="68.0" y="185.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">parallel, 4 s each</text><rect x="130" y="142" width="96" height="58" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="178.0" y="169.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">freshness</text><text x="178.0" y="185.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">age, not a cliff</text><path d="M116 171H130" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><rect x="240" y="142" width="96" height="58" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="288.0" y="169.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">checks</text><text x="288.0" y="185.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">hard vetoes</text><path d="M226 171H240" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><rect x="350" y="142" width="96" height="58" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="398.0" y="169.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">rules</text><text x="398.0" y="185.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">standing rules</text><path d="M336 171H350" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><rect x="460" y="142" width="96" height="58" rx="5" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="508.0" y="169.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">compare</text><text x="508.0" y="185.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">if needed, k=3</text><path d="M446 171H460" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><rect x="570" y="142" width="96" height="58" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="618.0" y="169.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">decide</text><text x="618.0" y="185.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">expected loss</text><path d="M556 171H570" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><rect x="680" y="142" width="96" height="58" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="728.0" y="169.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">reread</text><text x="728.0" y="185.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">before any act</text><path d="M666 171H680" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><rect x="790" y="140" width="96" height="28" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="838.0" y="159.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">commit</text><rect x="790" y="174" width="96" height="28" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="838.0" y="193.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">route</text><rect x="900" y="142" width="96" height="58" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="948.0" y="169.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">record</text><text x="948.0" y="185.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">every path</text><path d="M776 164L790 154" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><path d="M776 180L790 188" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><path d="M886 154L900 164" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><path d="M886 188L900 180" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><path d="M618 200V216H838V202" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><text x="688" y="228" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:start">hold, gather</text><path d="M420 82V118" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><text x="428" y="110" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:start">proposal</text><path d="M390 118V82" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><text x="382" y="110" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:end">decision</text><path d="M530 82V104H1060V142" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><text x="540" y="100" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:start">act only: writes the credit</text><path d="M893 188V82" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><text x="899" y="112" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:start">card</text><rect x="1022" y="142" width="158" height="58" rx="5" style="fill:var(--warn-soft);stroke:var(--warn)"/><text x="1101.0" y="169.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Chargebee write</text><text x="1101.0" y="185.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">via commit_credit only</text><path d="M1000 56H1120V142" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><text x="1010" y="48" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:start">Commit, if billing is unchanged</text><rect x="10" y="246" width="994" height="164" rx="6" style="fill:none;stroke:var(--rule)"/><text x="20" y="262" style="font-family:var(--body);font-size:11px;font-weight:600;fill:var(--fg-3);text-anchor:start">SOURCES, MODEL AND STATE</text><rect x="20" y="270" width="460" height="44" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="250.0" y="290.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Read-only MCP server</text><text x="250.0" y="306.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">5 tools, nothing here writes</text><rect x="20" y="346" width="84" height="52" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="62.0" y="370.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">HubSpot</text><text x="62.0" y="386.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">test, live</text><line x1="62" y1="314" x2="62" y2="346" style="stroke:var(--fg-3);stroke-width:1"/><rect x="114" y="346" width="84" height="52" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="156.0" y="370.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Chargebee</text><text x="156.0" y="386.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">test, live</text><line x1="156" y1="314" x2="156" y2="346" style="stroke:var(--fg-3);stroke-width:1"/><rect x="208" y="346" width="84" height="52" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2);stroke-dasharray:5 4"/><text x="250.0" y="370.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Contracts</text><text x="250.0" y="386.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">local</text><line x1="250" y1="314" x2="250" y2="346" style="stroke:var(--fg-3);stroke-width:1"/><rect x="302" y="346" width="84" height="52" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2);stroke-dasharray:5 4"/><text x="344.0" y="370.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Risk</text><text x="344.0" y="386.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">local</text><line x1="344" y1="314" x2="344" y2="346" style="stroke:var(--fg-3);stroke-width:1"/><rect x="396" y="346" width="84" height="52" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2);stroke-dasharray:5 4"/><text x="438.0" y="370.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Authority</text><text x="438.0" y="386.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">local</text><line x1="438" y1="314" x2="438" y2="346" style="stroke:var(--fg-3);stroke-width:1"/><path d="M68 200V270" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)" marker-start="url(#wa)"/><text x="76" y="242" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:start">records</text><rect x="500" y="270" width="150" height="58" rx="5" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="575.0" y="297.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Anthropic API</text><text x="575.0" y="313.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">cites records, code verifies</text><path d="M508 200V270" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)" marker-start="url(#wa)"/><text x="516" y="242" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:start">names redacted</text><rect x="670" y="270" width="190" height="58" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="765.0" y="297.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Local state</text><text x="765.0" y="313.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">rules, ledger, beliefs, boundary</text><path d="M765 232V270" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)" marker-start="url(#wa)"/><rect x="880" y="270" width="114" height="58" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="937.0" y="297.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Decision log</text><text x="937.0" y="313.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">beliefs, checks</text><path d="M948 200V270" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><path d="M1000 72H1012V256H810V270" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><text x="820" y="268" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:start">standing rule</text><text x="1022" y="276" style="font-family:var(--body);font-size:12px;font-weight:600;fill:var(--accent);text-anchor:start">Blue: a model</text><text x="1022" y="296" style="font-family:var(--body);font-size:12px;font-weight:600;fill:var(--warn);text-anchor:start">Amber: the money write</text><text x="1022" y="316" style="font-family:var(--body);font-size:12px;font-weight:600;fill:var(--fg-2);text-anchor:start">Grey: code</text><text x="1022" y="336" style="font-family:var(--body);font-size:12px;font-weight:600;fill:var(--fg-2);text-anchor:start">Dashed: scripted, local</text><text x="1022" y="352" style="font-family:var(--body);font-size:12px;font-weight:600;fill:var(--fg-2);text-anchor:start">or planned</text><rect x="10" y="422" width="1180" height="72" rx="6" style="fill:none;stroke:var(--rule)"/><text x="20" y="438" style="font-family:var(--body);font-size:11px;font-weight:600;fill:var(--fg-3);text-anchor:start">PROOF AROUND THE GATE: NEVER DECIDES</text><rect x="20" y="442" width="156" height="44" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="98.0" y="462.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Eval runner</text><text x="98.0" y="478.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">36 + 224 cases, 5 runs</text><rect x="186" y="442" width="156" height="44" rx="5" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="264.0" y="462.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Judge</text><text x="264.0" y="478.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">Opus 5.5, redacted</text><rect x="352" y="442" width="156" height="44" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="430.0" y="462.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Gate tests</text><text x="430.0" y="478.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">36, no model calls</text><rect x="518" y="442" width="156" height="44" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="596.0" y="462.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">OpenTelemetry</text><text x="596.0" y="478.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">a span per step</text><rect x="684" y="442" width="156" height="44" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="762.0" y="462.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">PII, secret scan</text><text x="762.0" y="478.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">pre-commit and CI</text><rect x="850" y="442" width="156" height="44" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2)"/><text x="928.0" y="462.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">Prototype</text><text x="928.0" y="478.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">boundary, shadow, review</text><rect x="1016" y="442" width="156" height="44" rx="5" style="fill:var(--surface-2);stroke:var(--rule-2);stroke-dasharray:5 4"/><text x="1094.0" y="462.0" style="font-family:var(--body);font-size:13.5px;font-weight:600;fill:var(--fg);text-anchor:middle">SageOx</text><text x="1094.0" y="478.0" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:middle">planned</text><path d="M937 328V422" style="fill:none;stroke:var(--fg-3);stroke-width:1.3" marker-end="url(#wa)"/><text x="929" y="372" style="font-family:var(--body);font-size:11.5px;font-weight:400;fill:var(--fg-2);text-anchor:end">records, traces</text></svg>
@@ -454,7 +744,7 @@ body.show-notes .slide.on .notes{display:block}
   </section>
 
   <section class="slide">
-    <p class="kick">Backup &middot; The cost of a person</p>
+    <div class="rail backup"><span>Appendix</span></div>
     <h2 style="margin-bottom:.35em">About $2 to $2.67 a record, against $0.01</h2>
     <div class="tbl" style="margin:0"><table style="font-size:clamp(11px,min(1.06vw,1.89vh),17px)">
       <thead><tr><th>Cases, 10,000 customers <span class="pill warn">assumed</span></th><th class="num">A day</th><th class="num">A week</th><th class="num">A month</th><th class="num">Review, a month</th><th class="num">Review, a year</th></tr></thead>
@@ -473,7 +763,7 @@ body.show-notes .slide.on .notes{display:block}
   </section>
 
   <section class="slide">
-    <p class="kick">Backup &middot; The replacement map</p>
+    <div class="rail backup"><span>Appendix</span></div>
     <h2 style="margin-bottom:.35em">What a belief layer replaced, and what it did not</h2>
     <div class="tbl" style="margin:0"><table style="font-size:clamp(11px,min(1vw,1.78vh),16px)">
       <thead><tr><th>Harness part</th><th>What v4 showed</th><th>What stays regardless</th></tr></thead>

@@ -585,7 +585,7 @@ function renderBoundary(){
     var added = acts.filter(function(d){ return val(d) != null && val(d) > edge[t]; });
     var held = ds.length - acts.length + added.length;
     var overHeld = ds.filter(function(d){ return d.kind === 'control' && (d.decision !== 'act' || added.indexOf(d) >= 0); }).length;
-    var unit = (B[t] || {}).unit || '';
+    var unit = (B[t] || {}).unit || ''; if(unit === 'currency') unit = 'USD';
     return '<tr><td class="font-mono text-xs">' + esc(t) + '</td><td><span class="pill ' + ((B[t]||{}).mode === 'enforce' ? 'ok' : 'warn') + '">' + esc((B[t]||{}).mode) + '</span></td>' +
       '<td><input data-t="' + t + '" type="range" min="0" max="' + (base[t] * 1.0) + '" step="' + (base[t] > 100 ? 50 : 1) + '" value="' + edge[t] + '" class="align-middle" style="width:150px" aria-label="Boundary for ' + esc(t) + '"> <span class="font-mono text-xs">' + esc(edge[t]) + ' ' + esc(unit) + '</span></td>' +
       '<td class="num">' + ds.length + '</td><td class="num">' + (acts.length - added.length) + '</td><td class="num">' + held + (added.length ? ' <span class="text-warn">(+' + added.length + ')</span>' : '') + '</td>' +

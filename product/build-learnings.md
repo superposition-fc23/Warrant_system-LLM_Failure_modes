@@ -110,6 +110,7 @@ Full evidence: [`llm-failure-modes-log.md`](llm-failure-modes-log.md).
 | My first reason for sitting beside the CRM was "habit". Challenged, the real reason was separation of duties, and it exposed where we lose | The non-goal was rewritten with its losing case | Ask why a buyer would pay for two tools. A non-goal needs a reason that survives that |
 | A fresh clone showed the repo link gave a reader source code, and the launcher needed a local environment | Published the pages with GitHub Pages, with the live controls off on the hosted copy | Test the deliverable the way its reader will get it, from a clean copy, before sending the link |
 | Slide fonts scaled with window width while slide height followed window height, so three new slides overflowed only in a shorter window | Fonts now scale with the slide; each slide measured at several window sizes | Check a deck at the window size you will present in, not only in the export |
+| The model API became unavailable just before a live demo, and the replay we had built as a fallback became the demo. It showed outcomes but not the steps between them, though the trace held them | The replay now shows each ticket's recorded steps | Save traces and a labelled replay from the first good live run, and make the fallback able to carry the whole demo |
 
 ## Product judgement
 

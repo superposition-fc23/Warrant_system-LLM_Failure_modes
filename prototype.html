@@ -690,6 +690,11 @@ function say(t){
   if(t.vetoed_by) return 'A hard veto: ' + esc(t.vetoed_by) + '. The belief layer cannot override it. The card shows the clause, so the person can check it.';
   return 'Same incident, seconds later, with the ledger and balance check off. The credit list looks empty, and the belief layer gathers because the billing record changed moments ago.';
 }
+function flow(t){
+  return '<div class="text-xs text-fg-3 mb-1">Recorded steps, read from this run\'s trace</div><ol class="m-0 mb-3 p-0 list-none flex flex-wrap gap-2">' + t.flow.map(function(s){
+    return '<li class="bg-surface-2 border border-solid border-rule rounded px-2 py-1 text-xs"><div class="font-semibold text-fg">' + esc(s.step) + '</div><div class="text-fg-2">' + esc(s.detail) + (s.ms != null ? ' <span class="font-mono text-fg-3">' + (s.ms < 1 ? '&lt;1 ms' : s.ms < 1000 ? s.ms + ' ms' : (s.ms / 1000).toFixed(1) + ' s') + '</span>' : '') + '</div></li>';
+  }).join('') + '</ol>';
+}
 function ruled(t){
   if(t.decision === 'act') return '';
   if(t.ruling === 'commit') return '<div class="banner stop mt-2"><strong>Recorded click: Commit, after ' + esc(t.seconds_to_ruling) + ' s.</strong> It wrote a second credit, ' + esc(t.ruling_credit) + ', on the test site. The list was still stale after 5 minutes, so the billing recheck passed. Found by reading this log. Commit now checks the ledger and balance and refuses. That fix has unit tests and has not been repeated live.</div>';
@@ -703,7 +708,7 @@ function render(){
   el('replay').innerHTML = '<div class="banner warn"><strong>Replay of a recorded run, not live.</strong> ' + esc(data.run) + '. Real agent and test systems at the time; nothing runs now.</div>' +
     '<div class="mt-3 text-xs text-fg-3 font-mono">Ticket ' + (at + 1) + ' of ' + n + '</div>' +
     '<div class="text-base font-semibold mt-1">' + esc(t.agent) + ' proposes ' + esc(t.amount) + ' USD on ' + esc(t.account) + ' <span class="pill ' + pill + '">' + esc(t.decision) + '</span>' + (t.p_safe != null ? ' <span class="font-mono text-sm">P(safe) ' + t.p_safe.toFixed(3) + '</span>' : '') + '</div>' +
-    '<p class="text-sm text-fg-2 mt-2 mb-2">' + say(t) + '</p>' +
+    '<p class="text-sm text-fg-2 mt-2 mb-2">' + say(t) + '</p>' + flow(t) +
     (t.card ? '<div class="bg-surface-2 border border-solid border-rule rounded p-3 text-sm"><div class="text-xs text-fg-3 mb-1">Slack card, in its current layout</div>' + t.card.map(function(x){ return '<div class="mb-2">' + rich(x) + '</div>'; }).join('') + '</div>' : '') +
     ruled(t) +
     (at === n - 1 && data.next_clean ? '<div class="banner warn mt-2"><strong>Calculated, not recorded: what Keep held on the lag card would do.</strong> No recorded run has that click. From this run\'s facts, using belief.py: ' + esc(data.next_clean.source) + ' reliability goes from ' + data.next_clean.reliability_before.toFixed(3) + ' to ' + data.next_clean.reliability_after.toFixed(3) + ', so the next clean credit\'s P(safe) goes from ' + data.next_clean.p_safe_before.toFixed(4) + ' to ' + data.next_clean.p_safe_after.toFixed(4) + ', and it still acts.</div>' : '') +

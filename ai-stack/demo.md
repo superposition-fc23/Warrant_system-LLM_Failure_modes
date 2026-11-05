@@ -17,7 +17,7 @@ Double-click `Warrant Demo.command` in the project folder. It opens the prototyp
 3. **Over-cap credit:** held, with the clause and its source on the card. Click **Keep held**.
 4. **Run again, keep my rulings.** The next clean credit shows the lower P(safe).
 
-If the model API or anything live fails, use **Replay a recorded run** on the same tab. It makes no calls and also works when the prototype is opened from the file. Say it is a replay. It includes the recorded Commit click that wrote a second credit.
+If the model API or anything live fails, use **Replay a recorded run** on the same tab. It makes no calls and also works when the prototype is opened from the file. Say it is a replay. It includes the recorded Commit click that wrote a second credit. Its last ticket adds what Keep held on the lag card would do, labelled as calculated, because no recorded run has that click.
 
 Rehearsal only, in a separate run: click **Commit** on the lag card. It should refuse and say why.
 

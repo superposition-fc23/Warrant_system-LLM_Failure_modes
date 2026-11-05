@@ -706,6 +706,7 @@ function render(){
     '<p class="text-sm text-fg-2 mt-2 mb-2">' + say(t) + '</p>' +
     (t.card ? '<div class="bg-surface-2 border border-solid border-rule rounded p-3 text-sm"><div class="text-xs text-fg-3 mb-1">Slack card, in its current layout</div>' + t.card.map(function(x){ return '<div class="mb-2">' + rich(x) + '</div>'; }).join('') + '</div>' : '') +
     ruled(t) +
+    (at === n - 1 && data.next_clean ? '<div class="banner warn mt-2"><strong>Calculated, not recorded: what Keep held on the lag card would do.</strong> No recorded run has that click. From this run\'s facts, using belief.py: ' + esc(data.next_clean.source) + ' reliability goes from ' + data.next_clean.reliability_before.toFixed(3) + ' to ' + data.next_clean.reliability_after.toFixed(3) + ', so the next clean credit\'s P(safe) goes from ' + data.next_clean.p_safe_before.toFixed(4) + ' to ' + data.next_clean.p_safe_after.toFixed(4) + ', and it still acts.</div>' : '') +
     '<div class="flex gap-2 mt-3"><button id="replay-prev" class="rounded border border-solid border-rule bg-surface text-fg px-3 py-2 text-sm cursor-pointer">Previous</button><button id="replay-next" class="rounded border border-solid border-accent bg-accent text-surface px-3 py-2 text-sm font-semibold cursor-pointer">Next</button></div>';
   el('replay-prev').disabled = at === 0;
   el('replay-next').disabled = at === n - 1;

@@ -381,14 +381,15 @@ body.show-notes .slide.on .notes{display:block}
 
   <section class="slide">
     <div class="rail"><span class="on">The problem</span><span>The product</span><span>The proof</span><span>Judgment and next steps</span></div>
-    <h2>What primary users told me</h2>
+    <h2>What primary users told me, and what public forums added</h2>
     <p class="lede">Three primary users in the segments Warrant serves. What each one described shaped the job on the previous slide.</p>
     <div class="row big" style="grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*1.6)">
       <div class="card"><span class="tag grey">CSM at an enterprise SaaS company</span><p style="color:var(--fg)">When the AI answered from one system and another held the truth, complaints went past the account team to the client's C-suite. A confident wrong answer cost more trust than a slow one.</p><p class="muted small">Points to: actions that match what is true across systems</p></div>
       <div class="card"><span class="tag grey">Support engineer at a Managed Service Provider (MSP)</span><p style="color:var(--fg)">Answers still sounded complete when a connector had broken or a decision had been superseded. Nobody could tell from the output.</p><p class="muted small">Points to: silence must never mean safe</p></div>
       <div class="card"><span class="tag grey">Business manager at a Fortune 500 insurer</span><p style="color:var(--fg)">When a plan changed mid-period, payouts were disputed over which version applied. The amended rule should govern only from its effective date.</p><p class="muted small">Points to: automation that does not quietly create leakage</p></div>
     </div>
-    <div class="foot"><span>Primary research so far: three users, plus sentiment analysis on a small corpus of public forum posts. Next: 20+ interviews and 100+ online surveys</span><span></span></div>
+    <div class="card" style="margin-top:calc(var(--u)*1.2);font-size:calc(var(--u)*1.3)"><span class="tag grey">Secondary research: sentiment analysis of 181 public opinions (163 Hacker News comments, 18 Substack posts)</span><p style="color:var(--fg)"><strong>Joint biggest gap:</strong> when answers conflict on a ticket, nobody can quickly say which should win, or why. <strong>Loudest theme:</strong> approval fatigue, 46 of 181. <strong>What it overturned:</strong> I assumed tracing was solved, but authors say logs cannot tell agent actions from human ones.</p></div>
+    <div class="foot"><span>Primary research so far: three users. Next: 20+ interviews and 100+ online surveys. Forum authors are mostly developers, 1 of 181 read as finance, and a model scored each opinion, so this stands in for interviews</span><span></span></div>
     <aside class="notes">5:00 to 6:00. If asked when and where: conversations with primary users of the products I worked on at DevRev, MSPbots and Xoxoday. The MSPbots one maps straight onto the belief layer's rule that silence must be earned.</aside>
   </section>
 
@@ -513,6 +514,11 @@ body.show-notes .slide.on .notes{display:block}
         <h3>Expected loss decides</h3><p>Chance of being wrong times the amount, against the cost of waiting: act, re-read or hold. Hard vetoes still win every time.</p>
       </div>
     </div>
+    <div class="card" style="margin-top:calc(var(--u)*1.2);display:grid;grid-template-columns:1fr 1fr 1.45fr;gap:calc(var(--u)*2);font-size:calc(var(--u)*1.2)">
+      <p style="color:var(--fg);margin:0"><strong>Why it exists.</strong> v3 could only say fresh or stale, and treated model silence as safe. It could not express a credit list that lags writes, or a model that flips between runs.</p>
+      <p style="color:var(--fg);margin:0"><strong>The Bayesian part.</strong> A source starts 0.995 reliable, and one kept hold drops it to 0.990. Ageing: a billing read counts 0.995 fresh, 0.90 at its 6 h window, 0.81 at 12 h.</p>
+      <p style="color:var(--fg);margin:0"><strong>P(safe) on a $300 credit.</strong> Multiply the facts, then weigh the doubt against a $20 cost of delay: $2.67 of review (4 min at an assumed $40 an hour) plus $17.33 of other delay, assumed. $20 on $300 tolerates 6.7% doubt. All clean and fresh: 0.975, so it acts. 40 s after a billing change: 0.35, so it re-reads.</p>
+    </div>
     <div class="foot"><span>P(safe) assumes independent facts. All priors are assumed and were fixed before the runs. The unread-fact value of 0.8 is a policy, not a measurement</span><span></span></div>
     <aside class="notes">9:30 to 10:30. A few pure functions, no new dependencies. The model stays an extractor, because its outputs are not calibrated probabilities. A cited ID shows the record exists, not that the model read it; say this limit yourself. If asked what is Bayesian: each fact's belief combines a starting assumption with fresh evidence, rulings update how much each source is trusted, and the decision weighs the chance of being wrong against the cost of waiting.</aside>
   </section>
@@ -535,6 +541,7 @@ body.show-notes .slide.on .notes{display:block}
         <p style="color:var(--fg)">The tickets, the seeded accounts, the contracts and the risk flags.</p>
       </div>
     </div>
+    <div class="card" style="margin-top:calc(var(--u)*2);padding:calc(var(--u)*.9);background:var(--accent-soft);border-color:var(--accent);text-align:center"><p style="font-family:var(--serif);font-size:calc(var(--u)*3.2);font-weight:600;line-height:1;letter-spacing:.14em;color:var(--accent)">DEMO</p></div>
     <div class="foot"><span>Seeded, fictional accounts only. A labelled replay of a recorded run is ready if the live path fails</span><span></span></div>
     <aside class="notes">10:30 to 18:30. Say real and mocked before starting. Before the call: double-click Warrant Demo.command, open tab 8, close notifications. Press Start clean demo; it clears earlier rulings by itself. On the call, click only Keep held. Go slowly on step 2. Say: this shows the layer reaches the same answer without the special-case rules, not that those rules are unnecessary; both stay in production. τ came from this same lag, and a later live run saw the list stale for over 5 minutes, so a re-read at the suggested time is not proof. If you click Commit on the lag card, it now refuses and says why; that refusal has only been unit tested, so rehearse it. If anything breaks, press Replay a recorded run on the same tab, say it is a replay, and do not apologise twice.</aside>
   </section>
@@ -614,9 +621,9 @@ body.show-notes .slide.on .notes{display:block}
       </svg>
       <div class="flex gap-5 text-fg-2" style="font-size:clamp(10px,min(0.875vw,1.56vh),14px);margin-top:.2em"><span><span style="color:var(--accent)">&#9679;&#9472;</span> Clean cases a person sees</span><span><span style="color:var(--warn)">&#9679;&#8211;&#8211;</span> Defects that would act</span></div></figure>
       <div>
-        <p style="margin-bottom:calc(var(--u)*1)"><strong>The dial is the buyer's control.</strong> It trades how many cases a person reviews against how many defects get through.</p>
-        <p style="margin-bottom:calc(var(--u)*1)"><strong>Below $20</strong>, no defect acts, but a person sees up to 73% of clean cases. <strong>Above $20</strong>, defects start to act and no review is saved.</p>
-        <p style="margin-bottom:calc(var(--u)*1)"><strong>Review time alone does not pay for this:</strong> about $1,170 to $1,570 a month at 5,000 cases <span class="pill warn">assumed</span>.</p>
+        <p style="margin-bottom:calc(var(--u)*1)"><strong>$20 is not the cost of a run.</strong> It is the buyer's dial: what making one case wait costs, $2.67 of review plus $17.33 assumed.</p>
+        <p style="margin-bottom:calc(var(--u)*1)"><strong>Below $20</strong>, no defect acts, but a person sees up to 73% of clean cases. <strong>Above $20 is worse:</strong> defects act and review does not fall. So $20 is the best point tested.</p>
+        <p style="margin-bottom:calc(var(--u)*1)"><strong>Saved review time alone does not pay for this.</strong> Reviewing all 5,000 cases a month (assumed) costs $10,000 to $13,333; at $20, $1,170 to $1,570. That saves about $106k to $141k a year, below an assumed $250k price.</p>
         <p class="soft">The case rests on what is not yet counted: clawbacks, lost trust and manual account work.</p>
       </div>
     </div>
@@ -632,8 +639,8 @@ body.show-notes .slide.on .notes{display:block}
       <tbody>
         <tr><td><strong>A belief layer, not a bigger model</strong></td><td>Cost: 2.6 times per decision</td><td>A single sample holds the catch rate</td></tr>
         <tr><td><strong>Labels from how cases were built, not from a model</strong></td><td>Realism: half the set is defects</td><td>A log pull gives real cases</td></tr>
-        <tr><td><strong>Priors frozen before the runs, even the two now known wrong</strong></td><td>A better score</td><td>A held-out set exists to refit on</td></tr>
-        <tr><td><strong>Fail closed, shadow first</strong></td><td>Automation rate</td><td>Over-holds cost more than the leakage they stop</td></tr>
+        <tr><td><strong>Priors frozen before the runs, even the two now known wrong</strong></td><td>A better score</td><td>New cases, unseen by these runs, exist to re-tune them on</td></tr>
+        <tr><td><strong>Fail closed, shadow first:</strong> hold if a check or source fails, and score real tickets without writing before any autonomy</td><td>Automation rate</td><td>Over-holds cost more than the leakage they stop</td></tr>
       </tbody>
     </table></div>
     <div class="foot"><span>The two priors now known wrong: the credit list's 90 s τ, and the unread-fact 0.8, a policy that was never going to calibrate</span><span></span></div>
@@ -659,11 +666,11 @@ body.show-notes .slide.on .notes{display:block}
     <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="done">The proof</span><span class="on">Judgment and next steps</span></div>
     <h2>Three ways I could be wrong</h2>
     <div class="row big" style="grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*1.6)">
-      <div class="card"><p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);font-weight:600;color:var(--stop);line-height:1;margin-bottom:calc(var(--u)*.6)">1</p><h3>The evidence base is still small</h3><p>It rests on minimal primary research, my prior experience in this segment, and sentiment analysis on a small corpus of forum opinions. Targeted JTBD interviews with a larger pool of potential customers, and a much larger forum corpus, would give a basis to trust.</p></div>
-      <div class="card"><p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);font-weight:600;color:var(--stop);line-height:1;margin-bottom:calc(var(--u)*.6)">2</p><h3>The results partly grade themselves</h3><p>One model family wrote the system, the cases and the judge. My review of 15 records is the first outside check, by the author: 11 matched v3 and 10 matched v4. Generated defects remove the model from the labels, but I still wrote the generator.</p></div>
-      <div class="card"><p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);font-weight:600;color:var(--stop);line-height:1;margin-bottom:calc(var(--u)*.6)">3</p><h3>The live path is real but small</h3><p>Scripted tickets, seeded accounts and one kind of write. A cited record shows it exists, not that the model read it, and P(safe) is not yet a calibrated probability.</p></div>
+      <div class="card" style="display:flex;flex-direction:column"><p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);font-weight:600;color:var(--stop);line-height:1;margin-bottom:calc(var(--u)*.6)">1</p><h3>The evidence base is still small</h3><p>It rests on minimal primary research, my prior experience in this segment, and sentiment analysis on a small corpus of forum opinions. Targeted JTBD interviews with a larger pool of potential customers, and a much larger forum corpus, would give a basis to trust.</p><p style="margin-top:auto;padding-top:calc(var(--u)*.9);color:var(--fg)"><strong>Named test:</strong> interviews and surveys at scale.</p></div>
+      <div class="card" style="display:flex;flex-direction:column"><p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);font-weight:600;color:var(--stop);line-height:1;margin-bottom:calc(var(--u)*.6)">2</p><h3>The results partly grade themselves</h3><p>Sonnet 5.5 runs the agent and the compare step; Opus 5.5 is the eval judge. The belief layer and the 224 generated cases are code, not a model, but I wrote that code with Claude Code. My review of 15 records is the first outside check, by the author: 11 matched v3 and 10 matched v4.</p><p style="margin-top:auto;padding-top:calc(var(--u)*.9);color:var(--fg)"><strong>Named test:</strong> labels from people who did not build it.</p></div>
+      <div class="card" style="display:flex;flex-direction:column"><p style="font-family:var(--serif);font-size:calc(var(--u)*2.6);font-weight:600;color:var(--stop);line-height:1;margin-bottom:calc(var(--u)*.6)">3</p><h3>The live path is real but small</h3><p>Scripted tickets, seeded accounts and one kind of write. A cited record shows it exists, not that the model read it, and P(safe) is not yet a calibrated probability.</p><p style="margin-top:auto;padding-top:calc(var(--u)*.9);color:var(--fg)"><strong>Named test:</strong> a shadow pilot on real traffic.</p></div>
     </div>
-    <div class="foot"><span>Each has a named test: interviews and surveys at scale, labels from people who did not build it, and a shadow pilot on real traffic</span><span></span></div>
+        <div class="foot"><span></span><span></span></div>
     <aside class="notes">23:00 to 24:30. Never cut this slide. Volunteer it before Q&amp;A. Point 2: on those 2 injection cases the gate was stricter than I was, held on the contract cap. Do not oversell it: 15 records, one reviewer. Ask: "What would change your view of the size of this problem by an order of magnitude?"</aside>
   </section>
 

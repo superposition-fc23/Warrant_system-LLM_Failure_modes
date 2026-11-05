@@ -44,6 +44,7 @@ How I got to the v4 plan: [`v4-plan-approach.md`](v4-plan-approach.md). The meth
 | One clean control could not measure over-holding | Controls now match planted cases, 10 and 10 | Give the counter-metric enough clean cases to move |
 
 | The first Reddit search returned 0 rows from 16 failed calls, and the report drew a clean table of zeros | Read the error before reading the table | A zero from a failed call is not a finding. Same rule as the severity outcome: check recall first |
+| A dial swept at six doubling steps looked like one good setting. Replaying the stored decisions in cents showed the same outcome from about $15 to $31 | The deck shows the band and a build-up of the $20, with its balancing input named | Sweep finely before defending a point estimate. A build-up done after the run is a test of the number, not its origin, and any input chosen to fit must say so |
 
 ## AI architecture and cost
 

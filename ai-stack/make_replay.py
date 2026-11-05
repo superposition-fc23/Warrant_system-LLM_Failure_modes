@@ -6,8 +6,24 @@ import json
 import os
 import sys
 
+import belief
 import crm_mcp
 import slack_card
+
+
+def next_clean(rows):
+    """What a kept hold on the lag card would do to the next clean credit. Calculated from the recorded facts with belief.py, because no recorded run has that click."""
+    records = [x["record"] for row in rows for x in row["records"]]
+    clean = next(r for r in records if r["decision"] == "act")
+    lag = next(r for r in records if r["decision"] == "gather")
+    src = lag["belief"]["top_doubt_source"]
+    table = json.loads(json.dumps(belief.PRIORS["sources"]))
+    before = belief.reliability(src, table)
+    table[src]["beta"] += 1
+    after = belief.reliability(src, table)
+    facts = dict(clean["belief"]["facts"])
+    facts["no_prior_compensation"] *= after / before
+    return {"source": src, "reliability_before": round(before, 4), "reliability_after": round(after, 4), "p_safe_before": clean["belief"]["p_safe"], "p_safe_after": round(belief.p_safe(facts), 4)}
 
 
 def build(folder):
@@ -27,7 +43,7 @@ def build(folder):
             steps.append({"ticket": row["ticket"], "agent": row["agent"], "account": rec["action"]["account_id"], "amount": rec["action"]["amount"], "decision": rec["decision"], "status": x["tool_result"]["status"],
                           "p_safe": b.get("p_safe"), "vetoed_by": b.get("vetoed_by"), "wait_seconds": b.get("wait_seconds"), "fact": rec["discriminating_fact"], "card": card, "credit_id": x["tool_result"].get("credit_id"),
                           "reply": row["reply"][:400], "ruling": r.get("ruling"), "seconds_to_ruling": r.get("seconds_to_ruling"), "ruling_credit": r.get("credit_id"), "belief_update": r.get("belief_update")})
-    return {"run": os.path.basename(folder.rstrip("/")), "steps": steps}
+    return {"run": os.path.basename(folder.rstrip("/")), "steps": steps, "next_clean": next_clean(rows)}
 
 
 if __name__ == "__main__":

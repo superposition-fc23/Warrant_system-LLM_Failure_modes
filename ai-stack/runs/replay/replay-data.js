@@ -70,5 +70,12 @@ window.WARRANT_REPLAY = {
    "ruling_credit": null,
    "belief_update": null
   }
- ]
+ ],
+ "next_clean": {
+  "source": "billing",
+  "reliability_before": 0.995,
+  "reliability_after": 0.99,
+  "p_safe_before": 0.9752,
+  "p_safe_after": 0.9704
+ }
 };

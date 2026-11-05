@@ -316,7 +316,7 @@ body.show-notes .slide.on .notes{display:block}
       </div>
     </div>
     <div class="foot"><span>Built in public: github.com/superposition-fc23. All accounts and data in this deck are seeded test data</span><span></span></div>
-    <aside class="notes">0:00 to 1:00. Introduce yourself first, and protect the opening for the introduction. One line on you, then: "An agent can pass every check and still give away money it should not. I will show that happening to my own system." Method in one line: I set the bar first, then report results and misses. Say the plan: the problem, the product, a live demo, the proof, and where this is weak.</aside>
+    <aside class="notes">0:00 to 1:00. Introduce yourself first, and protect the opening for the introduction. One line on you, then: "An agent can pass every check and still give away money it should not. I will show that happening to my own system." Method in one line: I set the bar first, then report results and misses. Say the plan: the problem, the product, a demo, the proof, and where this is weak.</aside>
   </section>
 
   <section class="slide">
@@ -525,25 +525,25 @@ body.show-notes .slide.on .notes{display:block}
 
   <section class="slide">
     <div class="rail"><span class="done">The problem</span><span class="done">The product</span><span class="on">The proof</span><span>Judgment and next steps</span></div>
-    <h2>Live: a real agent, real test systems, a real click</h2>
+    <h2>The demo: a recorded run from real test systems</h2>
     <div class="row" style="grid-template-columns:1.5fr 1fr;gap:calc(var(--u)*4);align-items:start">
       <ol class="steps" style="font-size:calc(var(--u)*1.6);row-gap:calc(var(--u)*1.2)">
         <li><span><strong>A clean credit</strong> commits to Chargebee, and nobody is told.</span></li>
         <li><span><strong>A second agent credits the same incident</strong>, with the ledger switched off. The belief layer gathers on its own, showing P(safe) and when it will re-read.</span></li>
-        <li><span><strong>Keep held in Slack.</strong> One click lowers how much Warrant trusts billing's credit list.</span></li>
-        <li><span><strong>Run it again.</strong> The next clean credit shows the lower P(safe).</span></li>
-        <li><span><strong>The prototype screens:</strong> the autonomy boundary, the shadow report and the review.</span></li>
+        <li><span><strong>A person clicked Commit in Slack,</strong> and a second credit was written. I found it in this log. Commit now refuses; that fix is unit tested only.</span></li>
+        <li><span><strong>An over-cap credit</strong> hits a hard veto, with the clause on the card. Keep held writes nothing.</span></li>
+        <li><span><strong>Calculated, not recorded:</strong> what Keep held on the lag card does to billing's reliability and the next clean credit.</span></li>
       </ol>
       <div class="card">
-        <span class="tag ok">Real</span>
+        <span class="tag ok">Real, when recorded</span>
         <p style="color:var(--fg);margin-bottom:calc(var(--u)*1.2)">The agent, the gate, reads from HubSpot and Chargebee test accounts, the credit write, and the Slack clicks.</p>
         <span class="tag warn">Scripted or local</span>
         <p style="color:var(--fg)">The tickets, the seeded accounts, the contracts and the risk flags.</p>
       </div>
     </div>
     <div class="card" style="margin-top:calc(var(--u)*2);padding:calc(var(--u)*.9);background:var(--accent-soft);border-color:var(--accent);text-align:center"><p style="font-family:var(--serif);font-size:calc(var(--u)*3.2);font-weight:600;line-height:1;letter-spacing:.14em;color:var(--accent)">DEMO</p></div>
-    <div class="foot"><span>Seeded, fictional accounts only. A labelled replay of a recorded run is ready if the live path fails</span><span></span></div>
-    <aside class="notes">10:30 to 18:30. Say real and mocked before starting. Before the call: double-click Warrant Demo.command, open tab 8, close notifications. Press Start clean demo; it clears earlier rulings by itself. On the call, click only Keep held. Go slowly on step 2. Say: this shows the layer reaches the same answer without the special-case rules, not that those rules are unnecessary; both stay in production. τ came from this same lag, and a later live run saw the list stale for over 5 minutes, so a re-read at the suggested time is not proof. If you click Commit on the lag card, it now refuses and says why; that refusal has only been unit tested, so rehearse it. If anything breaks, press Replay a recorded run on the same tab, say it is a replay, and do not apologise twice.</aside>
+    <div class="foot"><span>Seeded, fictional accounts only. Recorded on 3 Nov; nothing in the replay runs now</span><span></span></div>
+    <aside class="notes">10:30 to 18:30. Say first: this is a recording of a real run, not live. Real at the time: the agent, the gate, the test systems and the clicks. Scripted: the tickets. Then real and mocked. Open prototype tab 8 and press Replay a recorded run. Point at the recorded steps on each ticket. Go slowly on ticket 2. Say: this shows the layer reaches the same answer without the special-case rules, not that those rules are unnecessary; both stay in production. τ came from this same lag, and the list stayed stale for over 5 minutes in this run, so a re-read at the suggested time is not proof. The Commit click is the failure I found by reading this log. The refusal has only been unit tested. Show the credits in the Chargebee test site if the tab is open. Say the last step is calculated. Do not apologise twice.</aside>
   </section>
 
   <section class="slide">

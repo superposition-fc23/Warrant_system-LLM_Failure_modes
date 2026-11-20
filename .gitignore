@@ -9,3 +9,6 @@ ai-stack/.chroma/
 ai-stack/.models/
 __pycache__/
 *.mp3
+
+# Local Phoenix state for v5
+ai-stack/v5/.phoenix/

@@ -1,4 +1,4 @@
-# AI stack for the Dyssonance live case
+# AI stack for Warrant
 
 Python 3.12, managed by uv. Every script runs from this folder. Everything in `docs/` is synthetic.
 

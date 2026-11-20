@@ -2,7 +2,7 @@
 
 A checkpoint for AI agents in customer service. When an agent is about to take a money action, such as a credit or a refund, Warrant reads the source systems. If they disagree, it holds the action and names the exact fact in conflict, so a person can rule on it. Each ruling becomes a standing rule and an eval case.
 
-Built for an enterprise AI case challenge. The commits and pull requests are kept as a public record of how it developed.
+An independent, self-built project, developed in public. The commits and pull requests are kept as a public record of how it developed.
 
 ## Where to look
 

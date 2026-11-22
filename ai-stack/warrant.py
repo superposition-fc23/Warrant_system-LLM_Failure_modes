@@ -36,10 +36,13 @@ from langgraph.graph import END, START, StateGraph
 from mcp.client.client import Client
 
 import belief
+import callguard
 import crm_mcp
 import live_sources
 import llm
+import facts
 import pii
+import verify
 from opentelemetry import trace
 
 from telemetry import tracer
@@ -47,11 +50,13 @@ from telemetry import tracer
 FRESHNESS = {"crm": timedelta(hours=6), "billing": timedelta(hours=6), "risk": timedelta(hours=24), "contracts": timedelta(days=30)}
 ASSERTION_WINDOW = timedelta(hours=1)    # an agent's remembered fact older than this is replaced by a source read
 FACT_OWNER = {"risk": "Risk analyst", "billing": "Billing analyst", "contracts": "Billing analyst", "crm": "Billing analyst"}
-COMPARE_MODEL = "sonnet-5.5"
+COMPARE_MODEL = os.getenv("WARRANT_COMPARE_MODEL", "sonnet-5.5")    # an open-model run sets this, so its records say which model decided
 SAMPLES = 3
 BELIEF_ONLY = False    # no ledger and no balance check, to show the belief layer catching the lag alone
 CHECKED = ["contract_terms", "risk_flags", "entitlements", "prior_credits", "messages"]
-MAX_OUTPUT = 2000    # the longest v3 probe answer was 1,233 tokens; a reply cut off here holds
+VERIFY_CLAIMS = os.getenv("WARRANT_VERIFY_CLAIMS") == "1"
+COMPUTED_FACTS = os.getenv("WARRANT_COMPUTED_FACTS") == "1"    # arm A+verify+facts: neutral numbers computed by code go in the prompt (off in v4)    # arm A+verify: arithmetic behind a conflict is rechecked in code (off in v4)
+MAX_OUTPUT = int(os.getenv("WARRANT_MAX_OUTPUT", "2000"))    # an arm that lets the model think raises this, labelled as a deviation from v4; the longest v3 probe answer was 1,233 tokens; a reply cut off here holds
 # Conflict kinds that can stop a money action. "unverifiable" (no system covers the fact) and "data_quality" are
 # recorded but never hold on their own.
 MATERIAL_KINDS = {"payment_risk", "contract_terms", "amount", "entitlement", "duplicate", "authority", "currency", "injection"}
@@ -128,6 +133,8 @@ class State(TypedDict, total=False):
 async def read_one(client, system, tool, account_id):
     with tracer.start_as_current_span(f"mcp.tool {tool}") as sp:
         sp.set_attribute("account_id", account_id)
+        for k, v in {"openinference.span.kind": "TOOL", "tool.name": tool, "input.value": json.dumps({"account_id": account_id})}.items():
+            sp.set_attribute(k, v)
         try:
             rec = crm_mcp.parse(await asyncio.wait_for(client.call_tool(tool, {"account_id": account_id}), SOURCE_BUDGET))
         except asyncio.TimeoutError:
@@ -138,6 +145,7 @@ async def read_one(client, system, tool, account_id):
         if "error" not in rec and missing:
             rec = {"source": system, "error": f"reply is missing {', '.join(sorted(missing))}"}
         sp.set_attribute("source.error", rec.get("error", ""))
+        sp.set_attribute("output.value", pii.scrub(json.dumps(rec))[:8000])    # synthetic records; contact details scrubbed anyway
         return system, rec
 
 
@@ -299,11 +307,42 @@ COMPARE_SCHEMA = obj(
     checked={"type": "array", "items": obj(fact={"enum": CHECKED}, record_id=TEXT)}, discriminating_fact=NULL_TEXT, owner_role=NULL_TEXT, question=NULL_TEXT)
 
 
+CLAIM = {"type": ["object", "null"], "properties": {"left": TEXT, "op": {"enum": [">", ">=", "<", "<=", "!="]}, "right": TEXT},
+         "required": ["left", "op", "right"], "additionalProperties": False}
+CLAIM_HINT = """
+- claim (inside each conflict): if the conflict rests on arithmetic or dates, state the violation as {{left, op, right}} so code can check it: left is what the proposal does, right is what the governing record allows, and op (one of > >= < <= !=) is how the proposal breaks it. Example: a 900 credit against a cap of 10% of a 6000 fee is {{"left": "900", "op": ">", "right": "pct(10, 6000)"}}. Use only numbers copied from the proposal and records, + - * /, pct(p, base) for p% of base, and days("YYYY-MM-DD", "YYYY-MM-DD") for the days between two dates. If code finds the claim false, the conflict is dropped, so if the proposal agrees with the record there is no conflict to report. Otherwise null."""
+
+
+def compare_schema():
+    if not VERIFY_CLAIMS:
+        return COMPARE_SCHEMA
+    s = json.loads(json.dumps(COMPARE_SCHEMA))
+    items = s["properties"]["conflicts"]["items"]
+    items["properties"]["claim"] = CLAIM
+    items["required"] = items["required"] + ["claim"]
+    return s
+
+
+def facts_block(proposal, sources, now):
+    if not COMPUTED_FACTS:
+        return ""
+    return "\n\nComputed by code from the proposal and records (quantities only, not conclusions):\n" + "\n".join(f"- {l}" for l in facts.compute(proposal, sources, now))
+
+
+def compare_prompt_tail():
+    return CLAIM_HINT.format() if VERIFY_CLAIMS else ""
+
+
 def ask_compare(model, prompt):
     with tracer.start_as_current_span("llm.compare") as sp:
         t = time.time()
         meta = {}
-        out = llm.ask(model, prompt, system=COMPARE_SYSTEM, max_tokens=MAX_OUTPUT, effort="low", schema=COMPARE_SCHEMA, meta=meta)
+        try:
+            out = llm.ask(model, prompt, system=COMPARE_SYSTEM, max_tokens=MAX_OUTPUT, effort="low", schema=compare_schema(), meta=meta)
+        except callguard.GuardError as e:    # refused, out of budget, a loop, or retries spent: no answer, so the gate holds
+            sp.set_attribute("llm.refused", str(e)[:200])
+            data = {"parse_error": f"model call refused: {e}"[:300], "conflicts": [], "limits": []}
+            return data, {"model": model, "served_model": None, "stop_reason": "refused", "tokens_in": 0, "tokens_out": 0, "cost_usd": 0.0, "answer": ""}
         tin, tout = meta.get("usage") or llm.LAST_USAGE
         meta = meta or llm.LAST_META
         cin, cout = llm.MODELS[model]["cost"]
@@ -318,6 +357,10 @@ def ask_compare(model, prompt):
         data = {"parse_error": out[:300], "conflicts": [], "limits": []}
     if meta["stop_reason"] == "max_tokens":
         data = {"parse_error": f"reply cut off at {MAX_OUTPUT} tokens", "conflicts": [], "limits": []}
+    if VERIFY_CLAIMS and "parse_error" not in data:
+        data, refuted = verify.check(data, prompt)
+        data["refuted"] = refuted
+        trace.get_current_span().set_attribute("verify.refuted", len(refuted))
     return data, {"model": model, "served_model": meta["served_model"], "stop_reason": meta["stop_reason"], "tokens_in": tin,
                   "tokens_out": tout, "cost_usd": cost, "answer": out}
 
@@ -347,7 +390,7 @@ async def compare(s: State) -> State:
     current = [a for a in s["assertions"] if a["used"]]
     m = redaction_map(s)
     prompt = pii.scrub(swap(COMPARE_PROMPT.format(now=s["now"], agent=p["agent"], summary=summary(p), proposal=json.dumps({**p, "asserted": current}),
-                                                  sources=json.dumps(src, indent=1), assertions=json.dumps(current), checked=", ".join(CHECKED)), m))
+                                                  sources=json.dumps(src, indent=1), assertions=json.dumps(current), checked=", ".join(CHECKED)) + facts_block(p, src, s["now"]) + compare_prompt_tail(), m))
     with tracer.start_as_current_span("pii.redact") as sp:
         sp.set_attribute("pii.redacted_names", len(m))
     k = 1 if settled == "stake" else SAMPLES    # one answer is enough to name the fact when no answer could clear the action
@@ -545,7 +588,8 @@ def traced(name, fn):
                 return await fn(s)
     else:
         def run(s):
-            with tracer.start_as_current_span(f"gate.{name}"):
+            with tracer.start_as_current_span(f"gate.{name}") as sp:
+                sp.set_attribute("openinference.span.kind", "DECISION" if name == "decide" else "CHAIN")
                 return fn(s)
     return run
 
@@ -569,12 +613,15 @@ async def run(case, now, people, authority):
     crm_mcp.load(case["world"], people, authority)
     with tracer.start_as_current_span("gate.run") as sp:
         sp.set_attribute("case_id", case["id"])
+        sp.set_attribute("openinference.span.kind", "CHAIN")
+        sp.set_attribute("input.value", json.dumps(case["proposal"]))
         t = time.time()
         out = await app.ainvoke({"case": case, "now": now})
         rec = out["record"]
         rec["latency_ms"] = round((time.time() - t) * 1000)
         rec["trace_id"] = f"{sp.get_span_context().trace_id:032x}"
         sp.set_attribute("decision", rec["decision"])
+        sp.set_attribute("output.value", rec["decision"])
     return rec
 
 

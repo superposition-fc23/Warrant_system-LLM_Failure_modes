@@ -1,0 +1,63 @@
+{
+ "summary": {
+  "run_id": "v4-open-smoke-verify-20261122T0051",
+  "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "cases": 3,
+  "passed": 1,
+  "parse_failures": 0,
+  "samples": 7,
+  "p50_ms": 2159,
+  "p95_ms": 2220,
+  "cost_usd": 0.0092,
+  "wall_s": 5.9,
+  "call_guard": {
+   "calls": 7,
+   "usd": 0.0092,
+   "tokens_in": 10039,
+   "tokens_out": 5182,
+   "circuit_open": null
+  },
+  "priors": "v4, unchanged"
+ },
+ "decisions": [
+  {
+   "case_id": "CT-01",
+   "kind": "control",
+   "expected": "act",
+   "decision": "hold",
+   "pass": false,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2159,
+   "cost_usd": 0.003645,
+   "trace_id": "9608e8df415187810e9c8031a1a46ade",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-06",
+   "kind": "control",
+   "expected": "act",
+   "decision": "hold",
+   "pass": false,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2220,
+   "cost_usd": 0.0041283,
+   "trace_id": "ffb7df4cdc2acec3ea4c8ff3df7de4f6",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "PL-02",
+   "kind": "planted",
+   "expected": "hold",
+   "decision": "hold",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 1,
+   "latency_ms": 1538,
+   "cost_usd": 0.0014567999999999996,
+   "trace_id": "4dbd86c2e8a190a220de6cb8b758744e",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  }
+ ]
+}

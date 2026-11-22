@@ -74,6 +74,11 @@ async def shard(path, out, runs, index, count, only=None):
                                     "decision": r["decision"], "belief": r.get("belief"), "samples": r.get("samples"), "fact": r.get("discriminating_fact"), "cost_usd": u.get("cost_usd", 0),
                                     "calls": len(u.get("answers", [])) or (1 if u else 0), "answers": u.get("answers") or ([u["answer"]] if u.get("answer") else []), "latency_ms": round((time.time() - t) * 1000)}) + "\n")
                 f.flush()
+    try:    # the call guard's totals for this shard: retries, 429s, breaker trips, spend
+        import callguard
+        json.dump(callguard.GUARD.summary(), open(f"{out}/guard-{index}{'-fill' if only else ''}.json", "w"), indent=1)
+    except ImportError:
+        pass
 
 
 def main_run(version, runs, procs, path):

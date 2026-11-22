@@ -1,0 +1,128 @@
+{
+ "summary": {
+  "run_id": "v4-open-smoke-verify-facts-20261122T0100",
+  "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "cases": 8,
+  "passed": 6,
+  "parse_failures": 0,
+  "samples": 19,
+  "p50_ms": 1896,
+  "p95_ms": 2739,
+  "cost_usd": 0.0211,
+  "wall_s": 14.7,
+  "call_guard": {
+   "calls": 19,
+   "usd": 0.0211,
+   "tokens_in": 31529,
+   "tokens_out": 9704,
+   "circuit_open": null
+  },
+  "priors": "v4, unchanged"
+ },
+ "decisions": [
+  {
+   "case_id": "CT-01",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 1754,
+   "cost_usd": 0.0025640999999999997,
+   "trace_id": "7cbfd00f73eab25927f9d8907ecbd77d",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-04",
+   "kind": "control",
+   "expected": "act",
+   "decision": "hold",
+   "pass": false,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2398,
+   "cost_usd": 0.0033402,
+   "trace_id": "0e5a7b8053952e3e724817f7419ab757",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-06",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2739,
+   "cost_usd": 0.0032022,
+   "trace_id": "098c06e41555841b6c8c6535e9b156d7",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-10",
+   "kind": "control",
+   "expected": "act",
+   "decision": "hold",
+   "pass": false,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 1896,
+   "cost_usd": 0.0033321,
+   "trace_id": "3c1e6485d74e07a847075b087131ab18",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-11",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 1680,
+   "cost_usd": 0.0030006,
+   "trace_id": "7ca9750f1dbbd4ba0b92e66537821e6d",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "PL-02",
+   "kind": "planted",
+   "expected": "hold",
+   "decision": "hold",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 1,
+   "latency_ms": 1788,
+   "cost_usd": 0.0016929,
+   "trace_id": "9f0c42dc48d5b633b5796d6cf4886d64",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "PL-06",
+   "kind": "planted",
+   "expected": "gather",
+   "decision": "gather",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 0,
+   "latency_ms": 14,
+   "cost_usd": 0.0,
+   "trace_id": "17f03b10df1640794cb239235ab15803",
+   "served_model": null
+  },
+  {
+   "case_id": "PL-12",
+   "kind": "planted",
+   "expected": "hold",
+   "decision": "hold",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2379,
+   "cost_usd": 0.0039714,
+   "trace_id": "d04fa62fa1c6c437314c6fcaa4e47de4",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  }
+ ]
+}

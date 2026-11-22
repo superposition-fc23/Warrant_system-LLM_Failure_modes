@@ -1,0 +1,89 @@
+{
+ "summary": {
+  "run_id": "v4-open-smoke-verify2-20261122T0052",
+  "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "cases": 5,
+  "passed": 5,
+  "parse_failures": 1,
+  "samples": 13,
+  "p50_ms": 2356,
+  "p95_ms": 8811,
+  "cost_usd": 0.0152,
+  "wall_s": 17.4,
+  "call_guard": {
+   "calls": 13,
+   "usd": 0.0152,
+   "tokens_in": 19580,
+   "tokens_out": 7749,
+   "circuit_open": null
+  },
+  "priors": "v4, unchanged"
+ },
+ "decisions": [
+  {
+   "case_id": "CT-01",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2624,
+   "cost_usd": 0.0031799999999999997,
+   "trace_id": "784b540c448cdc17aa9609efcd91b93c",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-03",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 1697,
+   "cost_usd": 0.0025095,
+   "trace_id": "eefd54bc18905ee6435723caf5689f65",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-06",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 1,
+   "samples": 3,
+   "latency_ms": 8811,
+   "cost_usd": 0.0049701,
+   "trace_id": "0c53a25a3bf92c9e690e2f8fee194da7",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-10",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2356,
+   "cost_usd": 0.0029274,
+   "trace_id": "4779b8a42e2a6ca0f6d78c75766e7dda",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "PL-02",
+   "kind": "planted",
+   "expected": "hold",
+   "decision": "hold",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 1,
+   "latency_ms": 1863,
+   "cost_usd": 0.0015858,
+   "trace_id": "342276528cfba71a3114f9c4f677c4a3",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  }
+ ]
+}

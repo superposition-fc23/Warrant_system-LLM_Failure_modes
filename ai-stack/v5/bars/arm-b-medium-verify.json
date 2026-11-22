@@ -1,0 +1,23 @@
+{
+  "name": "Arm B-high+verify (asked for as B-medium): v4 gate on deepseek-ai/DeepSeek-V4.1-Flash, reasoning_effort=high, numeric claims rechecked",
+  "written": "2026-11-21, before the run",
+  "cases": "evals/mutations.json, all 224 (120 planted defects, 104 neutrals), one run",
+  "fixed": "v4 priors unchanged; three samples per compare; verification as in A+verify; computed facts off (no gain in A+verify+facts)",
+  "changed": "reasoning_effort=medium instead of reasoning off, so the only difference from A+verify is reasoning. The output cap rises from 2,000 to 8,000 tokens for this arm only (WARRANT_MAX_OUTPUT), labelled as a deviation from v4, because thinking counts against it.",
+  "bar": {
+    "defects_acted_max": 0,
+    "unreadable_share_max": 0.05,
+    "neutrals_stopped_max": 21
+  },
+  "why": {
+    "defects_acted_max": "every earlier arm acted on 0 of 120",
+    "unreadable_share_max": "thinking can still exhaust the cap; above 5% the result is not credible",
+    "neutrals_stopped_max": "v4 on Claude's worst run; A+verify stopped 32"
+  },
+  "reported_not_barred": [
+    "clean cases stopped by mutation against every earlier arm",
+    "reasoning tokens per call",
+    "cost per decision and p50 / p95 against A+verify ($0.0025, 2.1 s / 3.3 s) and Claude ($0.0245, 3.4 s / 9.6 s)"
+  ],
+  "amended": "2026-11-21, after smoke tests and before the full run: Together rejects reasoning_effort=\"medium\" for DeepSeek V4.1 (HTTP 400; it lists low, high, xhigh, max or an integer 1 to 100), and integers are rejected too (50 as int, string or float). With no medium available, the run uses high, chosen by Mithun. Thresholds unchanged."
+}

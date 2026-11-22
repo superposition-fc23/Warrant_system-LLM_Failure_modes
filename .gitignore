@@ -12,3 +12,9 @@ __pycache__/
 
 # Local Phoenix state for v5
 ai-stack/v5/.phoenix/
+
+# Private learnings and interview notes; keep local
+product/learnings/
+
+# Local Claude Code MCP config (third-party servers)
+.mcp.json

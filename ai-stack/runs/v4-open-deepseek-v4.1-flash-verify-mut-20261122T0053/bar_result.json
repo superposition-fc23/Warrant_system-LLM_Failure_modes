@@ -1,0 +1,73 @@
+{
+ "decisions": 224,
+ "errors": 0,
+ "defects": 120,
+ "defects_acted": 0,
+ "acted_cases": [],
+ "runs": [
+  1
+ ],
+ "neutrals": 104,
+ "neutrals_stopped_worst_run": 32,
+ "model_called": 164,
+ "unreadable_decisions": 0,
+ "unreadable_share": 0.0,
+ "answers": 486,
+ "answers_unparseable": 0,
+ "by_tier": {
+  "rules": {
+   "defects": 36,
+   "acted": 0,
+   "stopped_unreadable": 0
+  },
+  "v3-always": {
+   "defects": 63,
+   "acted": 0,
+   "stopped_unreadable": 0
+  },
+  "v3-never": {
+   "defects": 15,
+   "acted": 0,
+   "stopped_unreadable": 0
+  },
+  "v3-sometimes": {
+   "defects": 6,
+   "acted": 0,
+   "stopped_unreadable": 0
+  }
+ },
+ "p50_ms": 2103,
+ "p95_ms": 3306,
+ "cost_per_decision": 0.0025,
+ "cost_total": 0.5598,
+ "guard": [
+  {
+   "calls": 163,
+   "usd": 0.1854,
+   "tokens_in": 254485,
+   "tokens_out": 90854,
+   "circuit_open": null
+  },
+  {
+   "calls": 163,
+   "usd": 0.187,
+   "tokens_in": 254773,
+   "tokens_out": 92144,
+   "circuit_open": null
+  },
+  {
+   "calls": 160,
+   "usd": 0.1875,
+   "tokens_in": 250550,
+   "tokens_out": 93591,
+   "circuit_open": null
+  }
+ ],
+ "bar": {
+  "defects_acted": "pass",
+  "unreadable_share": "pass",
+  "neutrals_stopped": "FAIL",
+  "complete": "pass"
+ },
+ "verdict": "fail"
+}

@@ -2,7 +2,9 @@
 
 In a pilot the same spans go to the customer's own collector (OTLP) instead of a file; Warrant is not a tracing product.
 """
+import atexit
 import json
+import os
 
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -30,12 +32,22 @@ class JsonlExporter(SpanExporter):
 _provider = None
 
 
-def setup(path):
-    """Send spans to a JSONL file. Call once per run."""
+def setup(path, project=None):
+    """Send spans to a JSONL file. Call once per run.
+    With WARRANT_OTLP_ENDPOINT set (for local Phoenix: http://localhost:6006/v1/traces), the same spans also go there over OTLP,
+    into the Phoenix project named by `project`, WARRANT_PROJECT, or "warrant-live"."""
     global _provider
     if _provider is None:
-        _provider = TracerProvider()
+        from opentelemetry.sdk.resources import Resource
+        name = project or os.getenv("WARRANT_PROJECT", "warrant-live")
+        _provider = TracerProvider(resource=Resource.create({"openinference.project.name": name, "service.name": "warrant"}))
         trace.set_tracer_provider(_provider)
+        endpoint = os.getenv("WARRANT_OTLP_ENDPOINT")
+        if endpoint:
+            from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+            from opentelemetry.sdk.trace.export import BatchSpanProcessor
+            _provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint)))
+            atexit.register(_provider.shutdown)    # flush the last batch before the process exits
     _provider.add_span_processor(SimpleSpanProcessor(JsonlExporter(path)))
 
 

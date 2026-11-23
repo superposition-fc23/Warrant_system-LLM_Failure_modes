@@ -1,0 +1,483 @@
+[11/21/26 17:17:37] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: GET                   _client.py:1025
+                             https://api.together.ai/v1/models                  
+                             "HTTP/1.1 200 OK"                                  
+[11/21/26 17:17:46] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:17:47] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:17:55] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:18:06] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:18:07] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:18:21] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:18:26] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:18:27] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:18:29] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:18:37] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:18:48] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:18:58] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:00] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:08] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:10] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:17] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:38] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:39] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:40] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:47] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:50] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:51] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:19:59] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:01] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:05] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:11] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:12] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:17] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:18] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:19] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:28] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:32] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:34] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:42] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:50] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:20:53] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:21:05] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:21:07] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:21:08] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:21:14] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:21:29] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:21:32] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:21:41] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:21:46] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:21:57] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:04] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:06] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:15] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:23] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:29] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:31] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:37] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:38] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:40] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:48] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:22:58] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:04] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:17] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:19] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:24] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:25] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:32] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:33] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:36] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:38] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:43] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:49] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:54] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:55] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:23:59] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:04] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:07] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:11] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:16] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:17] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:22] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:23] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:27] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:29] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:31] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:34] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:37] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:42] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:45] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:47] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:24:59] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:04] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:05] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:09] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:11] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:19] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:24] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:26] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:31] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:32] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:35] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:38] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:44] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:48] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:49] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:51] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:57] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:25:59] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:01] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:02] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:05] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:09] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:13] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:17] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:19] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:20] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:23] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:25] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:31] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:36] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:39] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:44] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:47] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:48] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:49] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:54] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:55] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:26:57] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:06] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:08] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:09] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:12] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:13] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+                    INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:20] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:26] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:35] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:41] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:42] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:27:53] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:28:01] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:28:14] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         
+[11/21/26 17:28:15] INFO     HTTP Request: POST                  _client.py:1085
+                             https://api.together.ai/v1/chat/com                
+                             pletions "HTTP/1.1 200 OK"                         

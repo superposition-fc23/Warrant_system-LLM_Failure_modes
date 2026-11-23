@@ -1,0 +1,18 @@
+{
+  "name": "Arm A+verify: v4 gate on deepseek-ai/DeepSeek-V4.1-Flash, reasoning off, numeric claims in conflicts rechecked by code",
+  "written": "2026-11-21, before the mechanism was built and before the run",
+  "cases": "evals/mutations.json, all 224 (120 planted defects, 104 neutrals), one run",
+  "fixed": "v4 priors unchanged; output cap 2,000 tokens; three samples per compare; same model and settings as arm A",
+  "changed": "the compare step asks each conflict that rests on arithmetic or dates to state it as a checkable claim; code recomputes it from the numbers in the proposal and sources, and drops a conflict whose claim is false. A conflict with no claim is kept as before.",
+  "bar": {
+    "defects_acted_max": 0,
+    "unreadable_share_max": 0.05,
+    "neutrals_stopped_max": 21
+  },
+  "why": {
+    "defects_acted_max": "verification must never remove a true catch; v4 on Claude and arm A both acted on 0 of 120",
+    "unreadable_share_max": "a longer schema could raise parse failures; above 5% the result is not credible",
+    "neutrals_stopped_max": "v4 on Claude's worst run; arm A stopped 48"
+  },
+  "reported_not_barred": ["conflicts refuted by code, by mutation", "defects where a refuted conflict was dropped but the case still stopped", "share of numeric conflicts that came with a checkable claim", "neutrals stopped on the 80 invariance cases (arm A: 23, Claude: 0)", "p50, p95, cost per decision against arm A"]
+}

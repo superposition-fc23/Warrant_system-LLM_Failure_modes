@@ -1,0 +1,141 @@
+{
+ "summary": {
+  "run_id": "v4-open-smoke-verify-facts2-20261122T0101",
+  "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "cases": 9,
+  "passed": 8,
+  "parse_failures": 0,
+  "samples": 25,
+  "p50_ms": 2310,
+  "p95_ms": 2604,
+  "cost_usd": 0.0276,
+  "wall_s": 18.7,
+  "call_guard": {
+   "calls": 25,
+   "usd": 0.0276,
+   "tokens_in": 41867,
+   "tokens_out": 12554,
+   "circuit_open": null
+  },
+  "priors": "v4, unchanged"
+ },
+ "decisions": [
+  {
+   "case_id": "CT-01",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 1592,
+   "cost_usd": 0.0026978999999999996,
+   "trace_id": "bb5ba241aa040b14844aaad00817da87",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-02",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2341,
+   "cost_usd": 0.0029817,
+   "trace_id": "1aee29a005e81bc965778b253d38fb6c",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-04",
+   "kind": "control",
+   "expected": "act",
+   "decision": "gather",
+   "pass": false,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2426,
+   "cost_usd": 0.0031608,
+   "trace_id": "10494a8cced76231239c849651bf5ed7",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-06",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2604,
+   "cost_usd": 0.003126,
+   "trace_id": "983566a9ef78f4d36b1dd0c3fd247652",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-10",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 1829,
+   "cost_usd": 0.0029874,
+   "trace_id": "c9f2593565deb592a2611aac90c052f6",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "CT-11",
+   "kind": "control",
+   "expected": "act",
+   "decision": "act",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 1648,
+   "cost_usd": 0.0028799999999999997,
+   "trace_id": "0cc6c596eaf51f0170dfd0f29dd9ff18",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "PL-02",
+   "kind": "planted",
+   "expected": "hold",
+   "decision": "hold",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 1,
+   "latency_ms": 1387,
+   "cost_usd": 0.0015147000000000001,
+   "trace_id": "e234e37602a06398bfca80dd89a9a8f3",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "PL-12",
+   "kind": "planted",
+   "expected": "hold",
+   "decision": "hold",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2503,
+   "cost_usd": 0.00414,
+   "trace_id": "889609cb81a8c5f906b4b200d2bcd765",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "PL-13",
+   "kind": "planted",
+   "expected": "hold",
+   "decision": "hold",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 2310,
+   "cost_usd": 0.0041364,
+   "trace_id": "95b9914c55e7bfaef1bc600ad1c82edd",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  }
+ ]
+}

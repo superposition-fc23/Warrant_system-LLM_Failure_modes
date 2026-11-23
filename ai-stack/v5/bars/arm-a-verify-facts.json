@@ -1,0 +1,18 @@
+{
+  "name": "Arm A+verify+facts: v4 gate on deepseek-ai/DeepSeek-V4.1-Flash, reasoning off, numeric claims rechecked, computed facts in the prompt",
+  "written": "2026-11-21, before the facts were built and before the run",
+  "cases": "evals/mutations.json, all 224 (120 planted defects, 104 neutrals), one run",
+  "fixed": "v4 priors unchanged; output cap 2,000 tokens; three samples per compare; same model, settings and verification as A+verify",
+  "changed": "code computes neutral numbers from the proposal and records and adds them to the prompt: the amount as a share of the monthly fee, each percentage named in the contract documents applied to the fee, days from each invoice and document date to now, seat counts per system, prior credits on the account. No conclusions: caps and windows are still read from the contract by the model.",
+  "bar": {
+    "defects_acted_max": 0,
+    "unreadable_share_max": 0.05,
+    "neutrals_stopped_max": 21
+  },
+  "why": {
+    "defects_acted_max": "facts must not talk the model out of a true catch; every earlier arm acted on 0 of 120",
+    "unreadable_share_max": "a longer prompt could raise parse failures",
+    "neutrals_stopped_max": "v4 on Claude's worst run; arm A 48, A+verify 32"
+  },
+  "reported_not_barred": ["clean cases stopped by mutation against Claude, arm A and A+verify", "conflicts refuted by code", "conflicts without a claim", "p50, p95, cost per decision"]
+}

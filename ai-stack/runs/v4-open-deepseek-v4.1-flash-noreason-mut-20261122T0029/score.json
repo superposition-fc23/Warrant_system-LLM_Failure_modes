@@ -1,0 +1,160 @@
+{
+ "errors": 0,
+ "decisions": 224,
+ "per_run": [
+  {
+   "run": 1,
+   "defects": 120,
+   "defects_stopped": 120,
+   "neutrals": 104,
+   "neutrals_stopped": 48
+  }
+ ],
+ "by_mutation": {
+  "!aged": {
+   "gather": 12
+  },
+  "!amendment": {
+   "hold": 12
+  },
+  "!authority": {
+   "hold": 6
+  },
+  "!chargeback": {
+   "hold": 12
+  },
+  "!currency": {
+   "hold": 6
+  },
+  "!inject_contract": {
+   "hold": 12
+  },
+  "!inject_rationale": {
+   "hold": 12
+  },
+  "!ledger_lag": {
+   "hold": 12
+  },
+  "!list_lag": {
+   "gather": 12
+  },
+  "!over_cap": {
+   "hold": 12
+  },
+  "!unsigned": {
+   "hold": 12
+  },
+  "closed_flag": {
+   "act": 14,
+   "hold": 6
+  },
+  "recent_change": {
+   "gather": 12
+  },
+  "rename": {
+   "act": 22,
+   "hold": 8
+  },
+  "shuffle": {
+   "hold": 9,
+   "act": 20,
+   "gather": 1
+  },
+  "under_cap": {
+   "hold": 12
+  }
+ },
+ "flipping_cases": 0,
+ "no_model_share": 0.268,
+ "cost_per_decision": 0.00238,
+ "cost_total": 0.53,
+ "p50_ms": 2070,
+ "p95_ms": 2799,
+ "checks": {
+  "samples": 485,
+  "contract_check_unverified": 5,
+  "any_fact_omitted": 8,
+  "bad_citations": 90,
+  "neutrals_stopped_only_by_unverified_check": 1
+ },
+ "calibration": {
+  "0.0": {
+   "n": 31,
+   "observed_safe": 0.226
+  },
+  "0.1": {
+   "n": 2,
+   "observed_safe": 0.5
+  },
+  "0.2": {
+   "n": 7,
+   "observed_safe": 0.857
+  },
+  "0.3": {
+   "n": 4,
+   "observed_safe": 0.25
+  },
+  "0.4": {
+   "n": 2,
+   "observed_safe": 1.0
+  },
+  "0.5": {
+   "n": 4,
+   "observed_safe": 0.5
+  },
+  "0.6": {
+   "n": 29,
+   "observed_safe": 0.862
+  },
+  "0.7": {
+   "n": 13,
+   "observed_safe": 0.077
+  },
+  "0.8": {
+   "n": 2,
+   "observed_safe": 0.0
+  },
+  "0.9": {
+   "n": 56,
+   "observed_safe": 1.0
+  }
+ },
+ "sweep": [
+  {
+   "cost_of_delay": 5,
+   "defects_acted_share": 0.0,
+   "clean_stopped_share": 0.865,
+   "clean_person_share": 0.75
+  },
+  {
+   "cost_of_delay": 10,
+   "defects_acted_share": 0.0,
+   "clean_stopped_share": 0.519,
+   "clean_person_share": 0.404
+  },
+  {
+   "cost_of_delay": 20,
+   "defects_acted_share": 0.0,
+   "clean_stopped_share": 0.462,
+   "clean_person_share": 0.346
+  },
+  {
+   "cost_of_delay": 40,
+   "defects_acted_share": 0.033,
+   "clean_stopped_share": 0.452,
+   "clean_person_share": 0.337
+  },
+  {
+   "cost_of_delay": 80,
+   "defects_acted_share": 0.125,
+   "clean_stopped_share": 0.413,
+   "clean_person_share": 0.317
+  },
+  {
+   "cost_of_delay": 160,
+   "defects_acted_share": 0.225,
+   "clean_stopped_share": 0.24,
+   "clean_person_share": 0.202
+  }
+ ]
+}

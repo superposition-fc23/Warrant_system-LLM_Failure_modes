@@ -1,0 +1,50 @@
+{
+ "summary": {
+  "run_id": "v4-open-smoke-decision-span-20261123T0516",
+  "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "cases": 2,
+  "passed": 1,
+  "parse_failures": 0,
+  "samples": 4,
+  "p50_ms": 1922,
+  "p95_ms": 1922,
+  "cost_usd": 0.0043,
+  "wall_s": 3.6,
+  "call_guard": {
+   "calls": 4,
+   "usd": 0.0043,
+   "tokens_in": 5978,
+   "tokens_out": 2069,
+   "circuit_open": null
+  },
+  "priors": "v4, unchanged"
+ },
+ "decisions": [
+  {
+   "case_id": "CT-01",
+   "kind": "control",
+   "expected": "act",
+   "decision": "hold",
+   "pass": false,
+   "parse_failures": 0,
+   "samples": 3,
+   "latency_ms": 1922,
+   "cost_usd": 0.00285,
+   "trace_id": "f4ccb057a67df22ffdb33e6be793d61c",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  {
+   "case_id": "PL-02",
+   "kind": "planted",
+   "expected": "hold",
+   "decision": "hold",
+   "pass": true,
+   "parse_failures": 0,
+   "samples": 1,
+   "latency_ms": 1630,
+   "cost_usd": 0.0014261999999999999,
+   "trace_id": "888d5a7a4b069691e29d6617650e32db",
+   "served_model": "deepseek-ai/DeepSeek-V4.1-Flash"
+  }
+ ]
+}

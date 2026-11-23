@@ -473,6 +473,15 @@ def decide(s: State) -> State:
     sp.set_attribute("belief.p_safe", d["p_safe"])
     sp.set_attribute("belief.top_doubt", d["top_doubt"])
     sp.set_attribute("belief.gather", d.get("gather") or "")
+    # The full decision under Warrant's own names, so a live span carries what the stored-trace import adds: P(safe), expected loss,
+    # the cost of delay it was weighed against, the stake, the top doubt, any veto or rule, and the outcome.
+    fields = {"p_safe": d["p_safe"], "expected_loss": d.get("expected_loss"), "cost_of_delay": d.get("cost_of_delay"), "stake": d.get("stake"),
+              "top_doubt": d.get("top_doubt"), "top_doubt_source": d.get("top_doubt_source"), "gather": d.get("gather"),
+              "vetoed_by": d.get("vetoed_by"), "rule_applied": s.get("rule_applied"), "decision": decision}
+    for k, v in fields.items():
+        if v is not None:
+            sp.set_attribute(f"warrant.{k}", v)
+    sp.set_attribute("output.value", decision)
     return {"decision": decision, "checks": checks, "belief": d}
 
 

@@ -190,7 +190,11 @@ def test_gate_holds_when_the_model_is_refused():
     assert rec["decision"] != "act", rec["decision"]
     tools = [s for s in SPANS.get_finished_spans() if s.name.startswith("mcp.tool ")]
     assert tools and all(s.attributes["openinference.span.kind"] == "TOOL" and "output.value" in s.attributes for s in tools if s.name != "mcp.tool authority_get_limits")
-    assert named("gate.decide")[0].attributes["openinference.span.kind"] == "DECISION"
+    a = named("gate.decide")[0].attributes
+    assert a["openinference.span.kind"] == "DECISION"
+    for k in ("warrant.p_safe", "warrant.expected_loss", "warrant.cost_of_delay", "warrant.stake", "warrant.top_doubt", "warrant.decision", "output.value"):
+        assert k in a, f"decision span is missing {k}"
+    assert a["warrant.vetoed_by"] == "unreadable reply" and a["warrant.decision"] == rec["decision"] == a["output.value"]
     assert any("llm.refused" in s.attributes for s in named("llm.compare")), "the refusal is recorded on the compare span"
 
 

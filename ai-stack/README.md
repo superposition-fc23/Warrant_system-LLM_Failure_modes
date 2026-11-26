@@ -39,14 +39,15 @@ Bar for every open arm, written first: 0 defects acted on, at most 5% unreadable
 | System | Defects acted on (of 120) | Clean cases stopped (of 104) | Cost per decision | Median latency |
 |---|---|---|---|---|
 | Plain rules | 84 | 0 | 0 | 0 |
-| v3 on Claude, run 1 | 17 | 5 | $0.0086 | 3.1 s |
-| v4 on Claude, run 1 | 0 | 21 | $0.0245 | 4.3 s |
+| v3 on Claude, 5 runs | 16 to 19 | 5 to 7 | $0.0087 | 3.9 s |
+| v4 on Claude, 5 runs | 0 in every run | 18 to 21 | $0.0245 | 3.4 s |
 | DeepSeek-V4.1-Flash, reasoning off | 0 | 48 | $0.0024 | 2.1 s |
 | + arithmetic rechecked (`verify.py`) | 0 | 32 | $0.0025 | 2.1 s |
 | + computed facts (`facts.py`) | 0 | 35 | $0.0024 | 1.9 s |
 | Reasoning high + rechecked | 0 | 24 | $0.0094 | 7.8 s |
 
 - **Safety held on the open model in every arm.** Over-caution failed the bar in every arm; the best missed by 3.
+- **The 36 fixtures (`crm_eval.py`, five runs, worst run read):** v3 held 13 of 13 planted and named the fact in 13; v4 held 13 and named 12; each over-held 1 of 11 clean controls and held 5 of 5 prompt injections. Medians 4.2 s and 4.5 s; $0.0101 and $0.0266 per decision.
 - **Known limits:** each open arm ran once; the judges (84% exact agreement on 703 holds) are not yet calibrated against human ratings.
 - Details and rules learned: [`product/build-learnings.md`](../product/build-learnings.md).
 

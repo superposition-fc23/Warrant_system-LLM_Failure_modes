@@ -1,4 +1,4 @@
-# Third-party material and private interview prep stay local
+# Third-party material and private notes stay local
 reference/
 .DS_Store
 # Secrets and heavy local state
